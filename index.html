@@ -722,9 +722,19 @@
     // AUTH
     // =========================
     async function signUpUser() {
-      const email = signupEmail.value.trim();
-      const password = signupPassword.value.trim();
+     signupBtn.addEventListener("click", async () => {
+  signupBtn.disabled = true;
+  signupBtn.textContent = "Signing up...";
 
+  try {
+    await signUpUser();
+  }
+  finally
+  {
+    signupBtn.disabled = false;
+    signupBtn.textContent = "Sign Up";
+  }
+  
       if (!email || !password) {
         showToast("Please enter email and password.", "error");
         return;
