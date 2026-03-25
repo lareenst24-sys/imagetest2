@@ -3,256 +3,729 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login / Signup</title>
+  <title>Black Purple Auth + Dashboard</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0b0b0f;
+      --card: #15151d;
+      --card-2: #1d1d28;
+      --text: #ffffff;
+      --muted: #b8b8c7;
+      --purple: #8b3dff;
+      --purple-2: #b06cff;
+      --danger: #ff4d6d;
+      --success: #39d98a;
+      --border: rgba(255,255,255,0.08);
+      --shadow: 0 0 30px rgba(139, 61, 255, 0.18);
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: white;
+      background:
+        radial-gradient(circle at top right, rgba(139,61,255,0.15), transparent 25%),
+        radial-gradient(circle at bottom left, rgba(176,108,255,0.12), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .center-wrap {
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    .container {
+    .auth-card,
+    .dashboard-card {
       width: 100%;
-      max-width: 380px;
-      background: #171717;
-      border-radius: 18px;
+      max-width: 420px;
+      background: rgba(21, 21, 29, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .auth-card {
       padding: 28px;
-      box-shadow: 0 0 25px rgba(128, 0, 255, 0.28);
     }
 
-    h2 {
-      margin: 0 0 18px;
-      text-align: center;
-    }
-
-    p {
-      margin: 10px 0;
+    h1, h2, h3 {
+      margin: 0 0 12px;
     }
 
     .subtext {
-      text-align: center;
-      color: #b8b8b8;
-      font-size: 14px;
+      color: var(--muted);
       margin-bottom: 18px;
+      line-height: 1.5;
     }
 
-    input {
+    input, textarea {
       width: 100%;
       padding: 12px 14px;
-      margin: 8px 0;
-      border: 1px solid #2c2c2c;
-      border-radius: 10px;
-      background: #101010;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #101017;
       color: white;
       outline: none;
+      margin-top: 10px;
+      font-size: 14px;
     }
 
-    input:focus {
-      border-color: #8a2be2;
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--purple-2);
+      box-shadow: 0 0 0 3px rgba(176,108,255,0.12);
     }
 
     button {
       width: 100%;
-      padding: 12px 14px;
-      margin-top: 10px;
       border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      color: white;
-      font-weight: 600;
+      border-radius: 12px;
+      padding: 12px 14px;
       font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
 
-    .primary {
-      background: linear-gradient(135deg, #6a00ff, #9d4dff);
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
     }
 
-    .google {
-      background: #2a2a2a;
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
     }
 
-    .secondary {
-      background: #222;
+    .btn-dark {
+      color: white;
+      background: #222231;
+    }
+
+    .btn-danger {
+      color: white;
+      background: linear-gradient(135deg, #c1124f, #ff4d6d);
     }
 
     .switch {
       text-align: center;
-      color: #c7c7c7;
       margin-top: 16px;
+      color: var(--muted);
       cursor: pointer;
       font-size: 14px;
     }
 
     .switch span {
-      color: #b266ff;
-      font-weight: bold;
-    }
-
-    .message {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      display: none;
-    }
-
-    .success {
-      background: rgba(0, 160, 90, 0.15);
-      border: 1px solid rgba(0, 160, 90, 0.45);
-      color: #8ff0b3;
-    }
-
-    .error {
-      background: rgba(220, 40, 40, 0.15);
-      border: 1px solid rgba(220, 40, 40, 0.45);
-      color: #ff9d9d;
+      color: var(--purple-2);
+      font-weight: 700;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
-    .user-box {
+    .toast-wrap {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(360px, calc(100vw - 32px));
+    }
+
+    .toast {
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: white;
+      border: 1px solid var(--border);
+      background: #1a1a25;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.28);
+      animation: slideIn 0.25s ease;
+      font-size: 14px;
+    }
+
+    .toast.success {
+      border-color: rgba(57,217,138,0.35);
+      background: rgba(57,217,138,0.12);
+    }
+
+    .toast.error {
+      border-color: rgba(255,77,109,0.35);
+      background: rgba(255,77,109,0.12);
+    }
+
+    .toast.info {
+      border-color: rgba(176,108,255,0.35);
+      background: rgba(176,108,255,0.12);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dashboard-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 12px 40px;
+    }
+
+    .dashboard-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .brand span {
+      color: var(--purple-2);
+    }
+
+    .small-muted {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+    }
+
+    .dashboard-card {
+      padding: 18px;
+      max-width: none;
+    }
+
+    .stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat-box {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat-title {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .limit-bar {
+      height: 12px;
+      background: #0f0f14;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    .limit-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple), var(--purple-2));
+      transition: width 0.3s ease;
+    }
+
+    .uploader-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    .ad-box {
+      margin-top: 14px;
+      background: rgba(139,61,255,0.08);
+      border: 1px dashed rgba(176,108,255,0.45);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .ad-slot {
+      margin-top: 10px;
+      padding: 18px;
+      border-radius: 12px;
       text-align: center;
+      background: #0f0f16;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: 14px;
     }
 
-    .user-email {
-      color: #caa8ff;
+    .images-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .image-card {
+      position: relative;
+      background: #12121a;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 240px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+      background: #09090d;
+    }
+
+    .image-meta {
+      padding: 12px;
+    }
+
+    .image-title {
+      font-weight: 700;
+      margin-bottom: 6px;
       word-break: break-word;
-      margin: 12px 0 18px;
+    }
+
+    .image-sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .desc-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(5,5,8,0.96) 0%,
+        rgba(10,10,14,0.82) 45%,
+        rgba(10,10,14,0.1) 100%
+      );
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+
+    .image-card:hover .desc-overlay {
+      opacity: 1;
+    }
+
+    .desc-overlay-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #efecff;
+      max-height: 80%;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty-box {
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-actions button {
+      width: auto;
+      margin-top: 0;
+      padding-inline: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- AUTH BOX -->
-    <div id="authBox">
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="page center-wrap" id="authPage">
+    <div class="auth-card">
       <div id="loginView">
         <h2>Login</h2>
-        <p class="subtext">Sign in with email and password</p>
+        <div class="subtext">Sign in with email and password.</div>
 
-        <input type="email" id="loginEmail" placeholder="Email" />
-        <input type="password" id="loginPassword" placeholder="Password" />
+        <input type="email" id="loginEmail" placeholder="Enter your email" />
+        <input type="password" id="loginPassword" placeholder="Enter your password" />
 
-        <button class="primary" id="loginBtn">Login</button>
-        <button class="google" id="googleBtn">Continue with Google</button>
-
-        <p class="switch" onclick="showSignup()">
-          Don’t have an account? <span>Sign up</span>
-        </p>
+        <button class="btn-primary" id="loginBtn">Login</button>
+        <button class="btn-dark" id="goSignupBtn">Go to Sign Up</button>
       </div>
 
       <div id="signupView" class="hidden">
         <h2>Sign Up</h2>
-        <p class="subtext">Create a new account</p>
+        <div class="subtext">Create your account to access the dashboard.</div>
 
-        <input type="email" id="signupEmail" placeholder="Email" />
-        <input type="password" id="signupPassword" placeholder="Password" />
+        <input type="email" id="signupEmail" placeholder="Enter your email" />
+        <input type="password" id="signupPassword" placeholder="Create a password" />
 
-        <button class="primary" id="signupBtn">Sign Up</button>
-        <button class="google" id="googleBtn2">Continue with Google</button>
-
-        <p class="switch" onclick="showLogin()">
-          Already have an account? <span>Login</span>
-        </p>
+        <button class="btn-primary" id="signupBtn">Sign Up</button>
+        <button class="btn-dark" id="goLoginBtn">Go to Login</button>
       </div>
 
-      <div id="messageBox" class="message"></div>
+      <div class="switch" id="switchText">
+        You can edit colors, text, limits, and layout in the code anytime.
+      </div>
     </div>
+  </div>
 
-    <!-- DASHBOARD BOX -->
-    <div id="dashboardBox" class="hidden user-box">
-      <h2>Welcome</h2>
-      <p class="subtext">You are logged in</p>
-      <div class="user-email" id="userEmail"></div>
-      <button class="secondary" id="logoutBtn">Logout</button>
+  <div class="page hidden" id="dashboardPage">
+    <div class="dashboard-shell">
+      <div class="dashboard-top">
+        <div>
+          <div class="brand">Black<span>Purple</span> Dashboard</div>
+          <div class="small-muted" id="welcomeText">Welcome</div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn-dark" id="resetGalleryBtn">Clear Current Gallery</button>
+          <button class="btn-danger" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Upload Panel</h3>
+          <div class="subtext">Upload image cards with a description overlay.</div>
+
+          <div class="stats">
+            <div class="stat-box">
+              <div class="stat-title">Uploaded Today</div>
+              <div class="stat-value" id="uploadedTodayValue">0</div>
+              <div class="limit-bar">
+                <div class="limit-fill" id="limitFill"></div>
+              </div>
+              <div class="uploader-note" id="limitText">
+                0 / 1000 used today
+              </div>
+            </div>
+
+            <div class="stat-box">
+              <div class="stat-title">Extra Limit From Ads</div>
+              <div class="stat-value" id="extraLimitValue">0</div>
+              <div class="uploader-note">
+                This increases when the user watches an ad after hitting the limit.
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="imageInput" accept="image/*" />
+          <textarea id="imageDescription" placeholder="Write a description for this image..."></textarea>
+
+          <button class="btn-primary" id="uploadBtn">Upload Image</button>
+
+          <div class="ad-box hidden" id="adUnlockBox">
+            <h3 style="margin-bottom: 8px;">Daily Limit Reached</h3>
+            <div class="small-muted">
+              User hit the daily limit. Show ad option here to unlock more uploads.
+            </div>
+
+            <div class="ad-slot" id="rewardAdSlot">
+              Ad placeholder — connect your ad provider code here
+            </div>
+
+            <button class="btn-primary" id="watchAdBtn">
+              Watch Ad to Unlock +50 More Uploads
+            </button>
+          </div>
+
+          <div class="ad-box" id="uploadAdBox">
+            <h3 style="margin-bottom: 8px;">Upload Ad Trigger Area</h3>
+            <div class="small-muted">
+              Every time user clicks upload, you can trigger an ad here.
+            </div>
+            <div class="ad-slot" id="uploadAdSlot">
+              Upload ad placeholder — put provider script or function here
+            </div>
+          </div>
+
+          <div class="uploader-note">
+            This version shows uploaded cards in the dashboard for the current session.
+            For permanent storage across refresh, connect Supabase Storage later.
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="images-head">
+            <div>
+              <h3>Your Uploaded Images</h3>
+              <div class="small-muted">Hover an image to see its description.</div>
+            </div>
+          </div>
+
+          <div id="gallery" class="gallery"></div>
+
+          <div id="emptyGallery" class="empty-box">
+            No images uploaded yet.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // =========================
-    // 1) PASTE YOUR VALUES HERE
+    // SUPABASE SETTINGS
     // =========================
-    const SUPABASE_URL = "https://zyhiyorqjkvqdnubzynf.supabase.co";
+    const SUPABASE_URL = "https://zyhiyorqjkvqdnubzynf.supabase.coE";
     const SUPABASE_KEY = "sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
-
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const authBox = document.getElementById("authBox");
-    const dashboardBox = document.getElementById("dashboardBox");
-    const userEmail = document.getElementById("userEmail");
-    const messageBox = document.getElementById("messageBox");
+    // =========================
+    // EASY SETTINGS TO EDIT
+    // =========================
+    const BASE_DAILY_LIMIT = 1000;
+    const REWARDED_AD_BONUS = 50;
 
-    function showMessage(text, type = "success") {
-      messageBox.textContent = text;
-      messageBox.className = "message " + type;
-      messageBox.style.display = "block";
+    // =========================
+    // ELEMENTS
+    // =========================
+    const authPage = document.getElementById("authPage");
+    const dashboardPage = document.getElementById("dashboardPage");
+
+    const loginView = document.getElementById("loginView");
+    const signupView = document.getElementById("signupView");
+
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+
+    const signupEmail = document.getElementById("signupEmail");
+    const signupPassword = document.getElementById("signupPassword");
+
+    const loginBtn = document.getElementById("loginBtn");
+    const signupBtn = document.getElementById("signupBtn");
+    const goSignupBtn = document.getElementById("goSignupBtn");
+    const goLoginBtn = document.getElementById("goLoginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const uploadedTodayValue = document.getElementById("uploadedTodayValue");
+    const extraLimitValue = document.getElementById("extraLimitValue");
+    const limitText = document.getElementById("limitText");
+    const limitFill = document.getElementById("limitFill");
+    const welcomeText = document.getElementById("welcomeText");
+
+    const imageInput = document.getElementById("imageInput");
+    const imageDescription = document.getElementById("imageDescription");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const gallery = document.getElementById("gallery");
+    const emptyGallery = document.getElementById("emptyGallery");
+    const resetGalleryBtn = document.getElementById("resetGalleryBtn");
+
+    const adUnlockBox = document.getElementById("adUnlockBox");
+    const watchAdBtn = document.getElementById("watchAdBtn");
+
+    const toastWrap = document.getElementById("toastWrap");
+
+    // =========================
+    // CURRENT SESSION GALLERY
+    // =========================
+    let galleryItems = [];
+
+    // =========================
+    // TOASTS / POPUPS
+    // =========================
+    function showToast(message, type = "info") {
+      const toast = document.createElement("div");
+      toast.className = "toast " + type;
+      toast.textContent = message;
+      toastWrap.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-6px)";
+      }, 2600);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
     }
 
-    function clearMessage() {
-      messageBox.style.display = "none";
-      messageBox.textContent = "";
-      messageBox.className = "message";
+    // =========================
+    // VIEW SWITCH
+    // =========================
+    function showLogin() {
+      signupView.classList.add("hidden");
+      loginView.classList.remove("hidden");
     }
 
     function showSignup() {
-      clearMessage();
-      document.getElementById("loginView").classList.add("hidden");
-      document.getElementById("signupView").classList.remove("hidden");
-    }
-
-    function showLogin() {
-      clearMessage();
-      document.getElementById("signupView").classList.add("hidden");
-      document.getElementById("loginView").classList.remove("hidden");
+      loginView.classList.add("hidden");
+      signupView.classList.remove("hidden");
     }
 
     function showDashboard(email) {
-      authBox.classList.add("hidden");
-      dashboardBox.classList.remove("hidden");
-      userEmail.textContent = email || "Logged in";
+      authPage.classList.add("hidden");
+      dashboardPage.classList.remove("hidden");
+      welcomeText.textContent = "Welcome, " + (email || "User");
+      refreshDailyState();
+      renderGallery();
     }
 
     function showAuth() {
-      dashboardBox.classList.add("hidden");
-      authBox.classList.remove("hidden");
+      dashboardPage.classList.add("hidden");
+      authPage.classList.remove("hidden");
       showLogin();
     }
 
-    async function checkUser() {
-      const { data, error } = await supabase.auth.getSession();
+    // =========================
+    // DAILY LIMIT STORAGE
+    // =========================
+    function getTodayKey() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
 
-      if (error) {
-        showMessage(error.message, "error");
-        return;
+    function getLimitState() {
+      const today = getTodayKey();
+      const saved = JSON.parse(localStorage.getItem("dailyUploadState") || "{}");
+
+      if (saved.date !== today) {
+        const freshState = {
+          date: today,
+          uploadedToday: 0,
+          extraLimit: 0
+        };
+        localStorage.setItem("dailyUploadState", JSON.stringify(freshState));
+        return freshState;
       }
 
-      const session = data.session;
-      if (session && session.user) {
-        showDashboard(session.user.email);
+      return {
+        date: saved.date || today,
+        uploadedToday: Number(saved.uploadedToday || 0),
+        extraLimit: Number(saved.extraLimit || 0)
+      };
+    }
+
+    function setLimitState(state) {
+      localStorage.setItem("dailyUploadState", JSON.stringify(state));
+    }
+
+    function getMaxAllowed() {
+      const state = getLimitState();
+      return BASE_DAILY_LIMIT + state.extraLimit;
+    }
+
+    function refreshDailyState() {
+      const state = getLimitState();
+      const maxAllowed = getMaxAllowed();
+      const percent = Math.min((state.uploadedToday / maxAllowed) * 100, 100);
+
+      uploadedTodayValue.textContent = state.uploadedToday;
+      extraLimitValue.textContent = state.extraLimit;
+      limitText.textContent = `${state.uploadedToday} / ${maxAllowed} used today`;
+      limitFill.style.width = percent + "%";
+
+      if (state.uploadedToday >= maxAllowed) {
+        adUnlockBox.classList.remove("hidden");
       } else {
-        showAuth();
+        adUnlockBox.classList.add("hidden");
       }
     }
 
-    // SIGN UP
-    document.getElementById("signupBtn").addEventListener("click", async () => {
-      clearMessage();
+    function canUploadNow() {
+      const state = getLimitState();
+      return state.uploadedToday < (BASE_DAILY_LIMIT + state.extraLimit);
+    }
 
-      const email = document.getElementById("signupEmail").value.trim();
-      const password = document.getElementById("signupPassword").value.trim();
+    function increaseUploadCount() {
+      const state = getLimitState();
+      state.uploadedToday += 1;
+      setLimitState(state);
+      refreshDailyState();
+    }
+
+    function grantRewardedBonus() {
+      const state = getLimitState();
+      state.extraLimit += REWARDED_AD_BONUS;
+      setLimitState(state);
+      refreshDailyState();
+    }
+
+    // =========================
+    // AUTH
+    // =========================
+    async function signUpUser() {
+      const email = signupEmail.value.trim();
+      const password = signupPassword.value.trim();
 
       if (!email || !password) {
-        showMessage("Please enter email and password.", "error");
+        showToast("Please enter email and password.", "error");
         return;
       }
 
@@ -262,28 +735,24 @@
       });
 
       if (error) {
-        showMessage(error.message, "error");
+        showToast(error.message, "error");
         return;
       }
 
-      // If email confirmation is on, user may need to verify first.
       if (data.user && !data.session) {
-        showMessage("Signup successful. Check your email to verify your account.", "success");
+        showToast("Signup successful. Check your email to verify account.", "success");
       } else {
-        showMessage("Signup successful. You are now logged in.", "success");
+        showToast("Signup successful. Redirecting to dashboard...", "success");
         showDashboard(data.user?.email || email);
       }
-    });
+    }
 
-    // LOGIN
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      clearMessage();
-
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
+    async function loginUser() {
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value.trim();
 
       if (!email || !password) {
-        showMessage("Please enter email and password.", "error");
+        showToast("Please enter email and password.", "error");
         return;
       }
 
@@ -293,47 +762,41 @@
       });
 
       if (error) {
-        showMessage(error.message, "error");
+        showToast(error.message, "error");
         return;
       }
 
-      showMessage("Login successful.", "success");
+      showToast("Login successful. Welcome back.", "success");
       showDashboard(data.user?.email || email);
-    });
-
-    // GOOGLE LOGIN
-    async function loginWithGoogle() {
-      clearMessage();
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
-
-      if (error) {
-        showMessage(error.message, "error");
-      }
     }
 
-    document.getElementById("googleBtn").addEventListener("click", loginWithGoogle);
-    document.getElementById("googleBtn2").addEventListener("click", loginWithGoogle);
-
-    // LOGOUT
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
+    async function logoutUser() {
       const { error } = await supabase.auth.signOut();
 
       if (error) {
-        showMessage(error.message, "error");
+        showToast(error.message, "error");
         return;
       }
 
+      showToast("Logged out successfully.", "success");
       showAuth();
-      showMessage("Logged out successfully.", "success");
-    });
+    }
 
-    // Listen for auth changes
+    async function checkSession() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        showToast(error.message, "error");
+        return;
+      }
+
+      if (data.session && data.session.user) {
+        showDashboard(data.session.user.email);
+      } else {
+        showAuth();
+      }
+    }
+
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session && session.user) {
         showDashboard(session.user.email);
@@ -342,8 +805,158 @@
       }
     });
 
-    // Initial check
-    checkUser();
+    // =========================
+    // AD HOOKS
+    // =========================
+    function runUploadAd() {
+      // CONNECT YOUR AD PROVIDER HERE
+      // Example:
+      // myAdProvider.showInterstitial();
+      console.log("Upload ad hook fired");
+    }
+
+    async function runRewardedAd() {
+      // CONNECT YOUR REWARDED AD PROVIDER HERE
+      // Return true when ad finished successfully
+      // Example:
+      // const success = await myAdProvider.showRewardedAd();
+      // return success;
+
+      console.log("Rewarded ad hook fired");
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      return true;
+    }
+
+    // =========================
+    // GALLERY
+    // =========================
+    function renderGallery() {
+      gallery.innerHTML = "";
+
+      if (galleryItems.length === 0) {
+        emptyGallery.classList.remove("hidden");
+        return;
+      }
+
+      emptyGallery.classList.add("hidden");
+
+      galleryItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "image-card";
+
+        card.innerHTML = `
+          <img src="${item.src}" alt="${escapeHtml(item.fileName)}">
+          <div class="desc-overlay">
+            <div class="desc-overlay-text">${escapeHtml(item.description || "No description added.")}</div>
+          </div>
+          <div class="image-meta">
+            <div class="image-title">${escapeHtml(item.fileName)}</div>
+            <div class="image-sub">${escapeHtml(item.timeText)}</div>
+          </div>
+        `;
+
+        gallery.appendChild(card);
+      });
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatNow() {
+      const now = new Date();
+      return now.toLocaleString();
+    }
+
+    function addImageToGallery(file, description) {
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        galleryItems.unshift({
+          src: e.target.result,
+          description: description,
+          fileName: file.name,
+          timeText: formatNow()
+        });
+
+        renderGallery();
+        showToast("Image uploaded to dashboard.", "success");
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    // =========================
+    // UPLOAD
+    // =========================
+    function handleUpload() {
+      const file = imageInput.files[0];
+      const description = imageDescription.value.trim();
+
+      runUploadAd();
+
+      if (!file) {
+        showToast("Please choose an image first.", "error");
+        return;
+      }
+
+      if (!canUploadNow()) {
+        refreshDailyState();
+        showToast("Daily upload limit reached. Watch an ad to unlock more.", "error");
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        showToast("Only image files are allowed.", "error");
+        return;
+      }
+
+      addImageToGallery(file, description);
+      increaseUploadCount();
+
+      imageInput.value = "";
+      imageDescription.value = "";
+    }
+
+    // =========================
+    // EVENTS
+    // =========================
+    goSignupBtn.addEventListener("click", showSignup);
+    goLoginBtn.addEventListener("click", showLogin);
+    signupBtn.addEventListener("click", signUpUser);
+    loginBtn.addEventListener("click", loginUser);
+    logoutBtn.addEventListener("click", logoutUser);
+    uploadBtn.addEventListener("click", handleUpload);
+
+    watchAdBtn.addEventListener("click", async () => {
+      showToast("Opening rewarded ad...", "info");
+
+      const success = await runRewardedAd();
+
+      if (success) {
+        grantRewardedBonus();
+        showToast(`Ad completed. +${REWARDED_AD_BONUS} upload limit added.`, "success");
+      } else {
+        showToast("Ad was not completed.", "error");
+      }
+    });
+
+    resetGalleryBtn.addEventListener("click", () => {
+      galleryItems = [];
+      renderGallery();
+      showToast("Current gallery cleared.", "info");
+    });
+
+    // =========================
+    // START
+    // =========================
+    refreshDailyState();
+    checkSession();
   </script>
 </body>
 </html>
