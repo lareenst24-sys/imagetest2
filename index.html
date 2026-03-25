@@ -1,351 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Auth Page</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auth Page</title>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #1a002b 0%, #050505 45%, #000000 100%);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0d0d0d;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-    .container {
-      width: 100%;
-      max-width: 420px;
-      background: rgba(10, 10, 10, 0.96);
-      border-radius: 22px;
-      padding: 30px 24px;
-      box-shadow: 0 0 35px rgba(140, 0, 255, 0.25);
-      border: 1px solid rgba(168, 85, 247, 0.18);
-    }
+.container {
+  background: #1a1a1a;
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(128, 0, 255, 0.5);
+}
 
-    h1 {
-      text-align: center;
-      margin: 0 0 25px;
-      color: #a855f7;
-      font-size: 2rem;
-    }
+h2 {
+  margin-bottom: 20px;
+}
 
-    h2 {
-      text-align: center;
-      margin: 0 0 20px;
-      color: #b56cff;
-      font-size: 1.7rem;
-    }
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+}
 
-    .hidden {
-      display: none;
-    }
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: purple;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
 
-    .menu-buttons,
-    .form-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+button:hover {
+  background: #b300ff;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 14px;
-      border-radius: 12px;
-      border: 1px solid #2d2d2d;
-      background: #151515;
-      color: white;
-      font-size: 15px;
-      outline: none;
-    }
+.switch {
+  margin-top: 10px;
+  cursor: pointer;
+  color: #aaa;
+}
 
-    input:focus {
-      border-color: #a855f7;
-      box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .primary-btn {
-      background: linear-gradient(90deg, #7e22ce, #9333ea);
-      color: white;
-    }
-
-    .primary-btn:hover {
-      transform: translateY(-1px);
-      opacity: 0.96;
-    }
-
-    .dark-btn {
-      background: #1b1b1b;
-      color: white;
-      border: 1px solid #3a3a3a;
-    }
-
-    .dark-btn:hover {
-      background: #242424;
-    }
-
-    .back-btn {
-      background: #3b0764;
-      color: white;
-    }
-
-    .back-btn:hover {
-      background: #4c0b80;
-    }
-
-    .logout-btn {
-      background: #4a044e;
-      color: white;
-    }
-
-    .logout-btn:hover {
-      background: #5f0b65;
-    }
-
-    .status {
-      margin-top: 18px;
-      background: #111;
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
-      color: #e2c6ff;
-      min-height: 48px;
-      border: 1px solid rgba(168, 85, 247, 0.12);
-      word-break: break-word;
-    }
-
-    .user-box {
-      margin-top: 18px;
-      background: #101010;
-      border-radius: 14px;
-      padding: 16px;
-      border: 1px solid rgba(168, 85, 247, 0.16);
-      text-align: center;
-    }
-
-    .user-email {
-      color: #d8b4fe;
-      margin-bottom: 14px;
-      font-size: 15px;
-    }
-
-    .small-text {
-      text-align: center;
-      margin-top: 12px;
-      color: #bdbdbd;
-      font-size: 14px;
-    }
-  </style>
+.google {
+  background: #333;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="container">
-    <h1>Welcome</h1>
+<div class="container">
 
-    <!-- Main Menu -->
-    <div id="menu-screen">
-      <div class="menu-buttons">
-        <button class="primary-btn" onclick="showScreen('login-screen')">Login</button>
-        <button class="dark-btn" onclick="showScreen('signup-screen')">Sign Up</button>
-        <button class="dark-btn" onclick="loginWithGoogle()">Continue with Google</button>
-      </div>
-    </div>
-
-    <!-- Signup Screen -->
-    <div id="signup-screen" class="hidden">
-      <h2>Sign Up</h2>
-      <input type="email" id="signup-email" placeholder="Enter your email">
-      <input type="password" id="signup-password" placeholder="Enter your password">
-      <div class="form-buttons">
-        <button class="primary-btn" onclick="signup()">Create Account</button>
-        <button class="back-btn" onclick="showScreen('menu-screen')">Back</button>
-      </div>
-      <div class="small-text">Supabase will handle signup and email verification.</div>
-    </div>
-
-    <!-- Login Screen -->
-    <div id="login-screen" class="hidden">
-      <h2>Login</h2>
-      <input type="email" id="login-email" placeholder="Enter your email">
-      <input type="password" id="login-password" placeholder="Enter your password">
-      <div class="form-buttons">
-        <button class="primary-btn" onclick="login()">Login</button>
-        <button class="back-btn" onclick="showScreen('menu-screen')">Back</button>
-      </div>
-      <div class="small-text">Supabase will check the email and password.</div>
-    </div>
-
-    <!-- Logged In Screen -->
-    <div id="logged-in-screen" class="hidden">
-      <h2>Logged In</h2>
-      <div class="user-box">
-        <div class="user-email" id="user-email">User email here</div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-      </div>
-    </div>
-
-    <div class="status" id="status">Not logged in</div>
+  <!-- LOGIN -->
+  <div id="login">
+    <h2>Login</h2>
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Password">
+    <button>Login</button>
+    <button class="google">Continue with Google</button>
+    <p class="switch" onclick="showSignup()">Don't have an account? Sign up</p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-  const supabaseUrl = "https://zyhiyorqjkvqdnubzynf.supabase.co";
-  const supabaseKey = "sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
+  <!-- SIGNUP -->
+  <div id="signup" style="display:none;">
+    <h2>Sign Up</h2>
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Password">
+    <button>Sign Up</button>
+    <button class="google">Continue with Google</button>
+    <p class="switch" onclick="showLogin()">Already have an account? Login</p>
+  </div>
 
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+</div>
 
-    function setStatus(message) {
-      document.getElementById("status").innerText = message;
-    }
+<script>
+function showSignup() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("signup").style.display = "block";
+}
 
-    function showScreen(screenId) {
-      const screens = [
-        "menu-screen",
-        "signup-screen",
-        "login-screen",
-        "logged-in-screen"
-      ];
+function showLogin() {
+  document.getElementById("signup").style.display = "none";
+  document.getElementById("login").style.display = "block";
+}
+</script>
 
-      screens.forEach(id => {
-        document.getElementById(id).classList.add("hidden");
-      });
-
-      document.getElementById(screenId).classList.remove("hidden");
-    }
-
-    function showLoggedInUser(user) {
-      const email = user.email || "Logged in user";
-      document.getElementById("user-email").innerText = email;
-      showScreen("logged-in-screen");
-      setStatus("Logged in as: " + email);
-    }
-
-    async function signup() {
-      const email = document.getElementById("signup-email").value.trim();
-      const password = document.getElementById("signup-password").value.trim();
-
-      if (!email || !password) {
-        setStatus("Please enter email and password.");
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password
-      });
-
-      if (error) {
-        setStatus("Signup error: " + error.message);
-        return;
-      }
-
-      if (data.user) {
-        setStatus("Signup successful. Check your email for verification.");
-      } else {
-        setStatus("Signup completed.");
-      }
-
-      showScreen("menu-screen");
-    }
-
-    async function login() {
-      const email = document.getElementById("login-email").value.trim();
-      const password = document.getElementById("login-password").value.trim();
-
-      if (!email || !password) {
-        setStatus("Please enter email and password.");
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-
-      if (error) {
-        setStatus("Login error: " + error.message);
-        return;
-      }
-
-      if (data.user) {
-        showLoggedInUser(data.user);
-      } else {
-        setStatus("Login completed.");
-      }
-    }
-
-    async function loginWithGoogle() {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin + window.location.pathname
-        }
-      });
-
-      if (error) {
-        setStatus("Google login error: " + error.message);
-      }
-    }
-
-    async function logout() {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        setStatus("Logout error: " + error.message);
-        return;
-      }
-
-      showScreen("menu-screen");
-      setStatus("Logged out.");
-    }
-
-    async function checkSession() {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error) {
-        setStatus("Session error: " + error.message);
-        showScreen("menu-screen");
-        return;
-      }
-
-      if (data.session && data.session.user) {
-        showLoggedInUser(data.session.user);
-      } else {
-        showScreen("menu-screen");
-        setStatus("Not logged in");
-      }
-    }
-
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session && session.user) {
-        showLoggedInUser(session.user);
-      } else {
-        showScreen("menu-screen");
-        setStatus("Not logged in");
-      }
-    });
-
-    checkSession();
-  </script>
 </body>
 </html>
