@@ -1,0 +1,146 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zyhiyorqjkvqdnubzynf.supabase.co";
+  const supabaseKey = "sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
+
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  function setStatus(message) {
+    document.getElementById("status").innerText = message;
+    console.log(message);
+  }
+
+  function showScreen(screenId) {
+    const screens = ["menu-screen", "signup-screen", "login-screen", "logged-in-screen"];
+    screens.forEach(id => document.getElementById(id).classList.add("hidden"));
+    document.getElementById(screenId).classList.remove("hidden");
+  }
+
+  function showLoggedInUser(user) {
+    const email = user.email || "Logged in user";
+    document.getElementById("user-email").innerText = email;
+    showScreen("logged-in-screen");
+    setStatus("Logged in as: " + email);
+  }
+
+  async function signup() {
+    try {
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value.trim();
+
+      if (!email || !password) {
+        setStatus("Enter email and password.");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      console.log("signup data:", data);
+      console.log("signup error:", error);
+
+      if (error) {
+        setStatus("Signup error: " + error.message);
+        return;
+      }
+
+      setStatus("Signup worked. Check your email if confirmation is enabled.");
+      showScreen("menu-screen");
+    } catch (err) {
+      console.error(err);
+      setStatus("Signup crashed: " + err.message);
+    }
+  }
+
+  async function login() {
+    try {
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+
+      if (!email || !password) {
+        setStatus("Enter email and password.");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      console.log("login data:", data);
+      console.log("login error:", error);
+
+      if (error) {
+        setStatus("Login error: " + error.message);
+        return;
+      }
+
+      if (data.user) {
+        showLoggedInUser(data.user);
+      } else {
+        setStatus("Login finished but no user returned.");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("Login crashed: " + err.message);
+    }
+  }
+
+  async function loginWithGoogle() {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + window.location.pathname
+        }
+      });
+
+      if (error) {
+        setStatus("Google login error: " + error.message);
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("Google login crashed: " + err.message);
+    }
+  }
+
+  async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      setStatus("Logout error: " + error.message);
+      return;
+    }
+    showScreen("menu-screen");
+    setStatus("Logged out.");
+  }
+
+  async function checkSession() {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      setStatus("Session error: " + error.message);
+      return;
+    }
+
+    if (data.session && data.session.user) {
+      showLoggedInUser(data.session.user);
+    } else {
+      showScreen("menu-screen");
+      setStatus("Not logged in");
+    }
+  }
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log("auth event:", event, session);
+    if (session && session.user) {
+      showLoggedInUser(session.user);
+    } else {
+      showScreen("menu-screen");
+      setStatus("Not logged in");
+    }
+  });
+
+  checkSession();
+</script>
