@@ -1,108 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auth Page</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Signup</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0d0d0d;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  <style>
+    * { box-sizing: border-box; }
 
-.container {
-  background: #1a1a1a;
-  padding: 30px;
-  border-radius: 15px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(128, 0, 255, 0.5);
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d0d0d;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-h2 {
-  margin-bottom: 20px;
-}
+    .container {
+      width: 100%;
+      max-width: 380px;
+      background: #171717;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 0 25px rgba(128, 0, 255, 0.28);
+    }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-}
+    h2 {
+      margin: 0 0 18px;
+      text-align: center;
+    }
 
-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background: purple;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-}
+    p {
+      margin: 10px 0;
+    }
 
-button:hover {
-  background: #b300ff;
-}
+    .subtext {
+      text-align: center;
+      color: #b8b8b8;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
 
-.switch {
-  margin-top: 10px;
-  cursor: pointer;
-  color: #aaa;
-}
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      margin: 8px 0;
+      border: 1px solid #2c2c2c;
+      border-radius: 10px;
+      background: #101010;
+      color: white;
+      outline: none;
+    }
 
-.google {
-  background: #333;
-}
-</style>
+    input:focus {
+      border-color: #8a2be2;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #6a00ff, #9d4dff);
+    }
+
+    .google {
+      background: #2a2a2a;
+    }
+
+    .secondary {
+      background: #222;
+    }
+
+    .switch {
+      text-align: center;
+      color: #c7c7c7;
+      margin-top: 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .switch span {
+      color: #b266ff;
+      font-weight: bold;
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success {
+      background: rgba(0, 160, 90, 0.15);
+      border: 1px solid rgba(0, 160, 90, 0.45);
+      color: #8ff0b3;
+    }
+
+    .error {
+      background: rgba(220, 40, 40, 0.15);
+      border: 1px solid rgba(220, 40, 40, 0.45);
+      color: #ff9d9d;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .user-box {
+      text-align: center;
+    }
+
+    .user-email {
+      color: #caa8ff;
+      word-break: break-word;
+      margin: 12px 0 18px;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <!-- AUTH BOX -->
+    <div id="authBox">
+      <div id="loginView">
+        <h2>Login</h2>
+        <p class="subtext">Sign in with email and password</p>
 
-<div class="container">
+        <input type="email" id="loginEmail" placeholder="Email" />
+        <input type="password" id="loginPassword" placeholder="Password" />
 
-  <!-- LOGIN -->
-  <div id="login">
-    <h2>Login</h2>
-    <input type="email" placeholder="Email">
-    <input type="password" placeholder="Password">
-    <button>Login</button>
-    <button class="google">Continue with Google</button>
-    <p class="switch" onclick="showSignup()">Don't have an account? Sign up</p>
+        <button class="primary" id="loginBtn">Login</button>
+        <button class="google" id="googleBtn">Continue with Google</button>
+
+        <p class="switch" onclick="showSignup()">
+          Don’t have an account? <span>Sign up</span>
+        </p>
+      </div>
+
+      <div id="signupView" class="hidden">
+        <h2>Sign Up</h2>
+        <p class="subtext">Create a new account</p>
+
+        <input type="email" id="signupEmail" placeholder="Email" />
+        <input type="password" id="signupPassword" placeholder="Password" />
+
+        <button class="primary" id="signupBtn">Sign Up</button>
+        <button class="google" id="googleBtn2">Continue with Google</button>
+
+        <p class="switch" onclick="showLogin()">
+          Already have an account? <span>Login</span>
+        </p>
+      </div>
+
+      <div id="messageBox" class="message"></div>
+    </div>
+
+    <!-- DASHBOARD BOX -->
+    <div id="dashboardBox" class="hidden user-box">
+      <h2>Welcome</h2>
+      <p class="subtext">You are logged in</p>
+      <div class="user-email" id="userEmail"></div>
+      <button class="secondary" id="logoutBtn">Logout</button>
+    </div>
   </div>
 
-  <!-- SIGNUP -->
-  <div id="signup" style="display:none;">
-    <h2>Sign Up</h2>
-    <input type="email" placeholder="Email">
-    <input type="password" placeholder="Password">
-    <button>Sign Up</button>
-    <button class="google">Continue with Google</button>
-    <p class="switch" onclick="showLogin()">Already have an account? Login</p>
-  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // =========================
+    // 1) PASTE YOUR VALUES HERE
+    // =========================
+    const SUPABASE_URL = "https://zyhiyorqjkvqdnubzynf.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
 
-</div>
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<script>
-function showSignup() {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("signup").style.display = "block";
-}
+    const authBox = document.getElementById("authBox");
+    const dashboardBox = document.getElementById("dashboardBox");
+    const userEmail = document.getElementById("userEmail");
+    const messageBox = document.getElementById("messageBox");
 
-function showLogin() {
-  document.getElementById("signup").style.display = "none";
-  document.getElementById("login").style.display = "block";
-}
-</script>
+    function showMessage(text, type = "success") {
+      messageBox.textContent = text;
+      messageBox.className = "message " + type;
+      messageBox.style.display = "block";
+    }
 
+    function clearMessage() {
+      messageBox.style.display = "none";
+      messageBox.textContent = "";
+      messageBox.className = "message";
+    }
+
+    function showSignup() {
+      clearMessage();
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("signupView").classList.remove("hidden");
+    }
+
+    function showLogin() {
+      clearMessage();
+      document.getElementById("signupView").classList.add("hidden");
+      document.getElementById("loginView").classList.remove("hidden");
+    }
+
+    function showDashboard(email) {
+      authBox.classList.add("hidden");
+      dashboardBox.classList.remove("hidden");
+      userEmail.textContent = email || "Logged in";
+    }
+
+    function showAuth() {
+      dashboardBox.classList.add("hidden");
+      authBox.classList.remove("hidden");
+      showLogin();
+    }
+
+    async function checkUser() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        showMessage(error.message, "error");
+        return;
+      }
+
+      const session = data.session;
+      if (session && session.user) {
+        showDashboard(session.user.email);
+      } else {
+        showAuth();
+      }
+    }
+
+    // SIGN UP
+    document.getElementById("signupBtn").addEventListener("click", async () => {
+      clearMessage();
+
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+
+      if (!email || !password) {
+        showMessage("Please enter email and password.", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        showMessage(error.message, "error");
+        return;
+      }
+
+      // If email confirmation is on, user may need to verify first.
+      if (data.user && !data.session) {
+        showMessage("Signup successful. Check your email to verify your account.", "success");
+      } else {
+        showMessage("Signup successful. You are now logged in.", "success");
+        showDashboard(data.user?.email || email);
+      }
+    });
+
+    // LOGIN
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      clearMessage();
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if (!email || !password) {
+        showMessage("Please enter email and password.", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        showMessage(error.message, "error");
+        return;
+      }
+
+      showMessage("Login successful.", "success");
+      showDashboard(data.user?.email || email);
+    });
+
+    // GOOGLE LOGIN
+    async function loginWithGoogle() {
+      clearMessage();
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+
+      if (error) {
+        showMessage(error.message, "error");
+      }
+    }
+
+    document.getElementById("googleBtn").addEventListener("click", loginWithGoogle);
+    document.getElementById("googleBtn2").addEventListener("click", loginWithGoogle);
+
+    // LOGOUT
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        showMessage(error.message, "error");
+        return;
+      }
+
+      showAuth();
+      showMessage("Logged out successfully.", "success");
+    });
+
+    // Listen for auth changes
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && session.user) {
+        showDashboard(session.user.email);
+      } else {
+        showAuth();
+      }
+    });
+
+    // Initial check
+    checkUser();
+  </script>
 </body>
 </html>
