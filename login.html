@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Signup</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #111;
+      padding: 30px;
+      border-radius: 14px;
+      width: 340px;
+      box-shadow: 0 0 25px rgba(140, 0, 255, 0.25);
+    }
+
+    h2 {
+      text-align: center;
+      color: #b26cff;
+      margin-bottom: 15px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      background: #1a1a1a;
+      color: white;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #a855f7;
+      box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #7e22ce;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #9333ea;
+    }
+
+    .google-btn {
+      background: #222;
+      border: 1px solid #444;
+    }
+
+    .google-btn:hover {
+      background: #2c2c2c;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #181818;
+      font-size: 14px;
+      text-align: center;
+      color: #d8b4fe;
+      min-height: 20px;
+    }
+
+    .small-btn {
+      background: #3b0764;
+      margin-top: 12px;
+    }
+
+    .small-btn:hover {
+      background: #581c87;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="section">
+      <h2>Signup</h2>
+      <input type="email" id="signup-email" placeholder="Email">
+      <input type="password" id="signup-password" placeholder="Password">
+      <button onclick="signup()">Sign Up</button>
+    </div>
+
+    <div class="section">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email">
+      <input type="password" id="login-password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <button class="google-btn" onclick="loginWithGoogle()">Continue with Google</button>
+      <button class="small-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="status" id="status">Not logged in</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://zyhiyorqjkvqdnubzynf.supabase.co";
+    const supabaseKey = "sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
+
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function signup() {
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+
+      const { error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        setStatus("Signup error: " + error.message);
+      } else {
+        setStatus("Signup successful. Check your email.");
+      }
+    }
+
+    async function login() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        setStatus("Login error: " + error.message);
+      } else {
+        setStatus("Login successful.");
+        checkUser();
+      }
+    }
+
+    async function loginWithGoogle() {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + window.location.pathname
+        }
+      });
+
+      if (error) {
+        setStatus("Google login error: " + error.message);
+      }
+    }
+
+    async function logout() {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        setStatus("Logout error: " + error.message);
+      } else {
+        setStatus("Logged out.");
+      }
+    }
+
+    function setStatus(message) {
+      document.getElementById("status").innerText = message;
+    }
+
+    async function checkUser() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        setStatus("Session error: " + error.message);
+        return;
+      }
+
+      if (data.session && data.session.user) {
+        setStatus("Logged in as: " + data.session.user.email);
+      } else {
+        setStatus("Not logged in");
+      }
+    }
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session && session.user) {
+        setStatus("Logged in as: " + session.user.email);
+      } else {
+        setStatus("Not logged in");
+      }
+    });
+
+    checkUser();
+  </script>
+</body>
+</html>
