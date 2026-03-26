@@ -3,16 +3,19 @@ const SUPABASE_ANON_KEY = "sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const loginBox = document.getElementById("login-form");
-const registerBox = document.getElementById("register-form");
+const loginForm = document.getElementById("login-form");
+const registerForm = document.getElementById("register-form");
 
-const showRegister = document.getElementById("showRegister");
-const showLogin = document.getElementById("showLogin");
-
-showRegister.addEventListener("click", (e) => {
+document.getElementById("showRegister").addEventListener("click", function (e) {
   e.preventDefault();
-  loginBox.classList.add("hidden");
-  registerBox.classList.remove("hidden");
+  loginForm.style.display = "none";
+  registerForm.style.display = "flex";
+});
+
+document.getElementById("showLogin").addEventListener("click", function (e) {
+  e.preventDefault();
+  registerForm.style.display = "none";
+  loginForm.style.display = "flex";
 });
 
 showLogin.addEventListener("click", (e) => {
