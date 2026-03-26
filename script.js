@@ -1,76 +1,94 @@
-const SUPABASE_URL ="https://zyhiyorqjkvqdnubzynf.supabase.coL";
-const SUPABASE_ANON_KEY ="sb_publishable_lxmie2q8CLR5C5W9OBhGhA_cMnMEfE0";
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const loginForm = document.getElementById("login-form");
-const registerForm = document.getElementById("register-form");
+const loginFormBox = document.getElementById("login-form");
+const registerFormBox = document.getElementById("register-form");
 
-document.getElementById("showRegister").addEventListener("click", function (e) {
-  e.preventDefault();
-  loginForm.style.display = "none";
-  registerForm.style.display = "flex";
-});
+const showRegister = document.getElementById("showRegister");
+const showLogin = document.getElementById("showLogin");
 
-document.getElementById("showLogin").addEventListener("click", function (e) {
-  e.preventDefault();
-  registerForm.style.display = "none";
-  loginForm.style.display = "flex";
-});
-
-showLogin.addEventListener("click", (e) => {
-  e.preventDefault();
-  registerBox.classList.add("hidden");
-  loginBox.classList.remove("hidden");
-});
-
-function showMessage(message) {
-  alert(message);
+if (showRegister && loginFormBox && registerFormBox) {
+  showRegister.addEventListener("click", function (e) {
+    e.preventDefault();
+    loginFormBox.style.display = "none";
+    registerFormBox.style.display = "block";
+  });
 }
 
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+if (showLogin && loginFormBox && registerFormBox) {
+  showLogin.addEventListener("click", function (e) {
+    e.preventDefault();
+    registerFormBox.style.display = "none";
+    loginFormBox.style.display = "block";
+  });
+}
 
-  const name = document.getElementById("registerName").value.trim();
-  const email = document.getElementById("registerEmail").value.trim();
-  const password = document.getElementById("registerPassword").value.trim();
+const registerForm = document.getElementById("registerForm");
+if (registerForm) {
+  registerForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  const { data, error } = await supabaseClient.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name: name
+    const nameEl = document.getElementById("registerName");
+    const emailEl = document.getElementById("registerEmail");
+    const passwordEl = document.getElementById("registerPassword");
+
+    const name = nameEl ? nameEl.value.trim() : "";
+    const email = emailEl ? emailEl.value.trim() : "";
+    const password = passwordEl ? passwordEl.value.trim() : "";
+
+    try {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            name: name
+          }
+        }
+      });
+
+      if (error) {
+        alert("Register error: " + error.message);
+        return;
       }
+
+      alert("Registered successfully");
+    } catch (err) {
+      console.error("REGISTER FAILED:", err);
+      alert("Register error: " + err.message);
     }
   });
+}
 
-  if (error) {
-    showMessage("Register error: " + error.message);
-    return;
-  }
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  showMessage("Registered successfully. Check your email if confirmation is enabled.");
-  registerBox.classList.add("hidden");
-  loginBox.classList.remove("hidden");
-});
+    const emailEl = document.getElementById("loginEmail");
+    const passwordEl = document.getElementById("loginPassword");
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    const email = emailEl ? emailEl.value.trim() : "";
+    const password = passwordEl ? passwordEl.value.trim() : "";
 
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
+      if (error) {
+        alert("Login error: " + error.message);
+        return;
+      }
+
+      alert("Login successful");
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      console.error("LOGIN FAILED:", err);
+      alert("Login error: " + err.message);
+    }
   });
-
-  if (error) {
-    showMessage("Login error: " + error.message);
-    return;
-  }
-
-  showMessage("Login successful!");
-  window.location.href = "dashboard.html";
-});
+}
