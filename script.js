@@ -79,16 +79,21 @@ if (loginForm) {
         password: password
       });
 
-      if (error) {
-        alert("Login error: " + error.message);
-        return;
-      }
+     if (error) {
+  alert("Login error: " + error.message);
+  return;
+}
 
-      //alert("Login successful");
-      window.location.href = "dashboard.html";
-    } catch (err) {
-      console.error("LOGIN FAILED:", err);
-      alert("Login error: " + err.message);
+// 🔥 Smooth animation
+const btn = document.querySelector("#loginForm button");
+btn.textContent = "Loading...";
+btn.disabled = true;
+
+document.body.classList.add("fade-out");
+
+setTimeout(() => {
+  window.location.href = "dashboard.html";
+}, 600);
     }
   });
 }
