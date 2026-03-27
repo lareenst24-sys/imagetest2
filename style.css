@@ -156,5 +156,23 @@ body {
   .form-box input,
   .form-box button {
     height: 46px;
+    /* ===== Smooth page transition ===== */
+body {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+body.fade-out {
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+.form-box {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+body.fade-out .form-box {
+  transform: translateY(-20px);
+  opacity: 0;
+}
   }
 }
