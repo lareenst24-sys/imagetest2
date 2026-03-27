@@ -84,7 +84,7 @@ if (loginForm) {
         return;
       }
 
-      alert("Login successful");
+      //alert("Login successful");
       window.location.href = "dashboard.html";
     } catch (err) {
       console.error("LOGIN FAILED:", err);
