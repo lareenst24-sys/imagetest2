@@ -1,6 +1,6 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-const BUCKET_NAME ="user-images";
+const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 1000;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -30,22 +30,29 @@ const confirmUploadBtn = document.getElementById("confirmUploadBtn");
 let currentUser = null;
 let selectedFile = null;
 
-function getTodayKey(userId) {
-  const today = new Date().toISOString().slice(0, 10);
-  return `uploads_${userId}_${today}`;
+async function getTodayUploadCount() {
+  if (!currentUser) return 0;
+
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+
+  const { count, error } = await supabaseClient
+    .from("images")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", currentUser.id)
+    .gte("created_at", start.toISOString());
+
+  if (error) {
+    console.error("Count error:", error);
+    return 0;
+  }
+
+  return count || 0;
 }
 
-function getUploadCount(userId) {
-  return Number(localStorage.getItem(getTodayKey(userId)) || "0");
-}
-
-function setUploadCount(userId, count) {
-  localStorage.setItem(getTodayKey(userId), String(count));
-}
-
-function updateUploadCountUI() {
+async function updateUploadCountUI() {
   if (!currentUser) return;
-  const count = getUploadCount(currentUser.id);
+  const count = await getTodayUploadCount();
   uploadCountEl.textContent = `${count} / ${DAILY_LIMIT}`;
 }
 
@@ -86,7 +93,7 @@ function addImageToGrid(imageRow) {
     await deleteImage(imageRow.id, imageRow.file_path, item);
   });
 
-  imageGrid.prepend(item);
+  imageGrid.appendChild(item);
 }
 
 async function loadImages() {
@@ -97,6 +104,7 @@ async function loadImages() {
   const { data, error } = await supabaseClient
     .from("images")
     .select("*")
+    .eq("user_id", currentUser.id)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -182,7 +190,7 @@ async function requireLogin() {
   currentUser = data.user;
   profileEmail.textContent = currentUser.email;
 
-  updateUploadCountUI();
+  await updateUploadCountUI();
   await ensureProfile();
   await loadImages();
 }
@@ -211,7 +219,7 @@ async function uploadSelectedImage() {
     return;
   }
 
-  const count = getUploadCount(currentUser.id);
+  const count = await getTodayUploadCount();
   if (count >= DAILY_LIMIT) {
     alert("Daily limit reached.");
     return;
@@ -229,10 +237,6 @@ async function uploadSelectedImage() {
     const fileExt = selectedFile.name.split(".").pop();
     const cleanExt = fileExt ? fileExt.toLowerCase() : "jpg";
     const filePath = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${cleanExt}`;
-
-    console.log("Uploading to bucket:", BUCKET_NAME);
-    console.log("File path:", filePath);
-    console.log("User ID:", currentUser.id);
 
     const { error: uploadError } = await supabaseClient
       .storage
@@ -272,14 +276,9 @@ async function uploadSelectedImage() {
       throw insertError;
     }
 
-    const newRow = insertedRows[0];
-    addImageToGrid(newRow);
-
-    setUploadCount(currentUser.id, count + 1);
-    updateUploadCountUI();
-
     closeUploadModal();
-    alert("Upload successful");
+    await updateUploadCountUI();
+    await loadImages();
   } catch (err) {
     console.error("FULL UPLOAD ERROR:", err);
   } finally {
@@ -287,6 +286,7 @@ async function uploadSelectedImage() {
     confirmUploadBtn.disabled = false;
   }
 }
+
 async function deleteImage(imageId, filePath, itemEl) {
   const confirmed = window.confirm("Delete this image?");
   if (!confirmed) return;
@@ -304,7 +304,8 @@ async function deleteImage(imageId, filePath, itemEl) {
     const { error: dbError } = await supabaseClient
       .from("images")
       .delete()
-      .eq("id", imageId);
+      .eq("id", imageId)
+      .eq("user_id", currentUser.id);
 
     if (dbError) {
       throw dbError;
@@ -312,6 +313,7 @@ async function deleteImage(imageId, filePath, itemEl) {
 
     itemEl.remove();
     showEmptyStateIfNeeded();
+    await updateUploadCountUI();
   } catch (err) {
     console.error("Delete failed:", err);
     alert("Could not delete image.");
@@ -361,6 +363,9 @@ imageInput.addEventListener("change", function () {
   previewWrap.classList.remove("hidden");
 });
 
+confirmUploadBtn.addEventListener("click", uploadSelectedImage);
+
+requireLogin();
 confirmUploadBtn.addEventListener("click", uploadSelectedImage);
 
 requireLogin();
