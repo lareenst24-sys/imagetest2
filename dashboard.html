@@ -6,20 +6,58 @@
   <title>Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
 </head>
-<body>
-  <div class="dashboard">
+  <body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <button>Home</button>
+    <button>My Images</button>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Top bar -->
     <div class="topbar">
       <h1>Dashboard</h1>
       <button id="logoutBtn">Logout</button>
     </div>
 
-    <div class="card">
-      <h2>Welcome</h2>
-      <p id="userEmail">Loading user...</p>
+    <!-- Top cards -->
+    <div class="top-cards">
+
+      <div class="card">
+        <h3>Uploads Today</h3>
+        <p id="uploadCount">0 / 1000</p>
+      </div>
+
+      <div class="card">
+        <h3>Description</h3>
+        <textarea id="description" placeholder="#tags description..."></textarea>
+      </div>
+
+      <div class="card">
+        <h3>Upload Image</h3>
+        <input type="file" id="imageInput">
+        <button id="uploadBtn">Upload</button>
+      </div>
+
     </div>
+
+    <!-- Image grid -->
+    <div class="image-grid" id="imageGrid">
+      <p>No images yet</p>
+    </div>
+
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="dashboard.js"></script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="dashboard.js"></script>
+
 </body>
 </html>
