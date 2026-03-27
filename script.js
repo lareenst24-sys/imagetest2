@@ -25,6 +25,72 @@ if (showLogin && loginFormBox && registerFormBox) {
   });
 }
 
+async function checkSession() {
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) {
+      console.error("Session check error:", error);
+      return;
+    }
+
+    if (data.session && window.location.pathname.includes("index")) {
+      window.location.href = "dashboard.html";
+    }
+  } catch (err) {
+    console.error("Session check failed:", err);
+  }
+}
+
+checkSession();
+
+function showWelcomePopup() {
+  const alreadyShown = sessionStorage.getItem("welcomePopupShown");
+  if (alreadyShown) return;
+
+  sessionStorage.setItem("welcomePopupShown", "true");
+
+  const popup = document.createElement("div");
+  popup.className = "popup-overlay";
+  popup.innerHTML = `
+    <div class="popup-box">
+      <button class="popup-close" id="closePopup">&times;</button>
+      <h2>Welcome!</h2>
+      <p>Your account was created successfully.</p>
+      <video controls autoplay muted class="popup-video">
+        <source src="welcome.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <button class="popup-btn" id="popupOkBtn">Continue</button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  const closePopup = document.getElementById("closePopup");
+  const popupOkBtn = document.getElementById("popupOkBtn");
+
+  if (closePopup) {
+    closePopup.addEventListener("click", function () {
+      popup.remove();
+      if (registerFormBox && loginFormBox) {
+        registerFormBox.style.display = "none";
+        loginFormBox.style.display = "block";
+      }
+    });
+  }
+
+  if (popupOkBtn) {
+    popupOkBtn.addEventListener("click", function () {
+      popup.remove();
+      if (registerFormBox && loginFormBox) {
+        registerFormBox.style.display = "none";
+        loginFormBox.style.display = "block";
+      }
+    });
+  }
+}
+
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async function (e) {
@@ -33,12 +99,25 @@ if (registerForm) {
     const nameEl = document.getElementById("registerName");
     const emailEl = document.getElementById("registerEmail");
     const passwordEl = document.getElementById("registerPassword");
+    const registerBtn = registerForm.querySelector("button[type='submit'], button");
 
     const name = nameEl ? nameEl.value.trim() : "";
     const email = emailEl ? emailEl.value.trim() : "";
     const password = passwordEl ? passwordEl.value.trim() : "";
 
+    if (!email || !password) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    const originalBtnText = registerBtn ? registerBtn.textContent : "";
+
     try {
+      if (registerBtn) {
+        registerBtn.textContent = "Creating account...";
+        registerBtn.disabled = true;
+      }
+
       const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
@@ -54,10 +133,16 @@ if (registerForm) {
         return;
       }
 
-      alert("Registered successfully");
+      showWelcomePopup();
+      registerForm.reset();
     } catch (err) {
       console.error("REGISTER FAILED:", err);
       alert("Register error: " + err.message);
+    } finally {
+      if (registerBtn) {
+        registerBtn.textContent = originalBtnText;
+        registerBtn.disabled = false;
+      }
     }
   });
 }
@@ -69,31 +154,51 @@ if (loginForm) {
 
     const emailEl = document.getElementById("loginEmail");
     const passwordEl = document.getElementById("loginPassword");
+    const loginBtn = loginForm.querySelector("button[type='submit'], button");
 
     const email = emailEl ? emailEl.value.trim() : "";
     const password = passwordEl ? passwordEl.value.trim() : "";
 
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    const originalBtnText = loginBtn ? loginBtn.textContent : "";
+
     try {
+      if (loginBtn) {
+        loginBtn.textContent = "Loading...";
+        loginBtn.disabled = true;
+      }
+
       const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
       });
 
-     if (error) {
-  alert("Login error: " + error.message);
-  return;
-}
+      if (error) {
+        alert("Login error: " + error.message);
+        if (loginBtn) {
+          loginBtn.textContent = originalBtnText;
+          loginBtn.disabled = false;
+        }
+        return;
+      }
 
-// 🔥 Smooth animation
-const btn = document.querySelector("#loginForm button");
-btn.textContent = "Loading...";
-btn.disabled = true;
+      document.body.classList.add("fade-out");
 
-document.body.classList.add("fade-out");
+      setTimeout(function () {
+        window.location.href = "dashboard.html";
+      }, 600);
+    } catch (err) {
+      console.error("LOGIN FAILED:", err);
+      alert("Login error: " + err.message);
 
-setTimeout(() => {
-  window.location.href = "dashboard.html";
-}, 600);
+      if (loginBtn) {
+        loginBtn.textContent = originalBtnText;
+        loginBtn.disabled = false;
+      }
     }
   });
 }
