@@ -7,78 +7,322 @@
 
 :root {
   --bg: #05050b;
-  --card: #15151d;
-  --text: #ffffff;
-  --muted: #b8b8c7;
+  --card: rgba(20, 20, 31, 0.92);
+  --card-dark: #0b0b14;
+  --text: #f5f5fb;
+  --muted: #aaaabc;
   --purple: #8b3dff;
   --purple-2: #b06cff;
   --danger: #ff4d6d;
+  --border: rgba(255, 255, 255, 0.08);
+  --glow: rgba(139, 61, 255, 0.18);
 }
 
 body {
-  background: #05050b;
-  color: white;
-  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(100, 40, 180, 0.18) 0%,
+      rgba(0, 0, 0, 0) 18%,
+      rgba(0, 0, 0, 0) 82%,
+      rgba(100, 40, 180, 0.18) 100%
+    ),
+    var(--bg);
+  color: var(--text);
+  padding: 24px;
 }
 
-.layout {
-  display: flex;
+.dashboard-shell {
+  max-width: 1320px;
+  margin: 0 auto;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 200px;
-  background: #11111a;
-  padding: 20px;
-  height: 100vh;
-}
-
-/* Main */
-.main {
-  flex: 1;
-  padding: 20px;
-}
-
-/* Top bar */
 .topbar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  padding: 24px 28px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow:
+    0 0 30px var(--glow),
+    0 14px 50px rgba(0, 0, 0, 0.45);
 }
 
-/* Cards */
-.top-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
+.brand {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
-.card {
-  background: #15151d;
-  padding: 20px;
-  border-radius: 16px;
+.top-sub,
+.muted-text {
+  color: var(--muted);
 }
 
-/* Textarea */
-textarea {
-  width: 100%;
-  height: 80px;
-  background: #0b0b14;
+.profile-btn,
+.primary-btn,
+.danger-btn,
+.file-label {
   border: none;
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-/* Grid */
+.profile-btn,
+.primary-btn,
+.file-label {
+  background: linear-gradient(90deg, var(--purple), var(--purple-2));
+  color: white;
+}
+
+.profile-btn:hover,
+.primary-btn:hover,
+.file-label:hover {
+  opacity: 0.96;
+  transform: translateY(-1px);
+}
+
+.profile-btn {
+  padding: 14px 22px;
+  min-width: 120px;
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.glass-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow:
+    0 0 30px rgba(139, 61, 255, 0.10),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.card-label {
+  color: var(--text);
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.stat-card h2 {
+  font-size: 2.1rem;
+  margin-bottom: 8px;
+}
+
+#descriptionInput {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  background: var(--card-dark);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  color: var(--text);
+  padding: 16px;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+#descriptionInput:focus {
+  border-color: #a56cff;
+  box-shadow: 0 0 0 3px rgba(165, 108, 255, 0.18);
+}
+
+.upload-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#imageInput {
+  display: none;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 18px;
+  width: 100%;
+}
+
+.file-name {
+  color: var(--muted);
+  font-size: 0.95rem;
+  min-height: 20px;
+  word-break: break-word;
+}
+
+.primary-btn {
+  height: 50px;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.gallery-card {
+  min-height: 420px;
+}
+
+.gallery-head {
+  margin-bottom: 18px;
+}
+
+.gallery-head h3 {
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+}
+
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
 }
 
-.image-grid img {
+.image-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--card-dark);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.image-item img {
   width: 100%;
-  border-radius: 10px;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px;
+  font-size: 0.92rem;
+  color: white;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.05));
+  opacity: 0;
+  transition: 0.25s ease;
+}
+
+.image-item:hover .image-caption {
+  opacity: 1;
+}
+
+.empty-state {
+  min-height: 220px;
+  border: 1px dashed rgba(255, 255, 255, 0.10);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 28px;
+  position: relative;
+  box-shadow:
+    0 0 35px rgba(139, 61, 255, 0.18),
+    0 14px 50px rgba(0, 0, 0, 0.45);
+}
+
+.modal-box h2 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.profile-email {
+  color: var(--muted);
+  margin-bottom: 20px;
+  word-break: break-word;
+}
+
+.danger-btn {
+  width: 100%;
+  height: 50px;
+  background: var(--danger);
+  color: white;
+  font-size: 1rem;
+}
+
+.danger-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 28px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 16px;
+  }
+
+  .topbar,
+  .glass-card,
+  .modal-box {
+    border-radius: 22px;
+  }
+
+  .topbar {
+    padding: 20px;
+    gap: 12px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .brand {
+    font-size: 1.8rem;
+  }
 }
