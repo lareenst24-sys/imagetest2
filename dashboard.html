@@ -25,19 +25,15 @@
       </div>
 
       <div class="glass-card desc-card">
-        <p class="card-label">Description</p>
-        <textarea id="descriptionInput" placeholder="#tags description..."></textarea>
+        <p class="card-label">Profile Description</p>
+        <textarea id="profileDescriptionInput" placeholder="Tell people about your profile..."></textarea>
+        <button id="saveProfileBtn" class="secondary-btn">Save Profile</button>
       </div>
 
       <div class="glass-card upload-card">
         <p class="card-label">Upload Image</p>
-
-        <label for="imageInput" class="file-label">Choose Image</label>
-        <input type="file" id="imageInput" accept="image/*" />
-
-        <p id="fileName" class="file-name">No file selected</p>
-
-        <button id="uploadBtn" class="primary-btn">Upload Now</button>
+        <button id="openUploadBtn" class="primary-btn">Upload Image</button>
+        <p class="muted-text">Choose image, preview it, add #tags, then confirm upload.</p>
       </div>
     </section>
 
@@ -61,6 +57,25 @@
       <h2>Profile</h2>
       <p id="profileEmail" class="profile-email">Loading...</p>
       <button id="logoutBtn" class="danger-btn">Logout</button>
+    </div>
+  </div>
+
+  <div id="uploadModal" class="modal-overlay hidden">
+    <div class="modal-box upload-modal-box">
+      <button id="closeUploadBtn" class="modal-close">&times;</button>
+      <h2>Upload Preview</h2>
+
+      <input type="file" id="imageInput" accept="image/*" hidden />
+
+      <button id="chooseFileBtn" class="secondary-btn modal-top-btn">Choose Image</button>
+
+      <div id="previewWrap" class="preview-wrap hidden">
+        <img id="previewImage" class="preview-image" alt="Preview" />
+      </div>
+
+      <textarea id="imageDescriptionInput" placeholder="#tags image description..."></textarea>
+
+      <button id="confirmUploadBtn" class="primary-btn">Confirm Upload</button>
     </div>
   </div>
 
