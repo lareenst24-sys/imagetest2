@@ -1,6 +1,6 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-const BUCKET_NAME = "user-images";
+const BUCKET_NAME ="user-images";
 const DAILY_LIMIT = 1000;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -230,6 +230,10 @@ async function uploadSelectedImage() {
     const cleanExt = fileExt ? fileExt.toLowerCase() : "jpg";
     const filePath = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${cleanExt}`;
 
+    console.log("Uploading to bucket:", BUCKET_NAME);
+    console.log("File path:", filePath);
+    console.log("User ID:", currentUser.id);
+
     const { error: uploadError } = await supabaseClient
       .storage
       .from(BUCKET_NAME)
@@ -240,6 +244,8 @@ async function uploadSelectedImage() {
       });
 
     if (uploadError) {
+      console.error("STORAGE UPLOAD ERROR:", uploadError);
+      alert("Storage upload error: " + uploadError.message);
       throw uploadError;
     }
 
@@ -261,6 +267,8 @@ async function uploadSelectedImage() {
       .select();
 
     if (insertError) {
+      console.error("DATABASE INSERT ERROR:", insertError);
+      alert("Database insert error: " + insertError.message);
       throw insertError;
     }
 
@@ -271,15 +279,14 @@ async function uploadSelectedImage() {
     updateUploadCountUI();
 
     closeUploadModal();
+    alert("Upload successful");
   } catch (err) {
-    console.error("Upload failed:", err);
-    alert("Upload failed.");
+    console.error("FULL UPLOAD ERROR:", err);
   } finally {
     confirmUploadBtn.textContent = "Confirm Upload";
     confirmUploadBtn.disabled = false;
   }
 }
-
 async function deleteImage(imageId, filePath, itemEl) {
   const confirmed = window.confirm("Delete this image?");
   if (!confirmed) return;
