@@ -30,17 +30,13 @@ const confirmUploadBtn = document.getElementById("confirmUploadBtn");
 let currentUser = null;
 let selectedFile = null;
 
-async function getTodayUploadCount() {
+async function getTotalImageCount() {
   if (!currentUser) return 0;
-
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
 
   const { count, error } = await supabaseClient
     .from("images")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", currentUser.id)
-    .gte("created_at", start.toISOString());
+    .eq("user_id", currentUser.id);
 
   if (error) {
     console.error("Count error:", error);
@@ -52,7 +48,7 @@ async function getTodayUploadCount() {
 
 async function updateUploadCountUI() {
   if (!currentUser) return;
-  const count = await getTodayUploadCount();
+  const count = await getTotalImageCount();
   uploadCountEl.textContent = `${count} / ${DAILY_LIMIT}`;
 }
 
@@ -82,13 +78,15 @@ function addImageToGrid(imageRow) {
   item.dataset.filePath = imageRow.file_path;
 
   item.innerHTML = `
-    <button class="delete-image-btn" title="Delete image">&times;</button>
+    <button class="delete-image-btn" type="button" title="Delete image">&times;</button>
     <img src="${imageRow.public_url}" alt="Uploaded image">
     <div class="image-caption">${escapeHtml(imageRow.description || "No description")}</div>
   `;
 
   const deleteBtn = item.querySelector(".delete-image-btn");
+
   deleteBtn.addEventListener("click", async function (e) {
+    e.preventDefault();
     e.stopPropagation();
     await deleteImage(imageRow.id, imageRow.file_path, item);
   });
@@ -219,7 +217,7 @@ async function uploadSelectedImage() {
     return;
   }
 
-  const count = await getTodayUploadCount();
+  const count = await getTotalImageCount();
   if (count >= DAILY_LIMIT) {
     alert("Daily limit reached.");
     return;
@@ -260,15 +258,14 @@ async function uploadSelectedImage() {
 
     const publicUrl = publicData.publicUrl;
 
-    const { data: insertedRows, error: insertError } = await supabaseClient
+    const { error: insertError } = await supabaseClient
       .from("images")
       .insert({
         user_id: currentUser.id,
         file_path: filePath,
         public_url: publicUrl,
         description: imageDescriptionInput.value.trim()
-      })
-      .select();
+      });
 
     if (insertError) {
       console.error("DATABASE INSERT ERROR:", insertError);
@@ -298,7 +295,9 @@ async function deleteImage(imageId, filePath, itemEl) {
       .remove([filePath]);
 
     if (storageError) {
-      throw storageError;
+      console.error("Storage delete error:", storageError);
+      alert("Storage delete error: " + storageError.message);
+      return;
     }
 
     const { error: dbError } = await supabaseClient
@@ -308,7 +307,9 @@ async function deleteImage(imageId, filePath, itemEl) {
       .eq("user_id", currentUser.id);
 
     if (dbError) {
-      throw dbError;
+      console.error("DB delete error:", dbError);
+      alert("Database delete error: " + dbError.message);
+      return;
     }
 
     itemEl.remove();
@@ -363,9 +364,6 @@ imageInput.addEventListener("change", function () {
   previewWrap.classList.remove("hidden");
 });
 
-confirmUploadBtn.addEventListener("click", uploadSelectedImage);
-
-requireLogin();
 confirmUploadBtn.addEventListener("click", uploadSelectedImage);
 
 requireLogin();
