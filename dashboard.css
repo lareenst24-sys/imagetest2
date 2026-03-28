@@ -345,5 +345,56 @@ body {
 
   .brand {
     font-size: 1.8rem;
+    .profile-modal-box {
+  max-width: 520px;
+}
+
+.profile-section {
+  margin-bottom: 14px;
+}
+
+.mini-label {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.profile-input {
+  width: 100%;
+  height: 50px;
+  background: var(--card-dark);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  color: var(--text);
+  padding: 0 16px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.profile-input:focus {
+  border-color: #a56cff;
+  box-shadow: 0 0 0 3px rgba(165, 108, 255, 0.18);
+}
+
+.earnings-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.earnings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  color: var(--text);
+}
+
+.earnings-row span {
+  color: var(--muted);
+}
   }
 }
