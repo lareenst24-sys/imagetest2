@@ -17,6 +17,16 @@ const profileEmail = document.getElementById("profileEmail");
 const profileDescriptionInput = document.getElementById("profileDescriptionInput");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
 
+const profileNameInput = document.getElementById("profileNameInput");
+const countryInput = document.getElementById("countryInput");
+const payoutMethodInput = document.getElementById("payoutMethodInput");
+const paypalEmailInput = document.getElementById("paypalEmailInput");
+const savePayoutBtn = document.getElementById("savePayoutBtn");
+
+const totalEarnedValue = document.getElementById("totalEarnedValue");
+const pendingEarnedValue = document.getElementById("pendingEarnedValue");
+const paidEarnedValue = document.getElementById("paidEarnedValue");
+
 const uploadModal = document.getElementById("uploadModal");
 const openUploadBtn = document.getElementById("openUploadBtn");
 const closeUploadBtn = document.getElementById("closeUploadBtn");
@@ -29,6 +39,10 @@ const confirmUploadBtn = document.getElementById("confirmUploadBtn");
 
 let currentUser = null;
 let selectedFile = null;
+
+function money(value) {
+  return `$${Number(value || 0).toFixed(2)}`;
+}
 
 async function getTotalImageCount() {
   if (!currentUser) return 0;
@@ -84,7 +98,6 @@ function addImageToGrid(imageRow) {
   `;
 
   const deleteBtn = item.querySelector(".delete-image-btn");
-
   deleteBtn.addEventListener("click", async function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -146,10 +159,12 @@ async function ensureProfile() {
     }
 
     profileDescriptionInput.value = "";
+    profileNameInput.value = "";
     return;
   }
 
   profileDescriptionInput.value = existing.profile_description || "";
+  profileNameInput.value = existing.name || "";
 }
 
 async function saveProfileDescription() {
@@ -162,7 +177,8 @@ async function saveProfileDescription() {
     .from("profiles")
     .update({
       profile_description: profileDescriptionInput.value.trim(),
-      email: currentUser.email
+      email: currentUser.email,
+      name: profileNameInput ? profileNameInput.value.trim() : ""
     })
     .eq("id", currentUser.id);
 
@@ -170,11 +186,112 @@ async function saveProfileDescription() {
     console.error("Save profile error:", error);
     alert("Could not save profile description.");
   } else {
-    alert("Profile description saved.");
+    alert("Profile updated.");
   }
 
   saveProfileBtn.textContent = "Save Profile";
   saveProfileBtn.disabled = false;
+}
+
+async function ensurePayoutMethod() {
+  const { data: existing, error } = await supabaseClient
+    .from("payout_methods")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Payout fetch error:", error);
+    return;
+  }
+
+  if (!existing) {
+    const { error: insertError } = await supabaseClient
+      .from("payout_methods")
+      .insert({
+        user_id: currentUser.id,
+        country: "",
+        payout_method: "paypal",
+        paypal_email: ""
+      });
+
+    if (insertError) {
+      console.error("Payout create error:", insertError);
+      return;
+    }
+
+    countryInput.value = "";
+    payoutMethodInput.value = "paypal";
+    paypalEmailInput.value = "";
+    return;
+  }
+
+  countryInput.value = existing.country || "";
+  payoutMethodInput.value = existing.payout_method || "paypal";
+  paypalEmailInput.value = existing.paypal_email || "";
+}
+
+async function savePayoutDetails() {
+  if (!currentUser) return;
+
+  savePayoutBtn.textContent = "Saving...";
+  savePayoutBtn.disabled = true;
+
+  const { error } = await supabaseClient
+    .from("payout_methods")
+    .update({
+      country: countryInput.value.trim(),
+      payout_method: payoutMethodInput.value,
+      paypal_email: paypalEmailInput.value.trim(),
+      updated_at: new Date().toISOString()
+    })
+    .eq("user_id", currentUser.id);
+
+  if (error) {
+    console.error("Save payout error:", error);
+    alert("Could not save payout details.");
+  } else {
+    alert("Payout details saved.");
+  }
+
+  savePayoutBtn.textContent = "Save Payout Details";
+  savePayoutBtn.disabled = false;
+}
+
+async function loadEarnings() {
+  if (!currentUser) return;
+
+  const { data, error } = await supabaseClient
+    .from("creator_earnings")
+    .select("amount,status")
+    .eq("user_id", currentUser.id);
+
+  if (error) {
+    console.error("Earnings load error:", error);
+    totalEarnedValue.textContent = "$0.00";
+    pendingEarnedValue.textContent = "$0.00";
+    paidEarnedValue.textContent = "$0.00";
+    return;
+  }
+
+  let total = 0;
+  let pending = 0;
+  let paid = 0;
+
+  (data || []).forEach((row) => {
+    const amount = Number(row.amount || 0);
+    total += amount;
+
+    if (row.status === "paid") {
+      paid += amount;
+    } else {
+      pending += amount;
+    }
+  });
+
+  totalEarnedValue.textContent = money(total);
+  pendingEarnedValue.textContent = money(pending);
+  paidEarnedValue.textContent = money(paid);
 }
 
 async function requireLogin() {
@@ -190,6 +307,8 @@ async function requireLogin() {
 
   await updateUploadCountUI();
   await ensureProfile();
+  await ensurePayoutMethod();
+  await loadEarnings();
   await loadImages();
 }
 
@@ -246,7 +365,6 @@ async function uploadSelectedImage() {
       });
 
     if (uploadError) {
-      console.error("STORAGE UPLOAD ERROR:", uploadError);
       alert("Storage upload error: " + uploadError.message);
       throw uploadError;
     }
@@ -256,19 +374,16 @@ async function uploadSelectedImage() {
       .from(BUCKET_NAME)
       .getPublicUrl(filePath);
 
-    const publicUrl = publicData.publicUrl;
-
     const { error: insertError } = await supabaseClient
       .from("images")
       .insert({
         user_id: currentUser.id,
         file_path: filePath,
-        public_url: publicUrl,
+        public_url: publicData.publicUrl,
         description: imageDescriptionInput.value.trim()
       });
 
     if (insertError) {
-      console.error("DATABASE INSERT ERROR:", insertError);
       alert("Database insert error: " + insertError.message);
       throw insertError;
     }
@@ -277,7 +392,7 @@ async function uploadSelectedImage() {
     await updateUploadCountUI();
     await loadImages();
   } catch (err) {
-    console.error("FULL UPLOAD ERROR:", err);
+    console.error("Upload error:", err);
   } finally {
     confirmUploadBtn.textContent = "Confirm Upload";
     confirmUploadBtn.disabled = false;
@@ -295,7 +410,6 @@ async function deleteImage(imageId, filePath, itemEl) {
       .remove([filePath]);
 
     if (storageError) {
-      console.error("Storage delete error:", storageError);
       alert("Storage delete error: " + storageError.message);
       return;
     }
@@ -307,7 +421,6 @@ async function deleteImage(imageId, filePath, itemEl) {
       .eq("user_id", currentUser.id);
 
     if (dbError) {
-      console.error("DB delete error:", dbError);
       alert("Database delete error: " + dbError.message);
       return;
     }
@@ -341,6 +454,7 @@ logoutBtn.addEventListener("click", async function () {
 });
 
 saveProfileBtn.addEventListener("click", saveProfileDescription);
+savePayoutBtn.addEventListener("click", savePayoutDetails);
 
 openUploadBtn.addEventListener("click", openUploadModal);
 closeUploadBtn.addEventListener("click", closeUploadModal);
