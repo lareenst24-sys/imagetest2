@@ -51,52 +51,67 @@
     </section>
   </div>
 
-<div id="profileModal" class="modal-overlay hidden">
-  <div class="modal-box profile-modal-box">
-    <button id="closeProfileBtn" class="modal-close">&times;</button>
-    <h2>Profile</h2>
+<div id="profileModal" class="profile-modal hidden">
+  <div class="profile-panel">
+    <button id="closeProfileBtn" class="profile-close" type="button">&times;</button>
 
-    <div class="profile-section">
-      <label class="mini-label">Name</label>
-      <input type="text" id="profileNameInput" class="profile-input" placeholder="Your display name">
+    <div class="profile-header">
+      <h2>Profile</h2>
+      <p class="profile-subtext">Manage your account and payout details</p>
     </div>
 
-    <div class="profile-section">
-      <label class="mini-label">Email</label>
-      <p id="profileEmail" class="profile-email">Loading...</p>
+    <div class="profile-grid">
+      <div class="profile-field full">
+        <label for="profileName">Display Name</label>
+        <input id="profileName" type="text" placeholder="Your display name">
+      </div>
+
+      <div class="profile-field full">
+        <label>Email</label>
+        <div id="profileEmail" class="profile-static-box">you@example.com</div>
+      </div>
+
+      <div class="profile-field">
+        <label for="profileCountry">Country</label>
+        <input id="profileCountry" type="text" placeholder="Your country">
+      </div>
+
+      <div class="profile-field">
+        <label for="payoutMethod">Payout Method</label>
+        <select id="payoutMethod" class="profile-select">
+          <option value="paypal">PayPal</option>
+          <option value="payoneer">Payoneer</option>
+          <option value="bank">Bank Transfer</option>
+        </select>
+      </div>
+
+      <div class="profile-field full">
+        <label for="paypalEmail">Payout Email</label>
+        <input id="paypalEmail" type="email" placeholder="yourpayment@email.com">
+      </div>
     </div>
 
-    <div class="profile-section">
-      <label class="mini-label">Country</label>
-      <input type="text" id="countryInput" class="profile-input" placeholder="Your country">
-    </div>
-
-    <div class="profile-section">
-      <label class="mini-label">Payout Method</label>
-      <select id="payoutMethodInput" class="profile-input">
-        <option value="paypal">PayPal</option>
-      </select>
-    </div>
-
-    <div class="profile-section">
-      <label class="mini-label">PayPal Email</label>
-      <input type="email" id="paypalEmailInput" class="profile-input" placeholder="yourpaypal@email.com">
-    </div>
-
-    <div class="profile-section earnings-box">
-      <div class="earnings-row">
+    <div class="earnings-grid">
+      <div class="earn-card">
         <span>Total Earned</span>
-        <strong id="totalEarnedValue">$0.00</strong>
+        <strong>$0.00</strong>
       </div>
-      <div class="earnings-row">
+      <div class="earn-card">
         <span>Pending</span>
-        <strong id="pendingEarnedValue">$0.00</strong>
+        <strong>$0.00</strong>
       </div>
-      <div class="earnings-row">
+      <div class="earn-card">
         <span>Paid</span>
-        <strong id="paidEarnedValue">$0.00</strong>
+        <strong>$0.00</strong>
       </div>
     </div>
+
+    <div class="profile-actions">
+      <button id="savePayoutBtn" class="btn-primary" type="button">Save Payout Details</button>
+      <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
+    </div>
+  </div>
+</div>
 
     <button id="savePayoutBtn" class="primary-btn">Save Payout Details</button>
     <button id="logoutBtn" class="danger-btn">Logout</button>
