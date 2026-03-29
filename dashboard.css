@@ -135,6 +135,35 @@ body {
   margin-bottom: 8px;
 }
 
+.upload-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.upload-stat-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.upload-stat-title {
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+.upload-stat-line strong {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
 #profileDescriptionInput,
 #imageDescriptionInput {
   width: 100%;
