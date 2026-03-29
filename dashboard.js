@@ -442,6 +442,3 @@ currencyProfileSelect.addEventListener("change", function () {
 confirmUploadBtn.addEventListener("click", uploadSelectedImage);
 
 requireLogin();
-confirmUploadBtn.addEventListener("click", uploadSelectedImage);
-
-requireLogin();
