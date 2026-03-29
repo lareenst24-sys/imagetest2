@@ -3,6 +3,7 @@ const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
 
 const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 250;
+const AD_BONUS_LIMIT = 25;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -45,9 +46,15 @@ const previewImage = document.getElementById("previewImage");
 const imageDescriptionInput = document.getElementById("imageDescriptionInput");
 const confirmUploadBtn = document.getElementById("confirmUploadBtn");
 
+const limitModal = document.getElementById("limitModal");
+const closeLimitBtn = document.getElementById("closeLimitBtn");
+const watchAdBtn = document.getElementById("watchAdBtn");
+const limitStatusText = document.getElementById("limitStatusText");
+
 let currentUser = null;
 let selectedFile = null;
 let currentCurrency = "USD";
+let todayExtraLimit = 0;
 
 function currencySymbol(code) {
   const map = {
@@ -61,6 +68,50 @@ function currencySymbol(code) {
 
 function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
+}
+
+function getTodayKey() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getDailyBonusStorageKey() {
+  if (!currentUser) return "daily_bonus_guest";
+  return `daily_bonus_${currentUser.id}`;
+}
+
+function loadTodayExtraLimit() {
+  const raw = localStorage.getItem(getDailyBonusStorageKey());
+  if (!raw) {
+    todayExtraLimit = 0;
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed.date === getTodayKey()) {
+      todayExtraLimit = Number(parsed.extra || 0);
+    } else {
+      todayExtraLimit = 0;
+      localStorage.removeItem(getDailyBonusStorageKey());
+    }
+  } catch (error) {
+    todayExtraLimit = 0;
+    localStorage.removeItem(getDailyBonusStorageKey());
+  }
+}
+
+function saveTodayExtraLimit() {
+  localStorage.setItem(
+    getDailyBonusStorageKey(),
+    JSON.stringify({
+      date: getTodayKey(),
+      extra: todayExtraLimit
+    })
+  );
 }
 
 function getStartOfTodayISO() {
@@ -118,6 +169,19 @@ async function updateUploadStatsUI() {
 
   todayUploadCountEl.textContent = todayCount;
   monthUploadCountEl.textContent = monthCount;
+}
+
+function getCurrentDailyLimit() {
+  return DAILY_LIMIT + todayExtraLimit;
+}
+
+function openLimitModal() {
+  limitStatusText.textContent = "";
+  limitModal.classList.remove("hidden");
+}
+
+function closeLimitModal() {
+  limitModal.classList.add("hidden");
 }
 
 async function ensureProfile() {
@@ -332,6 +396,8 @@ async function requireLogin() {
   currentUser = data.user;
   profileEmail.textContent = currentUser.email;
 
+  loadTodayExtraLimit();
+
   await ensureProfile();
   await ensurePayoutMethod();
   await loadEarnings();
@@ -363,8 +429,10 @@ async function uploadSelectedImage() {
   }
 
   const todayCount = await getTodayUploadCount();
-  if (todayCount >= DAILY_LIMIT) {
-    alert("Daily upload limit reached.");
+  const currentLimit = getCurrentDailyLimit();
+
+  if (todayCount >= currentLimit) {
+    openLimitModal();
     return;
   }
 
@@ -414,6 +482,15 @@ async function uploadSelectedImage() {
       throw insertError;
     }
 
+    const { error: deleteStorageError } = await supabaseClient
+      .storage
+      .from(BUCKET_NAME)
+      .remove([filePath]);
+
+    if (deleteStorageError) {
+      console.error("Auto delete storage error:", deleteStorageError);
+    }
+
     closeUploadModal();
     await updateUploadStatsUI();
     alert("Image uploaded successfully.");
@@ -423,6 +500,21 @@ async function uploadSelectedImage() {
     confirmUploadBtn.textContent = "Confirm Upload";
     confirmUploadBtn.disabled = false;
   }
+}
+
+async function simulateWatchAdAndIncreaseLimit() {
+  watchAdBtn.disabled = true;
+  watchAdBtn.textContent = "Processing...";
+  limitStatusText.textContent = "Ad completed. Daily limit increased for today.";
+
+  todayExtraLimit += AD_BONUS_LIMIT;
+  saveTodayExtraLimit();
+
+  setTimeout(() => {
+    watchAdBtn.disabled = false;
+    watchAdBtn.textContent = "Watch Ad to Increase Limit";
+    closeLimitModal();
+  }, 1200);
 }
 
 profileBtn.addEventListener("click", function () {
@@ -480,6 +572,16 @@ currencyProfileSelect.addEventListener("change", function () {
   currencySelect.value = currencyProfileSelect.value;
   loadEarnings();
 });
+
+closeLimitBtn.addEventListener("click", closeLimitModal);
+
+limitModal.addEventListener("click", function (e) {
+  if (e.target === limitModal) {
+    closeLimitModal();
+  }
+});
+
+watchAdBtn.addEventListener("click", simulateWatchAdAndIncreaseLimit);
 
 confirmUploadBtn.addEventListener("click", uploadSelectedImage);
 
