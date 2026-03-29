@@ -180,8 +180,16 @@ body {
   min-height: 320px;
 }
 
-.gallery-head {
+.earnings-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
   margin-bottom: 18px;
+}
+
+.gallery-head {
+  margin-bottom: 0;
 }
 
 .gallery-head h3 {
@@ -189,39 +197,9 @@ body {
   margin-bottom: 6px;
 }
 
-.earnings-display {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.earn-box {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
-  padding: 24px;
-  min-height: 150px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.earn-box span {
-  display: block;
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-
-.earn-box strong {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.currency-earn-box {
-  justify-content: flex-start;
-  gap: 18px;
+.earnings-currency-area {
+  width: 280px;
+  flex-shrink: 0;
 }
 
 .currency-label {
@@ -234,7 +212,7 @@ body {
 
 .currency-select {
   width: 100%;
-  height: 50px;
+  height: 48px;
   padding: 0 16px;
   border-radius: 16px;
   border: 1px solid var(--border);
@@ -244,19 +222,32 @@ body {
   outline: none;
 }
 
-.fulfilled-inline {
-  margin-top: 8px;
+.earnings-display {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
 }
 
-.fulfilled-inline span {
+.earn-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 20px;
+  min-height: 128px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.earn-box span {
   display: block;
   color: var(--muted);
   font-size: 14px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.fulfilled-inline strong {
-  font-size: 2rem;
+.earn-box strong {
+  font-size: 1.8rem;
   font-weight: 800;
   color: #ffffff;
 }
@@ -505,6 +496,16 @@ body {
 @media (max-width: 1100px) {
   .top-grid {
     grid-template-columns: 1fr;
+  }
+
+  .earnings-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .earnings-currency-area {
+    width: 100%;
+    max-width: 320px;
   }
 
   .earnings-display,
