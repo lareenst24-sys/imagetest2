@@ -34,13 +34,23 @@
         <p class="card-label">Upload</p>
         <button id="openUploadBtn" class="primary-btn" type="button">Upload Image</button>
         <p class="muted-text">Choose image, preview it, add #tags, then confirm upload.</p>
+
+        <div class="currency-wrap">
+          <label for="currencySelect" class="currency-label">Currency</label>
+          <select id="currencySelect" class="currency-select">
+            <option value="USD">$ USD</option>
+            <option value="INR">₹ INR</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+        </div>
       </div>
     </section>
 
     <section class="gallery-card glass-card">
       <div class="gallery-head">
         <h3>Your Earnings</h3>
-        <p class="muted-text">Track your rewards and gift card payouts</p>
+        <p class="muted-text">Track your rewards and payout progress</p>
       </div>
 
       <div class="earnings-display">
@@ -50,13 +60,36 @@
         </div>
 
         <div class="earn-box">
-          <span>Pending Gift Cards</span>
+          <span>Pending</span>
           <strong id="pendingEarnedValue">$0.00</strong>
         </div>
 
         <div class="earn-box">
-          <span>Gift Cards Sent</span>
+          <span>Fulfilled</span>
           <strong id="paidEarnedValue">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="payout-switch-card">
+        <div class="switch-card-head">
+          <h4>Payout Access</h4>
+          <span class="switch-badge">Editable</span>
+        </div>
+
+        <p id="payoutAccessMessage" class="switch-message">
+          You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to bank transfer. Until then, gift card payouts will remain active.
+        </p>
+
+        <div class="switch-option-row">
+          <div class="switch-option">
+            <span class="switch-option-label">Current payout route</span>
+            <strong id="currentPayoutRoute">Gift Card</strong>
+          </div>
+
+          <div class="switch-option">
+            <span class="switch-option-label">Bank transfer access</span>
+            <strong id="bankTransferStatus">Locked for now</strong>
+          </div>
         </div>
       </div>
     </section>
@@ -97,8 +130,18 @@
           </select>
         </div>
 
+        <div class="profile-field">
+          <label for="currencyProfileSelect">Currency</label>
+          <select id="currencyProfileSelect" class="profile-select">
+            <option value="USD">USD</option>
+            <option value="INR">INR</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+
         <div class="profile-field full">
-          <label for="paypalEmail">Payout Email / Gift Card Email</label>
+          <label for="paypalEmail">Payout Email / Bank Email</label>
           <input id="paypalEmail" type="email" placeholder="yourpayment@email.com" />
         </div>
       </div>
