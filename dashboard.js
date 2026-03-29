@@ -24,6 +24,9 @@ const savePayoutBtn = document.getElementById("savePayoutBtn");
 const currencySelect = document.getElementById("currencySelect");
 const currencyProfileSelect = document.getElementById("currencyProfileSelect");
 
+const todayUploadCountEl = document.getElementById("todayUploadCount");
+const monthUploadCountEl = document.getElementById("monthUploadCount");
+
 const totalEarnedValue = document.getElementById("totalEarnedValue");
 const pendingEarnedValue = document.getElementById("pendingEarnedValue");
 const paidEarnedValue = document.getElementById("paidEarnedValue");
@@ -60,24 +63,61 @@ function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
 }
 
+function getStartOfTodayISO() {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  return date.toISOString();
+}
+
+function getStartOfMonthISO() {
+  const date = new Date();
+  date.setDate(1);
+  date.setHours(0, 0, 0, 0);
+  return date.toISOString();
+}
+
 async function getTodayUploadCount() {
   if (!currentUser) return 0;
-
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
 
   const { count, error } = await supabaseClient
     .from("images")
     .select("*", { count: "exact", head: true })
     .eq("user_id", currentUser.id)
-    .gte("created_at", start.toISOString());
+    .gte("created_at", getStartOfTodayISO());
 
   if (error) {
-    console.error("Count error:", error);
+    console.error("Today count error:", error);
     return 0;
   }
 
   return count || 0;
+}
+
+async function getMonthUploadCount() {
+  if (!currentUser) return 0;
+
+  const { count, error } = await supabaseClient
+    .from("images")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", currentUser.id)
+    .gte("created_at", getStartOfMonthISO());
+
+  if (error) {
+    console.error("Month count error:", error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
+async function updateUploadStatsUI() {
+  if (!currentUser) return;
+
+  const todayCount = await getTodayUploadCount();
+  const monthCount = await getMonthUploadCount();
+
+  todayUploadCountEl.textContent = todayCount;
+  monthUploadCountEl.textContent = monthCount;
 }
 
 async function ensureProfile() {
@@ -295,6 +335,7 @@ async function requireLogin() {
   await ensureProfile();
   await ensurePayoutMethod();
   await loadEarnings();
+  await updateUploadStatsUI();
 }
 
 function resetUploadModal() {
@@ -321,8 +362,8 @@ async function uploadSelectedImage() {
     return;
   }
 
-  const count = await getTodayUploadCount();
-  if (count >= DAILY_LIMIT) {
+  const todayCount = await getTodayUploadCount();
+  if (todayCount >= DAILY_LIMIT) {
     alert("Daily upload limit reached.");
     return;
   }
@@ -374,6 +415,7 @@ async function uploadSelectedImage() {
     }
 
     closeUploadModal();
+    await updateUploadStatsUI();
     alert("Image uploaded successfully.");
   } catch (err) {
     console.error("Upload error:", err);
