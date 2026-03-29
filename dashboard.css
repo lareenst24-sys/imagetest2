@@ -59,15 +59,15 @@ body {
 }
 
 .top-sub,
-.muted-text,
-.profile-email {
+.muted-text {
   color: var(--muted);
 }
 
 .profile-btn,
 .primary-btn,
 .secondary-btn,
-.danger-btn {
+.btn-primary,
+.btn-danger {
   border: none;
   border-radius: 16px;
   font-weight: 700;
@@ -76,7 +76,8 @@ body {
 }
 
 .profile-btn,
-.primary-btn {
+.primary-btn,
+.btn-primary {
   background: linear-gradient(90deg, var(--purple), var(--purple-2));
   color: white;
 }
@@ -86,7 +87,7 @@ body {
   color: white;
 }
 
-.danger-btn {
+.btn-danger {
   background: var(--danger);
   color: white;
 }
@@ -94,7 +95,8 @@ body {
 .profile-btn:hover,
 .primary-btn:hover,
 .secondary-btn:hover,
-.danger-btn:hover {
+.btn-primary:hover,
+.btn-danger:hover {
   opacity: 0.96;
   transform: translateY(-1px);
 }
@@ -149,6 +151,65 @@ body {
   margin-bottom: 14px;
 }
 
+.upload-card,
+.desc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.primary-btn,
+.secondary-btn,
+.btn-primary,
+.btn-danger {
+  height: 50px;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.gallery-card {
+  min-height: 320px;
+}
+
+.gallery-head {
+  margin-bottom: 18px;
+}
+
+.gallery-head h3 {
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+}
+
+.earnings-display {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.earn-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 24px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.earn-box span {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.earn-box strong {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+}
+
 .profile-modal {
   position: fixed;
   inset: 0;
@@ -184,13 +245,13 @@ body {
   right: 18px;
   width: 52px;
   height: 52px;
-  margin-top: 0;
   border-radius: 14px;
   font-size: 30px;
   line-height: 1;
   color: #fff;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
 }
 
 .profile-close:hover {
@@ -206,7 +267,6 @@ body {
   margin: 0;
   font-size: clamp(32px, 4vw, 46px);
   font-weight: 800;
-  letter-spacing: 0.2px;
 }
 
 .profile-subtext {
@@ -241,7 +301,6 @@ body {
 .profile-select {
   width: 100%;
   height: 54px;
-  margin-top: 0;
   padding: 0 16px;
   border-radius: 14px;
   border: 1px solid var(--border);
@@ -262,33 +321,6 @@ body {
   font-size: 15px;
 }
 
-.earnings-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 26px;
-}
-
-.earn-card {
-  padding: 20px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-  border: 1px solid var(--border);
-}
-
-.earn-card span {
-  display: block;
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.earn-card strong {
-  font-size: 30px;
-  font-weight: 800;
-  color: #fff;
-}
-
 .profile-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -297,130 +329,9 @@ body {
 }
 
 .profile-actions button {
-  margin-top: 0;
   height: 58px;
   border-radius: 16px;
   font-size: 17px;
-}
-
-@media (max-width: 760px) {
-  .profile-modal {
-    padding: 14px;
-  }
-
-  .profile-panel {
-    min-height: auto;
-    padding: 22px;
-    border-radius: 22px;
-  }
-
-  .profile-grid,
-  .earnings-grid,
-  .profile-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-header h2 {
-    font-size: 34px;
-  }
-}
-.upload-card,
-.desc-card {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.primary-btn,
-.secondary-btn,
-.danger-btn {
-  height: 50px;
-  width: 100%;
-  font-size: 1rem;
-}
-
-.gallery-card {
-  min-height: 420px;
-}
-
-.gallery-head {
-  margin-bottom: 18px;
-}
-
-.gallery-head h3 {
-  font-size: 1.6rem;
-  margin-bottom: 6px;
-}
-
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 18px;
-}
-
-.image-item {
-  position: relative;
-  overflow: hidden;
-  border-radius: 20px;
-  background: var(--card-dark);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.image-item img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
-}
-
-.image-caption {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 12px;
-  font-size: 0.92rem;
-  color: white;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.05));
-  opacity: 0;
-  transition: 0.25s ease;
-}
-
-.image-item:hover .image-caption {
-  opacity: 1;
-}
-
-.delete-image-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 77, 109, 0.95);
-  color: white;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 1;
-  z-index: 5;
-  transition: 0.2s ease;
-}
-
-.image-item:hover .delete-image-btn {
-  opacity: 1;
-}
-
-.empty-state {
-  min-height: 220px;
-  border: 1px dashed rgba(255, 255, 255, 0.10);
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  background: rgba(255, 255, 255, 0.02);
 }
 
 .modal-overlay {
@@ -492,6 +403,31 @@ body {
   .top-grid {
     grid-template-columns: 1fr;
   }
+
+  .earnings-display {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .profile-modal {
+    padding: 14px;
+  }
+
+  .profile-panel {
+    min-height: auto;
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .profile-grid,
+  .profile-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-header h2 {
+    font-size: 34px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -514,56 +450,5 @@ body {
 
   .brand {
     font-size: 1.8rem;
-    .profile-modal-box {
-  max-width: 520px;
-}
-
-.profile-section {
-  margin-bottom: 14px;
-}
-
-.mini-label {
-  display: block;
-  font-size: 0.92rem;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.profile-input {
-  width: 100%;
-  height: 50px;
-  background: var(--card-dark);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  color: var(--text);
-  padding: 0 16px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.profile-input:focus {
-  border-color: #a56cff;
-  box-shadow: 0 0 0 3px rgba(165, 108, 255, 0.18);
-}
-
-.earnings-box {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 14px;
-  margin-bottom: 14px;
-}
-
-.earnings-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  color: var(--text);
-}
-
-.earnings-row span {
-  color: var(--muted);
-}
   }
 }
