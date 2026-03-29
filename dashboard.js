@@ -110,9 +110,9 @@ async function ensureProfile() {
 
     profileDescriptionInput.value = "";
     profileNameInput.value = "";
+    currentCurrency = "USD";
     currencySelect.value = "USD";
     currencyProfileSelect.value = "USD";
-    currentCurrency = "USD";
     return;
   }
 
