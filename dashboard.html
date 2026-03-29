@@ -34,16 +34,6 @@
         <p class="card-label">Upload</p>
         <button id="openUploadBtn" class="primary-btn" type="button">Upload Image</button>
         <p class="muted-text">Choose image, preview it, add #tags, then confirm upload.</p>
-
-        <div class="currency-wrap">
-          <label for="currencySelect" class="currency-label">Currency</label>
-          <select id="currencySelect" class="currency-select">
-            <option value="USD">$ USD</option>
-            <option value="INR">₹ INR</option>
-            <option value="EUR">€ EUR</option>
-            <option value="GBP">£ GBP</option>
-          </select>
-        </div>
       </div>
     </section>
 
@@ -64,16 +54,25 @@
           <strong id="pendingEarnedValue">$0.00</strong>
         </div>
 
-        <div class="earn-box">
-          <span>Fulfilled</span>
-          <strong id="paidEarnedValue">$0.00</strong>
+        <div class="earn-box currency-earn-box">
+          <label for="currencySelect" class="currency-label">Currency</label>
+          <select id="currencySelect" class="currency-select">
+            <option value="USD">$ USD</option>
+            <option value="INR">₹ INR</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+
+          <div class="fulfilled-inline">
+            <span>Fulfilled</span>
+            <strong id="paidEarnedValue">$0.00</strong>
+          </div>
         </div>
       </div>
 
       <div class="payout-switch-card">
         <div class="switch-card-head">
           <h4>Payout Access</h4>
-          <span class="switch-badge">Editable</span>
         </div>
 
         <p id="payoutAccessMessage" class="switch-message">
