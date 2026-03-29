@@ -1,12 +1,10 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
+
 const BUCKET_NAME = "user-images";
-const DAILY_LIMIT = 1000;
+const DAILY_LIMIT = 250;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const uploadCountEl = document.getElementById("uploadCount");
-const imageGrid = document.getElementById("imageGrid");
 
 const profileBtn = document.getElementById("profileBtn");
 const profileModal = document.getElementById("profileModal");
@@ -17,10 +15,10 @@ const profileEmail = document.getElementById("profileEmail");
 const profileDescriptionInput = document.getElementById("profileDescriptionInput");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
 
-const profileNameInput = document.getElementById("profileNameInput");
-const countryInput = document.getElementById("countryInput");
-const payoutMethodInput = document.getElementById("payoutMethodInput");
-const paypalEmailInput = document.getElementById("paypalEmailInput");
+const profileNameInput = document.getElementById("profileName");
+const countryInput = document.getElementById("profileCountry");
+const payoutMethodInput = document.getElementById("payoutMethod");
+const paypalEmailInput = document.getElementById("paypalEmail");
 const savePayoutBtn = document.getElementById("savePayoutBtn");
 
 const totalEarnedValue = document.getElementById("totalEarnedValue");
@@ -44,13 +42,17 @@ function money(value) {
   return `$${Number(value || 0).toFixed(2)}`;
 }
 
-async function getTotalImageCount() {
+async function getTodayUploadCount() {
   if (!currentUser) return 0;
+
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
 
   const { count, error } = await supabaseClient
     .from("images")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", currentUser.id);
+    .eq("user_id", currentUser.id)
+    .gte("created_at", start.toISOString());
 
   if (error) {
     console.error("Count error:", error);
@@ -58,78 +60,6 @@ async function getTotalImageCount() {
   }
 
   return count || 0;
-}
-
-async function updateUploadCountUI() {
-  if (!currentUser) return;
-  const count = await getTotalImageCount();
-  uploadCountEl.textContent = `${count} / ${DAILY_LIMIT}`;
-}
-
-function showEmptyStateIfNeeded() {
-  if (!imageGrid.children.length) {
-    imageGrid.innerHTML = `
-      <div class="empty-state">
-        <p>No images yet</p>
-      </div>
-    `;
-  }
-}
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text || "";
-  return div.innerHTML;
-}
-
-function addImageToGrid(imageRow) {
-  const emptyState = imageGrid.querySelector(".empty-state");
-  if (emptyState) emptyState.remove();
-
-  const item = document.createElement("div");
-  item.className = "image-item";
-  item.dataset.imageId = imageRow.id;
-  item.dataset.filePath = imageRow.file_path;
-
-  item.innerHTML = `
-    <button class="delete-image-btn" type="button" title="Delete image">&times;</button>
-    <img src="${imageRow.public_url}" alt="Uploaded image">
-    <div class="image-caption">${escapeHtml(imageRow.description || "No description")}</div>
-  `;
-
-  const deleteBtn = item.querySelector(".delete-image-btn");
-  deleteBtn.addEventListener("click", async function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    await deleteImage(imageRow.id, imageRow.file_path, item);
-  });
-
-  imageGrid.appendChild(item);
-}
-
-async function loadImages() {
-  if (!currentUser) return;
-
-  imageGrid.innerHTML = "";
-
-  const { data, error } = await supabaseClient
-    .from("images")
-    .select("*")
-    .eq("user_id", currentUser.id)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Load images error:", error);
-    showEmptyStateIfNeeded();
-    return;
-  }
-
-  if (!data || !data.length) {
-    showEmptyStateIfNeeded();
-    return;
-  }
-
-  data.forEach(addImageToGrid);
 }
 
 async function ensureProfile() {
@@ -150,6 +80,7 @@ async function ensureProfile() {
       .insert({
         id: currentUser.id,
         email: currentUser.email,
+        name: "",
         profile_description: ""
       });
 
@@ -178,13 +109,13 @@ async function saveProfileDescription() {
     .update({
       profile_description: profileDescriptionInput.value.trim(),
       email: currentUser.email,
-      name: profileNameInput ? profileNameInput.value.trim() : ""
+      name: profileNameInput.value.trim()
     })
     .eq("id", currentUser.id);
 
   if (error) {
     console.error("Save profile error:", error);
-    alert("Could not save profile description.");
+    alert("Could not save profile.");
   } else {
     alert("Profile updated.");
   }
@@ -211,7 +142,7 @@ async function ensurePayoutMethod() {
       .insert({
         user_id: currentUser.id,
         country: "",
-        payout_method: "paypal",
+        payout_method: "giftcard",
         paypal_email: ""
       });
 
@@ -221,13 +152,13 @@ async function ensurePayoutMethod() {
     }
 
     countryInput.value = "";
-    payoutMethodInput.value = "paypal";
+    payoutMethodInput.value = "giftcard";
     paypalEmailInput.value = "";
     return;
   }
 
   countryInput.value = existing.country || "";
-  payoutMethodInput.value = existing.payout_method || "paypal";
+  payoutMethodInput.value = existing.payout_method || "giftcard";
   paypalEmailInput.value = existing.paypal_email || "";
 }
 
@@ -305,11 +236,9 @@ async function requireLogin() {
   currentUser = data.user;
   profileEmail.textContent = currentUser.email;
 
-  await updateUploadCountUI();
   await ensureProfile();
   await ensurePayoutMethod();
   await loadEarnings();
-  await loadImages();
 }
 
 function resetUploadModal() {
@@ -336,9 +265,9 @@ async function uploadSelectedImage() {
     return;
   }
 
-  const count = await getTotalImageCount();
+  const count = await getTodayUploadCount();
   if (count >= DAILY_LIMIT) {
-    alert("Daily limit reached.");
+    alert("Daily upload limit reached.");
     return;
   }
 
@@ -389,48 +318,12 @@ async function uploadSelectedImage() {
     }
 
     closeUploadModal();
-    await updateUploadCountUI();
-    await loadImages();
+    alert("Image uploaded successfully.");
   } catch (err) {
     console.error("Upload error:", err);
   } finally {
     confirmUploadBtn.textContent = "Confirm Upload";
     confirmUploadBtn.disabled = false;
-  }
-}
-
-async function deleteImage(imageId, filePath, itemEl) {
-  const confirmed = window.confirm("Delete this image?");
-  if (!confirmed) return;
-
-  try {
-    const { error: storageError } = await supabaseClient
-      .storage
-      .from(BUCKET_NAME)
-      .remove([filePath]);
-
-    if (storageError) {
-      alert("Storage delete error: " + storageError.message);
-      return;
-    }
-
-    const { error: dbError } = await supabaseClient
-      .from("images")
-      .delete()
-      .eq("id", imageId)
-      .eq("user_id", currentUser.id);
-
-    if (dbError) {
-      alert("Database delete error: " + dbError.message);
-      return;
-    }
-
-    itemEl.remove();
-    showEmptyStateIfNeeded();
-    await updateUploadCountUI();
-  } catch (err) {
-    console.error("Delete failed:", err);
-    alert("Could not delete image.");
   }
 }
 
@@ -478,6 +371,9 @@ imageInput.addEventListener("change", function () {
   previewWrap.classList.remove("hidden");
 });
 
+confirmUploadBtn.addEventListener("click", uploadSelectedImage);
+
+requireLogin();
 confirmUploadBtn.addEventListener("click", uploadSelectedImage);
 
 requireLogin();
