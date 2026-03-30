@@ -2,7 +2,7 @@ const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
 
 const BUCKET_NAME = "user-images";
-const DAILY_LIMIT = 1;
+const DAILY_LIMIT = 250;
 const AD_BONUS_LIMIT = 25;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -18,8 +18,6 @@ const saveProfileBtn = document.getElementById("saveProfileBtn");
 
 const profileNameInput = document.getElementById("profileName");
 const countryInput = document.getElementById("profileCountry");
-const payoutMethodInput = document.getElementById("payoutMethod");
-const paypalEmailInput = document.getElementById("paypalEmail");
 const savePayoutBtn = document.getElementById("savePayoutBtn");
 
 const currencySelect = document.getElementById("currencySelect");
@@ -43,7 +41,6 @@ const chooseFileBtn = document.getElementById("chooseFileBtn");
 const imageInput = document.getElementById("imageInput");
 const previewWrap = document.getElementById("previewWrap");
 const previewImage = document.getElementById("previewImage");
-const imageDescriptionInput = document.getElementById("imageDescriptionInput");
 const confirmUploadBtn = document.getElementById("confirmUploadBtn");
 
 const limitModal = document.getElementById("limitModal");
@@ -256,7 +253,7 @@ async function saveProfileDescription() {
   saveProfileBtn.disabled = false;
 }
 
-async function ensurePayoutMethod() {
+async function ensureBasicSettings() {
   const { data: existing, error } = await supabaseClient
     .from("payout_methods")
     .select("*")
@@ -264,7 +261,7 @@ async function ensurePayoutMethod() {
     .maybeSingle();
 
   if (error) {
-    console.error("Payout fetch error:", error);
+    console.error("Basic settings fetch error:", error);
     return;
   }
 
@@ -278,46 +275,39 @@ async function ensurePayoutMethod() {
         paypal_email: "",
         bank_transfer_enabled: false,
         payout_access_message:
-          "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to bank transfer. Until then, gift card payouts will remain active."
+          "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later."
       });
 
     if (insertError) {
-      console.error("Payout create error:", insertError);
+      console.error("Basic settings create error:", insertError);
       return;
     }
 
     countryInput.value = "";
-    payoutMethodInput.value = "giftcard";
-    paypalEmailInput.value = "";
     updatePayoutAccessUI({
       payout_method: "giftcard",
-      bank_transfer_enabled: false,
+      bank_transfer_enabled: true,
       payout_access_message:
-        "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to bank transfer. Until then, gift card payouts will remain active."
+        "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later."
     });
     return;
   }
 
   countryInput.value = existing.country || "";
-  payoutMethodInput.value = existing.payout_method || "giftcard";
-  paypalEmailInput.value = existing.paypal_email || "";
   updatePayoutAccessUI(existing);
 }
 
 function updatePayoutAccessUI(data) {
-  const payoutMethod = data?.payout_method || "giftcard";
-  const bankEnabled = !!data?.bank_transfer_enabled;
   const accessMessage =
     data?.payout_access_message ||
-    "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to bank transfer. Until then, gift card payouts will remain active.";
+    "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later.";
 
   payoutAccessMessage.textContent = accessMessage;
-  currentPayoutRoute.textContent =
-    payoutMethod === "bank" ? "Bank Transfer" : "Gift Card";
-  bankTransferStatus.textContent = bankEnabled ? "Available" : "Locked for now";
+  currentPayoutRoute.textContent = "Gift Card";
+  bankTransferStatus.textContent = "Active";
 }
 
-async function savePayoutDetails() {
+async function saveBasicDetails() {
   if (!currentUser) return;
 
   savePayoutBtn.textContent = "Saving...";
@@ -327,25 +317,18 @@ async function savePayoutDetails() {
     .from("payout_methods")
     .update({
       country: countryInput.value.trim(),
-      payout_method: payoutMethodInput.value,
-      paypal_email: paypalEmailInput.value.trim(),
       updated_at: new Date().toISOString()
     })
     .eq("user_id", currentUser.id);
 
   if (error) {
-    console.error("Save payout error:", error);
-    alert("Could not save payout details.");
+    console.error("Save details error:", error);
+    alert("Could not save details.");
   } else {
-    updatePayoutAccessUI({
-      payout_method: payoutMethodInput.value,
-      bank_transfer_enabled: payoutMethodInput.value === "bank",
-      payout_access_message: payoutAccessMessage.textContent
-    });
-    alert("Payout details saved.");
+    alert("Details saved.");
   }
 
-  savePayoutBtn.textContent = "Save Payout Details";
+  savePayoutBtn.textContent = "Save Details";
   savePayoutBtn.disabled = false;
 }
 
@@ -399,7 +382,7 @@ async function requireLogin() {
   loadTodayExtraLimit();
 
   await ensureProfile();
-  await ensurePayoutMethod();
+  await ensureBasicSettings();
   await loadEarnings();
   await updateUploadStatsUI();
 }
@@ -409,7 +392,6 @@ function resetUploadModal() {
   imageInput.value = "";
   previewImage.src = "";
   previewWrap.classList.add("hidden");
-  imageDescriptionInput.value = "";
 }
 
 function openUploadModal() {
@@ -474,7 +456,7 @@ async function uploadSelectedImage() {
         user_id: currentUser.id,
         file_path: filePath,
         public_url: publicData.publicUrl,
-        description: imageDescriptionInput.value.trim()
+        description: ""
       });
 
     if (insertError) {
@@ -537,7 +519,7 @@ logoutBtn.addEventListener("click", async function () {
 });
 
 saveProfileBtn.addEventListener("click", saveProfileDescription);
-savePayoutBtn.addEventListener("click", savePayoutDetails);
+savePayoutBtn.addEventListener("click", saveBasicDetails);
 
 openUploadBtn.addEventListener("click", openUploadModal);
 closeUploadBtn.addEventListener("click", closeUploadModal);
