@@ -110,9 +110,9 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 20px;
-  align-items: stretch;
+  margin: 0 auto 20px;
   max-width: 1080px;
+  justify-content: center;
 }
 
 .glass-card {
@@ -163,7 +163,7 @@ body {
 
 .stat-card,
 .upload-card {
-  min-height: 320px;
+  width: 100%;
 }
 
 .currency-select:focus,
