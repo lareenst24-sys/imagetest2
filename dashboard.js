@@ -285,8 +285,6 @@ async function ensureBasicSettings() {
 
     countryInput.value = "";
     updatePayoutAccessUI({
-      payout_method: "giftcard",
-      bank_transfer_enabled: true,
       payout_access_message:
         "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later."
     });
