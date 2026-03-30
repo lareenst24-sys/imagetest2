@@ -13,6 +13,7 @@ const closeProfileBtn = document.getElementById("closeProfileBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const profileEmail = document.getElementById("profileEmail");
+const dashboardUserName = document.getElementById("dashboardUserName");
 
 const profileNameInput = document.getElementById("profileName");
 const countryInput = document.getElementById("profileCountry");
@@ -26,6 +27,10 @@ const monthUploadCountEl = document.getElementById("monthUploadCount");
 const totalEarnedValue = document.getElementById("totalEarnedValue");
 const pendingEarnedValue = document.getElementById("pendingEarnedValue");
 const paidEarnedValue = document.getElementById("paidEarnedValue");
+
+const payoutAccessMessage = document.getElementById("payoutAccessMessage");
+const currentPayoutRoute = document.getElementById("currentPayoutRoute");
+const bankTransferStatus = document.getElementById("bankTransferStatus");
 
 const uploadModal = document.getElementById("uploadModal");
 const openUploadBtn = document.getElementById("openUploadBtn");
@@ -208,6 +213,7 @@ async function ensureProfile() {
     currentCurrency = "USD";
     currencySelect.value = "USD";
     currencyProfileSelect.value = "USD";
+    dashboardUserName.textContent = "Creator";
     return;
   }
 
@@ -215,6 +221,7 @@ async function ensureProfile() {
   currentCurrency = existing.currency || "USD";
   currencySelect.value = currentCurrency;
   currencyProfileSelect.value = currentCurrency;
+  dashboardUserName.textContent = existing.name && existing.name.trim() ? existing.name.trim() : "Creator";
 }
 
 async function saveProfileFields() {
@@ -233,6 +240,7 @@ async function saveProfileFields() {
     console.error("Save profile error:", error);
   } else {
     currentCurrency = currencySelect.value;
+    dashboardUserName.textContent = profileNameInput.value.trim() || "Creator";
     await loadEarnings();
   }
 }
@@ -264,7 +272,7 @@ async function ensureBasicSettings() {
         paypal_email: "",
         bank_transfer_enabled: false,
         payout_access_message:
-          "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later."
+          "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later."
       });
 
     if (insertError) {
@@ -273,10 +281,25 @@ async function ensureBasicSettings() {
     }
 
     countryInput.value = "";
+    updatePayoutAccessUI({
+      payout_access_message:
+        "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later."
+    });
     return;
   }
 
   countryInput.value = existing.country || "";
+  updatePayoutAccessUI(existing);
+}
+
+function updatePayoutAccessUI(data) {
+  const accessMessage =
+    data?.payout_access_message ||
+    "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later.";
+
+  payoutAccessMessage.textContent = accessMessage;
+  currentPayoutRoute.textContent = "Gift Card";
+  bankTransferStatus.textContent = "Active";
 }
 
 async function saveBasicSettings() {
