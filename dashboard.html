@@ -36,7 +36,7 @@
       <div class="glass-card desc-card">
         <p class="card-label">Profile Description</p>
         <textarea id="profileDescriptionInput" placeholder="Tell people about your profile..."></textarea>
-        <button id="saveProfileBtn" class="secondary-btn" type="button">Save Profile</button>
+        <p id="profileAutoSaveText" class="auto-save-text muted-text">Saved automatically</p>
       </div>
 
       <div class="glass-card upload-card">
@@ -92,11 +92,10 @@
         <p class="profile-subtext">Manage your account details and review platform rules</p>
       </div>
 
-      <div class="profile-layout">
-        <div class="profile-left">
-          <div class="profile-section">
-            <h3 class="profile-section-title">Section 1 · Account</h3>
-
+      <div class="accordion-list">
+        <details class="accordion-card" open>
+          <summary class="accordion-summary">Account</summary>
+          <div class="accordion-content">
             <div class="profile-field">
               <label for="profileName">Display Name</label>
               <input id="profileName" type="text" placeholder="Your display name" />
@@ -106,11 +105,14 @@
               <label>Email</label>
               <div id="profileEmail" class="profile-static-box">you@example.com</div>
             </div>
+
+            <p id="accountAutoSaveText" class="auto-save-text muted-text">Saved automatically</p>
           </div>
+        </details>
 
-          <div class="profile-section">
-            <h3 class="profile-section-title">Section 2 · Location & Currency</h3>
-
+        <details class="accordion-card">
+          <summary class="accordion-summary">Location & Currency</summary>
+          <div class="accordion-content">
             <div class="profile-field">
               <label for="profileCountry">Country</label>
               <input id="profileCountry" type="text" placeholder="Your country" />
@@ -125,54 +127,49 @@
                 <option value="GBP">GBP</option>
               </select>
             </div>
-          </div>
 
-          <div class="profile-actions">
-            <button id="savePayoutBtn" class="btn-primary" type="button">Save Details</button>
-            <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
+            <p id="locationAutoSaveText" class="auto-save-text muted-text">Saved automatically</p>
           </div>
-        </div>
+        </details>
 
-        <div class="profile-right">
-          <div class="legal-card">
-            <h3 class="legal-title">Terms & Conditions</h3>
-            <div class="legal-content">
-              <p>
-                By using this platform, you agree to upload only content you have the right to submit and to avoid fraud, spam, bots, duplicate accounts, misleading behavior, or abusive activity.
-              </p>
-              <p>
-                Uploads may be reviewed, limited, rejected, or removed where policy violations, suspicious activity, or legal issues are detected.
-              </p>
-              <p>
-                We may restrict or suspend accounts involved in fake uploads, manipulation, unauthorized content, or other rule violations.
-              </p>
-            </div>
+        <details class="accordion-card">
+          <summary class="accordion-summary">Terms & Conditions</summary>
+          <div class="accordion-content legal-content">
+            <p>By using this platform, you agree to upload only content you have the right to submit and to avoid fraud, spam, bots, duplicate accounts, misleading behavior, or abusive activity.</p>
+            <p>Uploads may be reviewed, limited, rejected, or removed where policy violations, suspicious activity, or legal issues are detected.</p>
+            <p>We may restrict or suspend accounts involved in fake uploads, manipulation, unauthorized content, or other rule violations.</p>
           </div>
+        </details>
 
-          <div class="legal-card">
-            <h3 class="legal-title">Payment Legal</h3>
-            <div class="legal-content">
-              <p>
-                Rewards are subject to platform review and approval. Activity may count only after successful processing and verification by the platform.
-              </p>
-              <p>
-                Gift card payouts are issued only for approved earnings and may be delayed, adjusted, withheld, or cancelled in cases of fraud review, policy violations, technical issues, duplicate submissions, or compliance checks.
-              </p>
-              <p>
-                Payout timing, thresholds, and eligibility rules may change over time. Use of the platform means you accept these payout conditions.
-              </p>
-            </div>
+        <details class="accordion-card">
+          <summary class="accordion-summary">Payment Legal</summary>
+          <div class="accordion-content legal-content">
+            <p>Rewards are subject to platform review and approval. Activity may count only after successful processing and verification by the platform.</p>
+            <p>Gift card payouts are issued only for approved earnings and may be delayed, adjusted, withheld, or cancelled in cases of fraud review, policy violations, technical issues, duplicate submissions, or compliance checks.</p>
+            <p>Payout timing, thresholds, and eligibility rules may change over time. Use of the platform means you accept these payout conditions.</p>
           </div>
+        </details>
 
-          <div class="legal-card small-legal-card">
-            <h3 class="legal-title">Data Notice</h3>
-            <div class="legal-content">
-              <p>
-                Basic account details, activity records, and payout-related settings may be processed for platform operations, account security, abuse prevention, and reward handling.
-              </p>
-            </div>
+        <details class="accordion-card">
+          <summary class="accordion-summary">Data Notice</summary>
+          <div class="accordion-content legal-content">
+            <p>Basic account details, activity records, upload records, earnings rows, and settings may be processed for platform operations, account security, abuse prevention, and reward handling.</p>
           </div>
-        </div>
+        </details>
+
+        <details class="accordion-card danger-accordion">
+          <summary class="accordion-summary">Delete Account</summary>
+          <div class="accordion-content">
+            <p class="danger-text">
+              This will delete your app data from the database, including profile details, upload records, payout/settings data, and earnings records, then log you out.
+            </p>
+            <button id="deleteAccountBtn" class="btn-danger" type="button">Delete Account Data</button>
+          </div>
+        </details>
+      </div>
+
+      <div class="profile-actions single-action">
+        <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
       </div>
     </div>
   </div>
