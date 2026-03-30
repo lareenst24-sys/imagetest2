@@ -92,8 +92,29 @@
 
           <div class="switch-option">
             <span class="switch-option-label">Bank transfer</span>
-            <strong id="bankTransferStatus">locked</strong>
+            <strong id="bankTransferStatus">Active</strong>
           </div>
+        </div>
+
+        <div class="payout-action-row">
+          <div class="payout-action-card">
+            <span class="switch-option-label">Gift Card Claim</span>
+            <button id="claimGiftCardBtn" class="btn-primary payout-action-btn" type="button">
+              Claim
+            </button>
+          </div>
+
+          <div class="payout-action-card">
+            <span class="switch-option-label">Bank Transfer Option</span>
+            <button id="bankTransferActionBtn" class="secondary-btn payout-action-btn" type="button">
+              Disabled
+            </button>
+          </div>
+        </div>
+
+        <div class="earnings-message-card">
+          <h4 class="earnings-message-title">Important Message</h4>
+          <div id="earningsMessageList" class="earnings-message-list"></div>
         </div>
       </div>
     </section>
