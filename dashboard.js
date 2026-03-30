@@ -11,14 +11,17 @@ const profileBtn = document.getElementById("profileBtn");
 const profileModal = document.getElementById("profileModal");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
 const logoutBtn = document.getElementById("logoutBtn");
+const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const profileEmail = document.getElementById("profileEmail");
 
 const profileDescriptionInput = document.getElementById("profileDescriptionInput");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
+const profileAutoSaveText = document.getElementById("profileAutoSaveText");
+const accountAutoSaveText = document.getElementById("accountAutoSaveText");
+const locationAutoSaveText = document.getElementById("locationAutoSaveText");
 
 const profileNameInput = document.getElementById("profileName");
 const countryInput = document.getElementById("profileCountry");
-const savePayoutBtn = document.getElementById("savePayoutBtn");
 
 const currencySelect = document.getElementById("currencySelect");
 const currencyProfileSelect = document.getElementById("currencyProfileSelect");
@@ -52,6 +55,8 @@ let currentUser = null;
 let selectedFile = null;
 let currentCurrency = "USD";
 let todayExtraLimit = 0;
+let profileSaveTimer = null;
+let settingsSaveTimer = null;
 
 function currencySymbol(code) {
   const map = {
@@ -65,6 +70,10 @@ function currencySymbol(code) {
 
 function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
+}
+
+function setSaveText(element, text) {
+  if (element) element.textContent = text;
 }
 
 function getTodayKey() {
@@ -224,11 +233,11 @@ async function ensureProfile() {
   currencyProfileSelect.value = currentCurrency;
 }
 
-async function saveProfileDescription() {
+async function saveProfileFields() {
   if (!currentUser) return;
 
-  saveProfileBtn.textContent = "Saving...";
-  saveProfileBtn.disabled = true;
+  setSaveText(profileAutoSaveText, "Saving...");
+  setSaveText(accountAutoSaveText, "Saving...");
 
   const { error } = await supabaseClient
     .from("profiles")
@@ -242,15 +251,21 @@ async function saveProfileDescription() {
 
   if (error) {
     console.error("Save profile error:", error);
-    alert("Could not save profile.");
+    setSaveText(profileAutoSaveText, "Save failed");
+    setSaveText(accountAutoSaveText, "Save failed");
   } else {
     currentCurrency = currencySelect.value;
     await loadEarnings();
-    alert("Profile updated.");
+    setSaveText(profileAutoSaveText, "Saved automatically");
+    setSaveText(accountAutoSaveText, "Saved automatically");
   }
+}
 
-  saveProfileBtn.textContent = "Save Profile";
-  saveProfileBtn.disabled = false;
+function scheduleProfileSave() {
+  clearTimeout(profileSaveTimer);
+  setSaveText(profileAutoSaveText, "Saving soon...");
+  setSaveText(accountAutoSaveText, "Saving soon...");
+  profileSaveTimer = setTimeout(saveProfileFields, 500);
 }
 
 async function ensureBasicSettings() {
@@ -305,11 +320,10 @@ function updatePayoutAccessUI(data) {
   bankTransferStatus.textContent = "Active";
 }
 
-async function saveBasicDetails() {
+async function saveBasicSettings() {
   if (!currentUser) return;
 
-  savePayoutBtn.textContent = "Saving...";
-  savePayoutBtn.disabled = true;
+  setSaveText(locationAutoSaveText, "Saving...");
 
   const { error } = await supabaseClient
     .from("payout_methods")
@@ -320,14 +334,17 @@ async function saveBasicDetails() {
     .eq("user_id", currentUser.id);
 
   if (error) {
-    console.error("Save details error:", error);
-    alert("Could not save details.");
+    console.error("Save settings error:", error);
+    setSaveText(locationAutoSaveText, "Save failed");
   } else {
-    alert("Details saved.");
+    setSaveText(locationAutoSaveText, "Saved automatically");
   }
+}
 
-  savePayoutBtn.textContent = "Save Details";
-  savePayoutBtn.disabled = false;
+function scheduleSettingsSave() {
+  clearTimeout(settingsSaveTimer);
+  setSaveText(locationAutoSaveText, "Saving soon...");
+  settingsSaveTimer = setTimeout(saveBasicSettings, 500);
 }
 
 async function loadEarnings() {
@@ -366,6 +383,57 @@ async function loadEarnings() {
   paidEarnedValue.textContent = money(fulfilled);
 }
 
+async function deleteAccountData() {
+  if (!currentUser) return;
+
+  const confirmed = window.confirm(
+    "This will delete your app data from the database and log you out. Continue?"
+  );
+
+  if (!confirmed) return;
+
+  deleteAccountBtn.disabled = true;
+  deleteAccountBtn.textContent = "Deleting...";
+
+  try {
+    const { error: deleteImagesError } = await supabaseClient
+      .from("images")
+      .delete()
+      .eq("user_id", currentUser.id);
+
+    if (deleteImagesError) throw deleteImagesError;
+
+    const { error: deleteEarningsError } = await supabaseClient
+      .from("creator_earnings")
+      .delete()
+      .eq("user_id", currentUser.id);
+
+    if (deleteEarningsError) throw deleteEarningsError;
+
+    const { error: deletePayoutError } = await supabaseClient
+      .from("payout_methods")
+      .delete()
+      .eq("user_id", currentUser.id);
+
+    if (deletePayoutError) throw deletePayoutError;
+
+    const { error: deleteProfileError } = await supabaseClient
+      .from("profiles")
+      .delete()
+      .eq("id", currentUser.id);
+
+    if (deleteProfileError) throw deleteProfileError;
+
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  } catch (error) {
+    console.error("Delete account data error:", error);
+    alert("Could not delete account data.");
+    deleteAccountBtn.disabled = false;
+    deleteAccountBtn.textContent = "Delete Account Data";
+  }
+}
+
 async function requireLogin() {
   const { data, error } = await supabaseClient.auth.getUser();
 
@@ -383,6 +451,10 @@ async function requireLogin() {
   await ensureBasicSettings();
   await loadEarnings();
   await updateUploadStatsUI();
+
+  setSaveText(profileAutoSaveText, "Saved automatically");
+  setSaveText(accountAutoSaveText, "Saved automatically");
+  setSaveText(locationAutoSaveText, "Saved automatically");
 }
 
 function resetUploadModal() {
@@ -516,8 +588,9 @@ logoutBtn.addEventListener("click", async function () {
   window.location.href = "index.html";
 });
 
-saveProfileBtn.addEventListener("click", saveProfileDescription);
-savePayoutBtn.addEventListener("click", saveBasicDetails);
+deleteAccountBtn.addEventListener("click", deleteAccountData);
+
+saveProfileBtn.addEventListener("click", saveProfileFields);
 
 openUploadBtn.addEventListener("click", openUploadModal);
 closeUploadBtn.addEventListener("click", closeUploadModal);
@@ -541,15 +614,22 @@ imageInput.addEventListener("change", function () {
   previewWrap.classList.remove("hidden");
 });
 
+profileDescriptionInput.addEventListener("input", scheduleProfileSave);
+profileNameInput.addEventListener("input", scheduleProfileSave);
+
+countryInput.addEventListener("input", scheduleSettingsSave);
+
 currencySelect.addEventListener("change", function () {
   currentCurrency = currencySelect.value;
   currencyProfileSelect.value = currencySelect.value;
+  scheduleProfileSave();
   loadEarnings();
 });
 
 currencyProfileSelect.addEventListener("change", function () {
   currentCurrency = currencyProfileSelect.value;
   currencySelect.value = currencyProfileSelect.value;
+  scheduleProfileSave();
   loadEarnings();
 });
 
