@@ -42,7 +42,7 @@
       <div class="glass-card upload-card">
         <p class="card-label">Upload</p>
         <button id="openUploadBtn" class="primary-btn" type="button">Upload Image</button>
-        <p class="muted-text">Choose image, preview it, add #tags, then confirm upload.</p>
+        <p class="muted-text">Choose image and confirm upload.</p>
       </div>
     </section>
 
@@ -87,7 +87,7 @@
         </div>
 
         <p id="payoutAccessMessage" class="switch-message">
-          You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to bank transfer. Until then, gift card payouts will remain active.
+          You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later.
         </p>
 
         <div class="switch-option-row">
@@ -97,8 +97,8 @@
           </div>
 
           <div class="switch-option">
-            <span class="switch-option-label">Bank transfer access</span>
-            <strong id="bankTransferStatus">Locked for now</strong>
+            <span class="switch-option-label">Account status</span>
+            <strong id="bankTransferStatus">Active</strong>
           </div>
         </div>
       </div>
@@ -111,53 +111,46 @@
 
       <div class="profile-header">
         <h2>Profile</h2>
-        <p class="profile-subtext">Manage your account and payout details</p>
+        <p class="profile-subtext">Manage your basic account details</p>
       </div>
 
-      <div class="profile-grid">
-        <div class="profile-field full">
-          <label for="profileName">Display Name</label>
-          <input id="profileName" type="text" placeholder="Your display name" />
-        </div>
+      <div class="profile-section">
+        <h3 class="profile-section-title">Basic Info</h3>
+        <div class="profile-grid single-grid">
+          <div class="profile-field">
+            <label for="profileName">Display Name</label>
+            <input id="profileName" type="text" placeholder="Your display name" />
+          </div>
 
-        <div class="profile-field full">
-          <label>Email</label>
-          <div id="profileEmail" class="profile-static-box">you@example.com</div>
+          <div class="profile-field">
+            <label>Email</label>
+            <div id="profileEmail" class="profile-static-box">you@example.com</div>
+          </div>
         </div>
+      </div>
 
-        <div class="profile-field">
-          <label for="profileCountry">Country</label>
-          <input id="profileCountry" type="text" placeholder="Your country" />
-        </div>
+      <div class="profile-section">
+        <h3 class="profile-section-title">Location & Currency</h3>
+        <div class="profile-grid two-grid">
+          <div class="profile-field">
+            <label for="profileCountry">Country</label>
+            <input id="profileCountry" type="text" placeholder="Your country" />
+          </div>
 
-        <div class="profile-field">
-          <label for="payoutMethod">Payout Method</label>
-          <select id="payoutMethod" class="profile-select">
-            <option value="giftcard">Gift Card</option>
-            <option value="paypal">PayPal</option>
-            <option value="payoneer">Payoneer</option>
-            <option value="bank">Bank Transfer</option>
-          </select>
-        </div>
-
-        <div class="profile-field">
-          <label for="currencyProfileSelect">Currency</label>
-          <select id="currencyProfileSelect" class="profile-select">
-            <option value="USD">USD</option>
-            <option value="INR">INR</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-          </select>
-        </div>
-
-        <div class="profile-field full">
-          <label for="paypalEmail">Payout Email / Bank Email</label>
-          <input id="paypalEmail" type="email" placeholder="yourpayment@email.com" />
+          <div class="profile-field">
+            <label for="currencyProfileSelect">Currency</label>
+            <select id="currencyProfileSelect" class="profile-select">
+              <option value="USD">USD</option>
+              <option value="INR">INR</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div class="profile-actions">
-        <button id="savePayoutBtn" class="btn-primary" type="button">Save Payout Details</button>
+        <button id="savePayoutBtn" class="btn-primary" type="button">Save Details</button>
         <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
       </div>
     </div>
@@ -175,8 +168,6 @@
       <div id="previewWrap" class="preview-wrap hidden">
         <img id="previewImage" class="preview-image" alt="Preview" />
       </div>
-
-      <textarea id="imageDescriptionInput" placeholder="#tags image description..."></textarea>
 
       <button id="confirmUploadBtn" class="primary-btn" type="button">Confirm Upload</button>
     </div>
