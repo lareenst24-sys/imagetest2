@@ -340,7 +340,7 @@ function updatePayoutAccessUI(data) {
 
   payoutAccessMessage.textContent = accessMessage;
   currentPayoutRoute.textContent = currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card";
-  bankTransferStatus.textContent = bankTransferMode === "switch" ? "Available" : "Active";
+  bankTransferStatus.textContent = bankTransferMode === "switch" ? "Available" : "Blocked";
 
   updatePayoutButtons();
 }
