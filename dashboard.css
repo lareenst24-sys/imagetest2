@@ -270,51 +270,6 @@ body {
   color: #ffffff;
 }
 
-.payout-switch-card {
-  margin-top: 20px;
-  padding: 22px;
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.switch-card-head h4 {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin-bottom: 14px;
-}
-
-.switch-message {
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 18px;
-}
-
-.switch-option-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.switch-option {
-  padding: 18px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.switch-option-label {
-  display: block;
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
-.switch-option strong {
-  font-size: 1.1rem;
-  color: #ffffff;
-}
-
 .profile-modal {
   position: fixed;
   inset: 0;
@@ -329,7 +284,7 @@ body {
 
 .profile-panel {
   position: relative;
-  width: min(760px, 100%);
+  width: min(1040px, 100%);
   max-height: 88vh;
   overflow-y: auto;
   padding: 28px;
@@ -374,32 +329,44 @@ body {
   font-size: 15px;
 }
 
-.profile-section {
-  margin-bottom: 22px;
+.profile-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
 }
 
-.profile-section-title {
+.profile-left,
+.profile-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-section,
+.legal-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 18px;
+}
+
+.profile-section-title,
+.legal-title {
   font-size: 1.05rem;
   margin-bottom: 14px;
   color: #ffffff;
-}
-
-.profile-grid {
-  display: grid;
-  gap: 16px;
-}
-
-.single-grid {
-  grid-template-columns: 1fr;
-}
-
-.two-grid {
-  grid-template-columns: 1fr 1fr;
+  font-weight: 800;
 }
 
 .profile-field {
   display: flex;
   flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.profile-field:last-child {
+  margin-bottom: 0;
 }
 
 .profile-field label {
@@ -434,11 +401,26 @@ body {
   font-size: 15px;
 }
 
+.legal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legal-content p {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.small-legal-card .legal-content p {
+  font-size: 0.92rem;
+}
+
 .profile-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  margin-top: 10px;
 }
 
 .profile-actions button {
@@ -538,8 +520,11 @@ body {
     max-width: 320px;
   }
 
-  .earnings-display,
-  .switch-option-row {
+  .earnings-display {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -551,7 +536,6 @@ body {
     border-radius: 22px;
   }
 
-  .two-grid,
   .profile-actions {
     grid-template-columns: 1fr;
   }
