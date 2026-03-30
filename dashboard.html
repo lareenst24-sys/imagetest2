@@ -80,28 +80,6 @@
           <strong id="paidEarnedValue">$0.00</strong>
         </div>
       </div>
-
-      <div class="payout-switch-card">
-        <div class="switch-card-head">
-          <h4>Payout Access</h4>
-        </div>
-
-        <p id="payoutAccessMessage" class="switch-message">
-          You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later.
-        </p>
-
-        <div class="switch-option-row">
-          <div class="switch-option">
-            <span class="switch-option-label">Current payout route</span>
-            <strong id="currentPayoutRoute">Gift Card</strong>
-          </div>
-
-          <div class="switch-option">
-            <span class="switch-option-label">Account status</span>
-            <strong id="bankTransferStatus">Active</strong>
-          </div>
-        </div>
-      </div>
     </section>
   </div>
 
@@ -111,47 +89,90 @@
 
       <div class="profile-header">
         <h2>Profile</h2>
-        <p class="profile-subtext">Manage your basic account details</p>
+        <p class="profile-subtext">Manage your account details and review platform rules</p>
       </div>
 
-      <div class="profile-section">
-        <h3 class="profile-section-title">Basic Info</h3>
-        <div class="profile-grid single-grid">
-          <div class="profile-field">
-            <label for="profileName">Display Name</label>
-            <input id="profileName" type="text" placeholder="Your display name" />
+      <div class="profile-layout">
+        <div class="profile-left">
+          <div class="profile-section">
+            <h3 class="profile-section-title">Section 1 · Account</h3>
+
+            <div class="profile-field">
+              <label for="profileName">Display Name</label>
+              <input id="profileName" type="text" placeholder="Your display name" />
+            </div>
+
+            <div class="profile-field">
+              <label>Email</label>
+              <div id="profileEmail" class="profile-static-box">you@example.com</div>
+            </div>
           </div>
 
-          <div class="profile-field">
-            <label>Email</label>
-            <div id="profileEmail" class="profile-static-box">you@example.com</div>
+          <div class="profile-section">
+            <h3 class="profile-section-title">Section 2 · Location & Currency</h3>
+
+            <div class="profile-field">
+              <label for="profileCountry">Country</label>
+              <input id="profileCountry" type="text" placeholder="Your country" />
+            </div>
+
+            <div class="profile-field">
+              <label for="currencyProfileSelect">Currency</label>
+              <select id="currencyProfileSelect" class="profile-select">
+                <option value="USD">USD</option>
+                <option value="INR">INR</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button id="savePayoutBtn" class="btn-primary" type="button">Save Details</button>
+            <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
           </div>
         </div>
-      </div>
 
-      <div class="profile-section">
-        <h3 class="profile-section-title">Location & Currency</h3>
-        <div class="profile-grid two-grid">
-          <div class="profile-field">
-            <label for="profileCountry">Country</label>
-            <input id="profileCountry" type="text" placeholder="Your country" />
+        <div class="profile-right">
+          <div class="legal-card">
+            <h3 class="legal-title">Terms & Conditions</h3>
+            <div class="legal-content">
+              <p>
+                By using this platform, you agree to upload only content you have the right to submit and to avoid fraud, spam, bots, duplicate accounts, misleading behavior, or abusive activity.
+              </p>
+              <p>
+                Uploads may be reviewed, limited, rejected, or removed where policy violations, suspicious activity, or legal issues are detected.
+              </p>
+              <p>
+                We may restrict or suspend accounts involved in fake uploads, manipulation, unauthorized content, or other rule violations.
+              </p>
+            </div>
           </div>
 
-          <div class="profile-field">
-            <label for="currencyProfileSelect">Currency</label>
-            <select id="currencyProfileSelect" class="profile-select">
-              <option value="USD">USD</option>
-              <option value="INR">INR</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-            </select>
+          <div class="legal-card">
+            <h3 class="legal-title">Payment Legal</h3>
+            <div class="legal-content">
+              <p>
+                Rewards are subject to platform review and approval. Activity may count only after successful processing and verification by the platform.
+              </p>
+              <p>
+                Gift card payouts are issued only for approved earnings and may be delayed, adjusted, withheld, or cancelled in cases of fraud review, policy violations, technical issues, duplicate submissions, or compliance checks.
+              </p>
+              <p>
+                Payout timing, thresholds, and eligibility rules may change over time. Use of the platform means you accept these payout conditions.
+              </p>
+            </div>
+          </div>
+
+          <div class="legal-card small-legal-card">
+            <h3 class="legal-title">Data Notice</h3>
+            <div class="legal-content">
+              <p>
+                Basic account details, activity records, and payout-related settings may be processed for platform operations, account security, abuse prevention, and reward handling.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="profile-actions">
-        <button id="savePayoutBtn" class="btn-primary" type="button">Save Details</button>
-        <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
       </div>
     </div>
   </div>
