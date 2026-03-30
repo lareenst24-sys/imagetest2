@@ -5,6 +5,14 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 250;
 const AD_BONUS_LIMIT = 25;
 
+const EARNINGS_MESSAGES = [
+  "The amount displayed is not final, as additional amounts may be added based on the assessment of the images.",
+  "We will email you when you are eligible for bank transfer."
+];
+
+let bankTransferMode = "disabled";
+let currentPayoutMode = "giftcard";
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const profileBtn = document.getElementById("profileBtn");
@@ -31,6 +39,9 @@ const paidEarnedValue = document.getElementById("paidEarnedValue");
 const payoutAccessMessage = document.getElementById("payoutAccessMessage");
 const currentPayoutRoute = document.getElementById("currentPayoutRoute");
 const bankTransferStatus = document.getElementById("bankTransferStatus");
+const claimGiftCardBtn = document.getElementById("claimGiftCardBtn");
+const bankTransferActionBtn = document.getElementById("bankTransferActionBtn");
+const earningsMessageList = document.getElementById("earningsMessageList");
 
 const uploadModal = document.getElementById("uploadModal");
 const openUploadBtn = document.getElementById("openUploadBtn");
@@ -65,6 +76,36 @@ function currencySymbol(code) {
 
 function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
+}
+
+function renderEarningsMessages() {
+  if (!earningsMessageList) return;
+
+  earningsMessageList.innerHTML = "";
+
+  EARNINGS_MESSAGES.forEach((message) => {
+    const item = document.createElement("div");
+    item.className = "earnings-message-item";
+    item.textContent = "• " + message;
+    earningsMessageList.appendChild(item);
+  });
+}
+
+function updatePayoutButtons() {
+  if (claimGiftCardBtn) {
+    claimGiftCardBtn.textContent = "Claim";
+    claimGiftCardBtn.disabled = currentPayoutMode !== "giftcard";
+  }
+
+  if (bankTransferActionBtn) {
+    if (bankTransferMode === "switch") {
+      bankTransferActionBtn.textContent = "Switch";
+      bankTransferActionBtn.disabled = false;
+    } else {
+      bankTransferActionBtn.textContent = "Disabled";
+      bankTransferActionBtn.disabled = true;
+    }
+  }
 }
 
 function getTodayKey() {
@@ -298,8 +339,10 @@ function updatePayoutAccessUI(data) {
     "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later.";
 
   payoutAccessMessage.textContent = accessMessage;
-  currentPayoutRoute.textContent = "Gift Card";
-  bankTransferStatus.textContent = "Active";
+  currentPayoutRoute.textContent = currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card";
+  bankTransferStatus.textContent = bankTransferMode === "switch" ? "Available" : "Active";
+
+  updatePayoutButtons();
 }
 
 async function saveBasicSettings() {
@@ -427,6 +470,9 @@ async function requireLogin() {
   await ensureBasicSettings();
   await loadEarnings();
   await updateUploadStatsUI();
+
+  renderEarningsMessages();
+  updatePayoutButtons();
 }
 
 function resetUploadModal() {
@@ -561,6 +607,23 @@ logoutBtn.addEventListener("click", async function () {
 });
 
 deleteAccountBtn.addEventListener("click", deleteAccountData);
+
+if (claimGiftCardBtn) {
+  claimGiftCardBtn.addEventListener("click", function () {
+    if (currentPayoutMode !== "giftcard") return;
+    alert("Gift card claim request submitted.");
+  });
+}
+
+if (bankTransferActionBtn) {
+  bankTransferActionBtn.addEventListener("click", function () {
+    if (bankTransferMode !== "switch") return;
+
+    currentPayoutMode = currentPayoutMode === "giftcard" ? "bank" : "giftcard";
+    updatePayoutAccessUI({});
+    alert("Payout route switched to " + (currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card") + ".");
+  });
+}
 
 openUploadBtn.addEventListener("click", openUploadModal);
 closeUploadBtn.addEventListener("click", closeUploadModal);
