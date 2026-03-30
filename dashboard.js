@@ -14,12 +14,6 @@ const logoutBtn = document.getElementById("logoutBtn");
 const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const profileEmail = document.getElementById("profileEmail");
 
-const profileDescriptionInput = document.getElementById("profileDescriptionInput");
-const saveProfileBtn = document.getElementById("saveProfileBtn");
-const profileAutoSaveText = document.getElementById("profileAutoSaveText");
-const accountAutoSaveText = document.getElementById("accountAutoSaveText");
-const locationAutoSaveText = document.getElementById("locationAutoSaveText");
-
 const profileNameInput = document.getElementById("profileName");
 const countryInput = document.getElementById("profileCountry");
 
@@ -32,10 +26,6 @@ const monthUploadCountEl = document.getElementById("monthUploadCount");
 const totalEarnedValue = document.getElementById("totalEarnedValue");
 const pendingEarnedValue = document.getElementById("pendingEarnedValue");
 const paidEarnedValue = document.getElementById("paidEarnedValue");
-
-const payoutAccessMessage = document.getElementById("payoutAccessMessage");
-const currentPayoutRoute = document.getElementById("currentPayoutRoute");
-const bankTransferStatus = document.getElementById("bankTransferStatus");
 
 const uploadModal = document.getElementById("uploadModal");
 const openUploadBtn = document.getElementById("openUploadBtn");
@@ -70,10 +60,6 @@ function currencySymbol(code) {
 
 function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
-}
-
-function setSaveText(element, text) {
-  if (element) element.textContent = text;
 }
 
 function getTodayKey() {
@@ -218,7 +204,6 @@ async function ensureProfile() {
       return;
     }
 
-    profileDescriptionInput.value = "";
     profileNameInput.value = "";
     currentCurrency = "USD";
     currencySelect.value = "USD";
@@ -226,7 +211,6 @@ async function ensureProfile() {
     return;
   }
 
-  profileDescriptionInput.value = existing.profile_description || "";
   profileNameInput.value = existing.name || "";
   currentCurrency = existing.currency || "USD";
   currencySelect.value = currentCurrency;
@@ -236,13 +220,9 @@ async function ensureProfile() {
 async function saveProfileFields() {
   if (!currentUser) return;
 
-  setSaveText(profileAutoSaveText, "Saving...");
-  setSaveText(accountAutoSaveText, "Saving...");
-
   const { error } = await supabaseClient
     .from("profiles")
     .update({
-      profile_description: profileDescriptionInput.value.trim(),
       email: currentUser.email,
       name: profileNameInput.value.trim(),
       currency: currencySelect.value
@@ -251,20 +231,14 @@ async function saveProfileFields() {
 
   if (error) {
     console.error("Save profile error:", error);
-    setSaveText(profileAutoSaveText, "Save failed");
-    setSaveText(accountAutoSaveText, "Save failed");
   } else {
     currentCurrency = currencySelect.value;
     await loadEarnings();
-    setSaveText(profileAutoSaveText, "Saved automatically");
-    setSaveText(accountAutoSaveText, "Saved automatically");
   }
 }
 
 function scheduleProfileSave() {
   clearTimeout(profileSaveTimer);
-  setSaveText(profileAutoSaveText, "Saving soon...");
-  setSaveText(accountAutoSaveText, "Saving soon...");
   profileSaveTimer = setTimeout(saveProfileFields, 500);
 }
 
@@ -299,31 +273,14 @@ async function ensureBasicSettings() {
     }
 
     countryInput.value = "";
-    updatePayoutAccessUI({
-      payout_access_message:
-        "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later."
-    });
     return;
   }
 
   countryInput.value = existing.country || "";
-  updatePayoutAccessUI(existing);
-}
-
-function updatePayoutAccessUI(data) {
-  const accessMessage =
-    data?.payout_access_message ||
-    "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may be eligible to switch to other payout options later.";
-
-  payoutAccessMessage.textContent = accessMessage;
-  currentPayoutRoute.textContent = "Gift Card";
-  bankTransferStatus.textContent = "Active";
 }
 
 async function saveBasicSettings() {
   if (!currentUser) return;
-
-  setSaveText(locationAutoSaveText, "Saving...");
 
   const { error } = await supabaseClient
     .from("payout_methods")
@@ -335,15 +292,11 @@ async function saveBasicSettings() {
 
   if (error) {
     console.error("Save settings error:", error);
-    setSaveText(locationAutoSaveText, "Save failed");
-  } else {
-    setSaveText(locationAutoSaveText, "Saved automatically");
   }
 }
 
 function scheduleSettingsSave() {
   clearTimeout(settingsSaveTimer);
-  setSaveText(locationAutoSaveText, "Saving soon...");
   settingsSaveTimer = setTimeout(saveBasicSettings, 500);
 }
 
@@ -451,10 +404,6 @@ async function requireLogin() {
   await ensureBasicSettings();
   await loadEarnings();
   await updateUploadStatsUI();
-
-  setSaveText(profileAutoSaveText, "Saved automatically");
-  setSaveText(accountAutoSaveText, "Saved automatically");
-  setSaveText(locationAutoSaveText, "Saved automatically");
 }
 
 function resetUploadModal() {
@@ -590,8 +539,6 @@ logoutBtn.addEventListener("click", async function () {
 
 deleteAccountBtn.addEventListener("click", deleteAccountData);
 
-saveProfileBtn.addEventListener("click", saveProfileFields);
-
 openUploadBtn.addEventListener("click", openUploadModal);
 closeUploadBtn.addEventListener("click", closeUploadModal);
 
@@ -614,9 +561,7 @@ imageInput.addEventListener("change", function () {
   previewWrap.classList.remove("hidden");
 });
 
-profileDescriptionInput.addEventListener("input", scheduleProfileSave);
 profileNameInput.addEventListener("input", scheduleProfileSave);
-
 countryInput.addEventListener("input", scheduleSettingsSave);
 
 currencySelect.addEventListener("change", function () {
