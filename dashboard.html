@@ -11,7 +11,7 @@
     <header class="topbar">
       <div>
         <h1 class="brand">Dashboard</h1>
-        <p class="top-sub">Upload and manage your images</p>
+        <p class="top-sub">Welcome, <span id="dashboardUserName">Creator</span></p>
       </div>
 
       <button id="profileBtn" class="profile-btn" type="button">Profile</button>
@@ -31,15 +31,6 @@
           </div>
         </div>
         <p class="muted-text">Daily uploads reset every day</p>
-      </div>
-
-      <div class="glass-card payout-card">
-        <p class="card-label">Payment Description</p>
-        <div class="payment-desc-box">
-          <p id="paymentDescriptionText">
-            Rewards are reviewed before approval. Gift card payouts are issued only for approved earnings and may be delayed, adjusted, or withheld if fraud, abuse, duplicate submissions, or policy violations are detected.
-          </p>
-        </div>
       </div>
 
       <div class="glass-card upload-card">
@@ -83,6 +74,28 @@
           <strong id="paidEarnedValue">$0.00</strong>
         </div>
       </div>
+
+      <div class="payout-switch-card">
+        <div class="switch-card-head">
+          <h4>Payout Access</h4>
+        </div>
+
+        <p id="payoutAccessMessage" class="switch-message">
+          You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later.
+        </p>
+
+        <div class="switch-option-row">
+          <div class="switch-option">
+            <span class="switch-option-label">Current payout route</span>
+            <strong id="currentPayoutRoute">Gift Card</strong>
+          </div>
+
+          <div class="switch-option">
+            <span class="switch-option-label">Account status</span>
+            <strong id="bankTransferStatus">Active</strong>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -108,8 +121,6 @@
               <label>Email</label>
               <div id="profileEmail" class="profile-static-box">you@example.com</div>
             </div>
-
-            <p id="accountAutoSaveText" class="auto-save-text muted-text">Saved automatically</p>
           </div>
         </details>
 
@@ -130,8 +141,6 @@
                 <option value="GBP">GBP</option>
               </select>
             </div>
-
-            <p id="locationAutoSaveText" class="auto-save-text muted-text">Saved automatically</p>
           </div>
         </details>
 
