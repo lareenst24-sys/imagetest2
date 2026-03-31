@@ -212,7 +212,7 @@
       <div class="profile-header">
         <p class="section-kicker">Account Center</p>
         <h2>Profile</h2>
-        <p class="profile-subtext">Manage your details, contact links, and platform pages.</p>
+        <p class="profile-subtext">Manage your details, business contact, and legal pages.</p>
       </div>
 
       <div class="accordion-list">
@@ -252,20 +252,28 @@
         </details>
 
         <details class="accordion-card">
-          <summary class="accordion-summary">Contact</summary>
+          <summary class="accordion-summary">Business Contact</summary>
           <div class="accordion-content">
-            <div class="profile-field">
-              <label for="contactEmailInput">Contact Email</label>
-              <input id="contactEmailInput" type="text" placeholder="Add later in code" />
-            </div>
+            <div class="business-contact-list">
+              <a id="businessEmailLink" class="business-contact-card" href="mailto:">
+                <span class="business-contact-label">Contact Email</span>
+                <strong id="businessEmailText">Add later in code</strong>
+              </a>
 
-            <div class="profile-field">
-              <label for="instagramHandleInput">Instagram Handle</label>
-              <input id="instagramHandleInput" type="text" placeholder="@yourhandle" />
+              <a
+                id="businessInstagramLink"
+                class="business-contact-card"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="business-contact-label">Instagram</span>
+                <strong id="businessInstagramText">@yourhandle</strong>
+              </a>
             </div>
 
             <p class="muted-text small-note">
-              These fields can stay blank for now. You can also hardcode them later.
+              These are business contact links for support and social reach.
             </p>
           </div>
         </details>
@@ -273,11 +281,11 @@
         <details class="accordion-card">
           <summary class="accordion-summary">Legal Pages</summary>
           <div class="accordion-content">
-            <div class="legal-link-grid">
-              <a class="legal-link-card" href="privacy.html">Privacy Policy</a>
-              <a class="legal-link-card" href="terms.html">Terms & Conditions</a>
-              <a class="legal-link-card" href="payment-policy.html">Payment Policy</a>
-              <a class="legal-link-card" href="data-notice.html">Data Notice</a>
+            <div class="legal-button-list">
+              <a class="legal-page-btn" href="privacy.html">Privacy Policy</a>
+              <a class="legal-page-btn" href="terms.html">Terms & Conditions</a>
+              <a class="legal-page-btn" href="payment-policy.html">Payment Policy</a>
+              <a class="legal-page-btn" href="data-notice.html">Data Notice</a>
             </div>
           </div>
         </details>
