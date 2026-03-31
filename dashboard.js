@@ -27,8 +27,11 @@ const dashboardUserName = document.getElementById("dashboardUserName");
 
 const profileNameInput = document.getElementById("profileName");
 const countryInput = document.getElementById("profileCountry");
-const contactEmailInput = document.getElementById("contactEmailInput");
-const instagramHandleInput = document.getElementById("instagramHandleInput");
+
+const businessEmailLink = document.getElementById("businessEmailLink");
+const businessEmailText = document.getElementById("businessEmailText");
+const businessInstagramLink = document.getElementById("businessInstagramLink");
+const businessInstagramText = document.getElementById("businessInstagramText");
 
 const currencySelect = document.getElementById("currencySelect");
 const currencyProfileSelect = document.getElementById("currencyProfileSelect");
@@ -463,11 +466,33 @@ function scheduleSettingsSave() {
 }
 
 function loadContactPlaceholders() {
-  if (contactEmailInput) {
-    contactEmailInput.value = CONTACT_EMAIL;
+  const emailText = CONTACT_EMAIL && CONTACT_EMAIL.trim()
+    ? CONTACT_EMAIL.trim()
+    : "Add later in code";
+
+  const igText = INSTAGRAM_HANDLE && INSTAGRAM_HANDLE.trim()
+    ? INSTAGRAM_HANDLE.trim()
+    : "@yourhandle";
+
+  if (businessEmailText) {
+    businessEmailText.textContent = emailText;
   }
-  if (instagramHandleInput) {
-    instagramHandleInput.value = INSTAGRAM_HANDLE;
+
+  if (businessEmailLink) {
+    businessEmailLink.href = CONTACT_EMAIL && CONTACT_EMAIL.trim()
+      ? `mailto:${CONTACT_EMAIL.trim()}`
+      : "mailto:";
+  }
+
+  if (businessInstagramText) {
+    businessInstagramText.textContent = igText;
+  }
+
+  if (businessInstagramLink) {
+    const cleanHandle = igText.replace(/^@/, "").trim();
+    businessInstagramLink.href = cleanHandle && cleanHandle !== "yourhandle"
+      ? `https://instagram.com/${cleanHandle}`
+      : "#";
   }
 }
 
