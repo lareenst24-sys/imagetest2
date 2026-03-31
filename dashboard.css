@@ -7,30 +7,20 @@
 
 :root {
   --bg: #05050b;
-  --bg-2: #0a0912;
   --card: rgba(16, 16, 27, 0.82);
-  --card-strong: rgba(23, 23, 37, 0.94);
   --card-dark: #0b0b14;
   --text: #f7f5ff;
   --muted: #a6a7bc;
-  --muted-2: #8587a1;
   --purple: #8b3dff;
   --purple-2: #b06cff;
-  --purple-3: #6d28ff;
   --cyan: #69d8ff;
   --danger: #ff4d6d;
   --success: #64f0a5;
-  --warning: #ffd56a;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
-  --glow: rgba(139, 61, 255, 0.2);
   --shadow:
     0 18px 50px rgba(0, 0, 0, 0.45),
     0 0 36px rgba(139, 61, 255, 0.12);
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
@@ -96,7 +86,6 @@ body {
   padding: 24px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
 }
 
 .topbar {
@@ -194,7 +183,8 @@ body {
 .primary-btn,
 .secondary-btn,
 .btn-primary,
-.btn-danger {
+.btn-danger,
+.mobile-upload-btn {
   border: none;
   border-radius: 18px;
   font-weight: 700;
@@ -204,7 +194,8 @@ body {
 
 .profile-btn,
 .primary-btn,
-.btn-primary {
+.btn-primary,
+.mobile-upload-btn {
   background: linear-gradient(135deg, var(--purple), var(--purple-2));
   color: #ffffff;
   box-shadow: 0 12px 28px rgba(139, 61, 255, 0.26);
@@ -225,7 +216,8 @@ body {
 .primary-btn:hover,
 .secondary-btn:hover,
 .btn-primary:hover,
-.btn-danger:hover {
+.btn-danger:hover,
+.mobile-upload-btn:hover {
   opacity: 0.98;
   transform: translateY(-2px) scale(1.01);
 }
@@ -436,6 +428,31 @@ body {
   font-size: 1rem;
 }
 
+.glow-btn {
+  position: relative;
+  overflow: hidden;
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(140, 82, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(140, 82, 255, 0.95);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(140, 82, 255, 0.4);
+  }
+}
+
+.earn-hint {
+  margin-top: 10px;
+  font-size: 0.86rem;
+  color: var(--muted);
+  text-align: center;
+}
+
 .action-tip-box {
   margin-top: 16px;
   display: flex;
@@ -514,19 +531,26 @@ body {
   font-size: 1rem;
 }
 
-.earnings-display {
+.earnings-display,
+.pulse-info-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 20px;
 }
 
-.earn-box {
+.pulse-info-row {
+  grid-template-columns: 1fr 1fr;
+  margin-top: -4px;
+}
+
+.earn-box,
+.pulse-info-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 24px;
   padding: 20px;
-  min-height: 128px;
+  min-height: 118px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -538,14 +562,16 @@ body {
     linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
 }
 
-.earn-box span {
+.earn-box span,
+.pulse-info-label {
   display: block;
   color: var(--muted);
   font-size: 14px;
   margin-bottom: 10px;
 }
 
-.earn-box strong {
+.earn-box strong,
+.pulse-info-card strong {
   font-size: 1.9rem;
   font-weight: 800;
   color: #ffffff;
@@ -588,7 +614,8 @@ body {
 
 .switch-option,
 .payout-action-card,
-.earnings-message-card {
+.earnings-message-card,
+.legal-link-card {
   padding: 18px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.03);
@@ -663,12 +690,6 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.03) inset,
     0 0 40px rgba(139, 61, 255, 0.18),
     0 24px 80px rgba(0, 0, 0, 0.45);
-}
-
-.profile-close,
-.modal-close {
-  display: grid;
-  place-items: center;
 }
 
 .profile-close {
@@ -777,16 +798,31 @@ body {
   font-size: 15px;
 }
 
-.legal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.small-note {
+  font-size: 0.88rem;
+  margin-top: 4px;
 }
 
-.legal-content p {
-  color: var(--muted);
-  line-height: 1.6;
-  font-size: 0.95rem;
+.legal-link-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.legal-link-card {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 68px;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.legal-link-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(176, 108, 255, 0.45);
 }
 
 .danger-text {
@@ -874,6 +910,17 @@ body {
   margin-top: 12px;
 }
 
+.mobile-upload-btn {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92%, 420px);
+  min-height: 56px;
+  z-index: 2500;
+  display: none;
+}
+
 .hidden {
   display: none !important;
 }
@@ -883,7 +930,8 @@ body {
   .top-grid,
   .earnings-display,
   .switch-option-row,
-  .payout-action-row {
+  .payout-action-row,
+  .pulse-info-row {
     grid-template-columns: 1fr;
   }
 
@@ -900,7 +948,7 @@ body {
 
 @media (max-width: 760px) {
   body {
-    padding: 14px;
+    padding: 14px 14px 88px;
   }
 
   .topbar,
@@ -935,12 +983,14 @@ body {
   .upload-stat-tile,
   .switch-option,
   .payout-action-card,
-  .earn-box {
+  .earn-box,
+  .pulse-info-card {
     border-radius: 20px;
   }
 
   .upload-stats.two-col,
-  .hero-stats {
+  .hero-stats,
+  .legal-link-grid {
     grid-template-columns: 1fr;
   }
 
@@ -952,6 +1002,10 @@ body {
 
   .profile-header h2 {
     font-size: 34px;
+  }
+
+  .mobile-upload-btn {
+    display: block;
   }
 }
 
@@ -975,7 +1029,8 @@ body {
   .progress-head strong,
   .upload-stat-tile strong,
   .hero-mini-card strong,
-  .earn-box strong {
+  .earn-box strong,
+  .pulse-info-card strong {
     font-size: 1.45rem;
   }
 
@@ -983,7 +1038,8 @@ body {
   .primary-btn,
   .secondary-btn,
   .btn-primary,
-  .btn-danger {
+  .btn-danger,
+  .mobile-upload-btn {
     min-height: 52px;
   }
 
