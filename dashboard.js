@@ -1,6 +1,5 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-
 const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 250;
 const AD_BONUS_LIMIT = 25;
@@ -205,8 +204,8 @@ async function updateUploadStatsUI() {
   const todayCount = await getTodayUploadCount();
   const monthCount = await getMonthUploadCount();
 
-  todayUploadCountEl.textContent = todayCount;
-  monthUploadCountEl.textContent = monthCount;
+  if (todayUploadCountEl) todayUploadCountEl.textContent = todayCount;
+  if (monthUploadCountEl) monthUploadCountEl.textContent = monthCount;
 }
 
 function getCurrentDailyLimit() {
@@ -214,12 +213,12 @@ function getCurrentDailyLimit() {
 }
 
 function openLimitModal() {
-  limitStatusText.textContent = "";
-  limitModal.classList.remove("hidden");
+  if (limitStatusText) limitStatusText.textContent = "";
+  if (limitModal) limitModal.classList.remove("hidden");
 }
 
 function closeLimitModal() {
-  limitModal.classList.add("hidden");
+  if (limitModal) limitModal.classList.add("hidden");
 }
 
 async function ensureProfile() {
@@ -250,19 +249,22 @@ async function ensureProfile() {
       return;
     }
 
-    profileNameInput.value = "";
+    if (profileNameInput) profileNameInput.value = "";
     currentCurrency = "USD";
-    currencySelect.value = "USD";
-    currencyProfileSelect.value = "USD";
-    dashboardUserName.textContent = "Creator";
+    if (currencySelect) currencySelect.value = "USD";
+    if (currencyProfileSelect) currencyProfileSelect.value = "USD";
+    if (dashboardUserName) dashboardUserName.textContent = "Creator";
     return;
   }
 
-  profileNameInput.value = existing.name || "";
+  if (profileNameInput) profileNameInput.value = existing.name || "";
   currentCurrency = existing.currency || "USD";
-  currencySelect.value = currentCurrency;
-  currencyProfileSelect.value = currentCurrency;
-  dashboardUserName.textContent = existing.name && existing.name.trim() ? existing.name.trim() : "Creator";
+  if (currencySelect) currencySelect.value = currentCurrency;
+  if (currencyProfileSelect) currencyProfileSelect.value = currentCurrency;
+  if (dashboardUserName) {
+    dashboardUserName.textContent =
+      existing.name && existing.name.trim() ? existing.name.trim() : "Creator";
+  }
 }
 
 async function saveProfileFields() {
@@ -272,16 +274,21 @@ async function saveProfileFields() {
     .from("profiles")
     .update({
       email: currentUser.email,
-      name: profileNameInput.value.trim(),
-      currency: currencySelect.value
+      name: profileNameInput ? profileNameInput.value.trim() : "",
+      currency: currencySelect ? currencySelect.value : currentCurrency
     })
     .eq("id", currentUser.id);
 
   if (error) {
     console.error("Save profile error:", error);
   } else {
-    currentCurrency = currencySelect.value;
-    dashboardUserName.textContent = profileNameInput.value.trim() || "Creator";
+    currentCurrency = currencySelect ? currencySelect.value : currentCurrency;
+    if (dashboardUserName) {
+      dashboardUserName.textContent =
+        profileNameInput && profileNameInput.value.trim()
+          ? profileNameInput.value.trim()
+          : "Creator";
+    }
     await loadEarnings();
   }
 }
@@ -321,7 +328,7 @@ async function ensureBasicSettings() {
       return;
     }
 
-    countryInput.value = "";
+    if (countryInput) countryInput.value = "";
     updatePayoutAccessUI({
       payout_access_message:
         "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later."
@@ -329,7 +336,7 @@ async function ensureBasicSettings() {
     return;
   }
 
-  countryInput.value = existing.country || "";
+  if (countryInput) countryInput.value = existing.country || "";
   updatePayoutAccessUI(existing);
 }
 
@@ -338,9 +345,15 @@ function updatePayoutAccessUI(data) {
     data?.payout_access_message ||
     "You are currently receiving gift card payouts. After you complete the required time period or sales target, you may become eligible for additional payout options later.";
 
-  payoutAccessMessage.textContent = accessMessage;
-  currentPayoutRoute.textContent = currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card";
-  bankTransferStatus.textContent = bankTransferMode === "switch" ? "Available" : "Blocked";
+  if (payoutAccessMessage) payoutAccessMessage.textContent = accessMessage;
+  if (currentPayoutRoute) {
+    currentPayoutRoute.textContent =
+      currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card";
+  }
+  if (bankTransferStatus) {
+    bankTransferStatus.textContent =
+      bankTransferMode === "switch" ? "Available" : "Blocked";
+  }
 
   updatePayoutButtons();
 }
@@ -351,7 +364,7 @@ async function saveBasicSettings() {
   const { error } = await supabaseClient
     .from("payout_methods")
     .update({
-      country: countryInput.value.trim(),
+      country: countryInput ? countryInput.value.trim() : "",
       updated_at: new Date().toISOString()
     })
     .eq("user_id", currentUser.id);
@@ -376,9 +389,9 @@ async function loadEarnings() {
 
   if (error) {
     console.error("Earnings load error:", error);
-    totalEarnedValue.textContent = money(0);
-    pendingEarnedValue.textContent = money(0);
-    paidEarnedValue.textContent = money(0);
+    if (totalEarnedValue) totalEarnedValue.textContent = money(0);
+    if (pendingEarnedValue) pendingEarnedValue.textContent = money(0);
+    if (paidEarnedValue) paidEarnedValue.textContent = money(0);
     return;
   }
 
@@ -397,9 +410,9 @@ async function loadEarnings() {
     }
   });
 
-  totalEarnedValue.textContent = money(total);
-  pendingEarnedValue.textContent = money(pending);
-  paidEarnedValue.textContent = money(fulfilled);
+  if (totalEarnedValue) totalEarnedValue.textContent = money(total);
+  if (pendingEarnedValue) pendingEarnedValue.textContent = money(pending);
+  if (paidEarnedValue) paidEarnedValue.textContent = money(fulfilled);
 }
 
 async function deleteAccountData() {
@@ -411,8 +424,10 @@ async function deleteAccountData() {
 
   if (!confirmed) return;
 
-  deleteAccountBtn.disabled = true;
-  deleteAccountBtn.textContent = "Deleting...";
+  if (deleteAccountBtn) {
+    deleteAccountBtn.disabled = true;
+    deleteAccountBtn.textContent = "Deleting...";
+  }
 
   try {
     const { error: deleteImagesError } = await supabaseClient
@@ -448,47 +463,74 @@ async function deleteAccountData() {
   } catch (error) {
     console.error("Delete account data error:", error);
     alert("Could not delete account data.");
-    deleteAccountBtn.disabled = false;
-    deleteAccountBtn.textContent = "Delete Account Data";
+    if (deleteAccountBtn) {
+      deleteAccountBtn.disabled = false;
+      deleteAccountBtn.textContent = "Delete Account Data";
+    }
   }
 }
 
 async function requireLogin() {
-  const { data, error } = await supabaseClient.auth.getUser();
+  try {
+    const { data, error } = await supabaseClient.auth.getUser();
 
-  if (error || !data.user) {
-    window.location.href = "index.html";
-    return;
+    if (error || !data.user) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    currentUser = data.user;
+    if (profileEmail) profileEmail.textContent = currentUser.email;
+
+    loadTodayExtraLimit();
+
+    try {
+      await ensureProfile();
+    } catch (e) {
+      console.error("ensureProfile failed:", e);
+    }
+
+    try {
+      await ensureBasicSettings();
+    } catch (e) {
+      console.error("ensureBasicSettings failed:", e);
+    }
+
+    try {
+      await loadEarnings();
+    } catch (e) {
+      console.error("loadEarnings failed:", e);
+    }
+
+    try {
+      await updateUploadStatsUI();
+    } catch (e) {
+      console.error("updateUploadStatsUI failed:", e);
+    }
+
+    renderEarningsMessages();
+    updatePayoutButtons();
+  } catch (err) {
+    console.error("requireLogin failed:", err);
+    renderEarningsMessages();
+    updatePayoutButtons();
   }
-
-  currentUser = data.user;
-  profileEmail.textContent = currentUser.email;
-
-  loadTodayExtraLimit();
-
-  await ensureProfile();
-  await ensureBasicSettings();
-  await loadEarnings();
-  await updateUploadStatsUI();
-
-  renderEarningsMessages();
-  updatePayoutButtons();
 }
 
 function resetUploadModal() {
   selectedFile = null;
-  imageInput.value = "";
-  previewImage.src = "";
-  previewWrap.classList.add("hidden");
+  if (imageInput) imageInput.value = "";
+  if (previewImage) previewImage.src = "";
+  if (previewWrap) previewWrap.classList.add("hidden");
 }
 
 function openUploadModal() {
   resetUploadModal();
-  uploadModal.classList.remove("hidden");
+  if (uploadModal) uploadModal.classList.remove("hidden");
 }
 
 function closeUploadModal() {
-  uploadModal.classList.add("hidden");
+  if (uploadModal) uploadModal.classList.add("hidden");
   resetUploadModal();
 }
 
@@ -511,16 +553,17 @@ async function uploadSelectedImage() {
     return;
   }
 
-  confirmUploadBtn.textContent = "Uploading...";
-  confirmUploadBtn.disabled = true;
+  if (confirmUploadBtn) {
+    confirmUploadBtn.textContent = "Uploading...";
+    confirmUploadBtn.disabled = true;
+  }
 
   try {
     const fileExt = selectedFile.name.split(".").pop();
     const cleanExt = fileExt ? fileExt.toLowerCase() : "jpg";
     const filePath = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${cleanExt}`;
 
-    const { error: uploadError } = await supabaseClient
-      .storage
+    const { error: uploadError } = await supabaseClient.storage
       .from(BUCKET_NAME)
       .upload(filePath, selectedFile, {
         cacheControl: "3600",
@@ -533,8 +576,7 @@ async function uploadSelectedImage() {
       throw uploadError;
     }
 
-    const { data: publicData } = supabaseClient
-      .storage
+    const { data: publicData } = supabaseClient.storage
       .from(BUCKET_NAME)
       .getPublicUrl(filePath);
 
@@ -552,8 +594,7 @@ async function uploadSelectedImage() {
       throw insertError;
     }
 
-    const { error: deleteStorageError } = await supabaseClient
-      .storage
+    const { error: deleteStorageError } = await supabaseClient.storage
       .from(BUCKET_NAME)
       .remove([filePath]);
 
@@ -567,46 +608,64 @@ async function uploadSelectedImage() {
   } catch (err) {
     console.error("Upload error:", err);
   } finally {
-    confirmUploadBtn.textContent = "Confirm Upload";
-    confirmUploadBtn.disabled = false;
+    if (confirmUploadBtn) {
+      confirmUploadBtn.textContent = "Confirm Upload";
+      confirmUploadBtn.disabled = false;
+    }
   }
 }
 
 async function simulateWatchAdAndIncreaseLimit() {
-  watchAdBtn.disabled = true;
-  watchAdBtn.textContent = "Processing...";
-  limitStatusText.textContent = "Ad completed. Daily limit increased for today.";
+  if (watchAdBtn) {
+    watchAdBtn.disabled = true;
+    watchAdBtn.textContent = "Processing...";
+  }
+  if (limitStatusText) {
+    limitStatusText.textContent = "Ad completed. Daily limit increased for today.";
+  }
 
   todayExtraLimit += AD_BONUS_LIMIT;
   saveTodayExtraLimit();
 
   setTimeout(() => {
-    watchAdBtn.disabled = false;
-    watchAdBtn.textContent = "Watch Ad to Increase Limit";
+    if (watchAdBtn) {
+      watchAdBtn.disabled = false;
+      watchAdBtn.textContent = "Watch Ad to Increase Limit";
+    }
     closeLimitModal();
   }, 1200);
 }
 
-profileBtn.addEventListener("click", function () {
-  profileModal.classList.remove("hidden");
-});
+if (profileBtn) {
+  profileBtn.addEventListener("click", function () {
+    if (profileModal) profileModal.classList.remove("hidden");
+  });
+}
 
-closeProfileBtn.addEventListener("click", function () {
-  profileModal.classList.add("hidden");
-});
+if (closeProfileBtn) {
+  closeProfileBtn.addEventListener("click", function () {
+    if (profileModal) profileModal.classList.add("hidden");
+  });
+}
 
-profileModal.addEventListener("click", function (e) {
-  if (e.target === profileModal) {
-    profileModal.classList.add("hidden");
-  }
-});
+if (profileModal) {
+  profileModal.addEventListener("click", function (e) {
+    if (e.target === profileModal) {
+      profileModal.classList.add("hidden");
+    }
+  });
+}
 
-logoutBtn.addEventListener("click", async function () {
-  await supabaseClient.auth.signOut();
-  window.location.href = "index.html";
-});
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async function () {
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  });
+}
 
-deleteAccountBtn.addEventListener("click", deleteAccountData);
+if (deleteAccountBtn) {
+  deleteAccountBtn.addEventListener("click", deleteAccountData);
+}
 
 if (claimGiftCardBtn) {
   claimGiftCardBtn.addEventListener("click", function () {
@@ -621,59 +680,84 @@ if (bankTransferActionBtn) {
 
     currentPayoutMode = currentPayoutMode === "giftcard" ? "bank" : "giftcard";
     updatePayoutAccessUI({});
-    alert("Payout route switched to " + (currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card") + ".");
+    alert(
+      "Payout route switched to " +
+        (currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card") +
+        "."
+    );
   });
 }
 
-openUploadBtn.addEventListener("click", openUploadModal);
-closeUploadBtn.addEventListener("click", closeUploadModal);
+if (openUploadBtn) openUploadBtn.addEventListener("click", openUploadModal);
+if (closeUploadBtn) closeUploadBtn.addEventListener("click", closeUploadModal);
 
-uploadModal.addEventListener("click", function (e) {
-  if (e.target === uploadModal) {
-    closeUploadModal();
-  }
-});
+if (uploadModal) {
+  uploadModal.addEventListener("click", function (e) {
+    if (e.target === uploadModal) {
+      closeUploadModal();
+    }
+  });
+}
 
-chooseFileBtn.addEventListener("click", function () {
-  imageInput.click();
-});
+if (chooseFileBtn) {
+  chooseFileBtn.addEventListener("click", function () {
+    if (imageInput) imageInput.click();
+  });
+}
 
-imageInput.addEventListener("change", function () {
-  const file = imageInput.files[0];
-  if (!file) return;
+if (imageInput) {
+  imageInput.addEventListener("change", function () {
+    const file = imageInput.files[0];
+    if (!file) return;
 
-  selectedFile = file;
-  previewImage.src = URL.createObjectURL(file);
-  previewWrap.classList.remove("hidden");
-});
+    selectedFile = file;
+    if (previewImage) previewImage.src = URL.createObjectURL(file);
+    if (previewWrap) previewWrap.classList.remove("hidden");
+  });
+}
 
-profileNameInput.addEventListener("input", scheduleProfileSave);
-countryInput.addEventListener("input", scheduleSettingsSave);
+if (profileNameInput) profileNameInput.addEventListener("input", scheduleProfileSave);
+if (countryInput) countryInput.addEventListener("input", scheduleSettingsSave);
 
-currencySelect.addEventListener("change", function () {
-  currentCurrency = currencySelect.value;
-  currencyProfileSelect.value = currencySelect.value;
-  scheduleProfileSave();
-  loadEarnings();
-});
+if (currencySelect) {
+  currencySelect.addEventListener("change", function () {
+    currentCurrency = currencySelect.value;
+    if (currencyProfileSelect) currencyProfileSelect.value = currencySelect.value;
+    scheduleProfileSave();
+    loadEarnings();
+  });
+}
 
-currencyProfileSelect.addEventListener("change", function () {
-  currentCurrency = currencyProfileSelect.value;
-  currencySelect.value = currencyProfileSelect.value;
-  scheduleProfileSave();
-  loadEarnings();
-});
+if (currencyProfileSelect) {
+  currencyProfileSelect.addEventListener("change", function () {
+    currentCurrency = currencyProfileSelect.value;
+    if (currencySelect) currencySelect.value = currencyProfileSelect.value;
+    scheduleProfileSave();
+    loadEarnings();
+  });
+}
 
-closeLimitBtn.addEventListener("click", closeLimitModal);
+if (closeLimitBtn) closeLimitBtn.addEventListener("click", closeLimitModal);
 
-limitModal.addEventListener("click", function (e) {
-  if (e.target === limitModal) {
-    closeLimitModal();
-  }
-});
+if (limitModal) {
+  limitModal.addEventListener("click", function (e) {
+    if (e.target === limitModal) {
+      closeLimitModal();
+    }
+  });
+}
 
-watchAdBtn.addEventListener("click", simulateWatchAdAndIncreaseLimit);
+if (watchAdBtn) {
+  watchAdBtn.addEventListener("click", simulateWatchAdAndIncreaseLimit);
+}
 
-confirmUploadBtn.addEventListener("click", uploadSelectedImage);
+if (confirmUploadBtn) {
+  confirmUploadBtn.addEventListener("click", uploadSelectedImage);
+}
 
 requireLogin();
+
+// backup render so Important Message still shows even if dashboard init is slow
+setTimeout(() => {
+  renderEarningsMessages();
+}, 300);
