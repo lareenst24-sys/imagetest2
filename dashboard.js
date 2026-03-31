@@ -4,6 +4,9 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 25;
 
+const CONTACT_EMAIL = "";
+const INSTAGRAM_HANDLE = "";
+
 const EARNINGS_MESSAGES = [
   "The amount displayed is not final, as additional amounts may be added based on the assessment of the images.",
   "We will email you when you are eligible for bank transfer."
@@ -24,6 +27,8 @@ const dashboardUserName = document.getElementById("dashboardUserName");
 
 const profileNameInput = document.getElementById("profileName");
 const countryInput = document.getElementById("profileCountry");
+const contactEmailInput = document.getElementById("contactEmailInput");
+const instagramHandleInput = document.getElementById("instagramHandleInput");
 
 const currencySelect = document.getElementById("currencySelect");
 const currencyProfileSelect = document.getElementById("currencyProfileSelect");
@@ -62,6 +67,9 @@ const uploadProgressText = document.getElementById("uploadProgressText");
 const uploadProgressNote = document.getElementById("uploadProgressNote");
 const uploadStatusBadge = document.getElementById("uploadStatusBadge");
 const dailyLimitValue = document.getElementById("dailyLimitValue");
+const liveEarningStatus = document.getElementById("liveEarningStatus");
+const rewardEnergyText = document.getElementById("rewardEnergyText");
+const mobileUploadBtn = document.getElementById("mobileUploadBtn");
 
 let currentUser = null;
 let selectedFile = null;
@@ -69,6 +77,7 @@ let currentCurrency = "USD";
 let todayExtraLimit = 0;
 let profileSaveTimer = null;
 let settingsSaveTimer = null;
+let activityPulseTimer = null;
 
 function currencySymbol(code) {
   const map = {
@@ -82,6 +91,28 @@ function currencySymbol(code) {
 
 function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
+}
+
+function animateValue(element, finalValue) {
+  if (!element) return;
+  const target = Number(finalValue || 0);
+  const startTime = performance.now();
+  const duration = 700;
+
+  function tick(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = target * eased;
+    element.textContent = money(value);
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      element.textContent = money(target);
+    }
+  }
+
+  requestAnimationFrame(tick);
 }
 
 function renderEarningsMessages() {
@@ -223,26 +254,33 @@ function updateProgressUI(todayCount, monthCount) {
 
   let badgeText = "Starting";
   let noteText = "You’re just getting started today.";
+  let energyText = "Low";
 
   if (todayCount === 0) {
     badgeText = "New Day";
     noteText = "Start your first upload and begin building today’s progress.";
+    energyText = "Low";
   } else if (percent < 30) {
     badgeText = "Growing";
     noteText = "Nice start. Keep uploading to build momentum.";
+    energyText = "Warming";
   } else if (percent < 70) {
     badgeText = "Active";
     noteText = "Strong progress today. You’re building steady activity.";
+    energyText = "Medium";
   } else if (percent < 100) {
     badgeText = "Hot";
     noteText = "You’re close to today’s limit. Keep going.";
+    energyText = "High";
   } else {
     badgeText = "Limit Reached";
     noteText = "You hit today’s cap. Watch an ad to unlock more uploads.";
+    energyText = "Max";
   }
 
   if (uploadStatusBadge) uploadStatusBadge.textContent = badgeText;
   if (uploadProgressNote) uploadProgressNote.textContent = noteText;
+  if (rewardEnergyText) rewardEnergyText.textContent = energyText;
 }
 
 async function updateUploadStatsUI() {
@@ -251,6 +289,24 @@ async function updateUploadStatsUI() {
   const todayCount = await getTodayUploadCount();
   const monthCount = await getMonthUploadCount();
   updateProgressUI(todayCount, monthCount);
+}
+
+function startLiveActivityPulse() {
+  if (activityPulseTimer) clearInterval(activityPulseTimer);
+
+  const states = ["Updating", "Tracking", "Active", "Live"];
+  let i = 0;
+
+  if (liveEarningStatus) {
+    liveEarningStatus.textContent = states[0];
+  }
+
+  activityPulseTimer = setInterval(() => {
+    i = (i + 1) % states.length;
+    if (liveEarningStatus) {
+      liveEarningStatus.textContent = states[i];
+    }
+  }, 1800);
 }
 
 function openLimitModal() {
@@ -406,6 +462,15 @@ function scheduleSettingsSave() {
   settingsSaveTimer = setTimeout(saveBasicSettings, 500);
 }
 
+function loadContactPlaceholders() {
+  if (contactEmailInput) {
+    contactEmailInput.value = CONTACT_EMAIL;
+  }
+  if (instagramHandleInput) {
+    instagramHandleInput.value = INSTAGRAM_HANDLE;
+  }
+}
+
 async function loadEarnings() {
   if (!currentUser) return;
 
@@ -437,9 +502,9 @@ async function loadEarnings() {
     }
   });
 
-  totalEarnedValue.textContent = money(total);
-  pendingEarnedValue.textContent = money(pending);
-  paidEarnedValue.textContent = money(fulfilled);
+  animateValue(totalEarnedValue, total);
+  animateValue(pendingEarnedValue, pending);
+  animateValue(paidEarnedValue, fulfilled);
 }
 
 async function deleteAccountData() {
@@ -505,6 +570,8 @@ async function requireLogin() {
   profileEmail.textContent = currentUser.email;
 
   loadTodayExtraLimit();
+  loadContactPlaceholders();
+  startLiveActivityPulse();
 
   await ensureProfile();
   await ensureBasicSettings();
@@ -603,6 +670,7 @@ async function uploadSelectedImage() {
 
     closeUploadModal();
     await updateUploadStatsUI();
+    await loadEarnings();
     alert("Image uploaded successfully.");
   } catch (err) {
     console.error("Upload error:", err);
@@ -671,6 +739,11 @@ if (bankTransferActionBtn) {
 }
 
 openUploadBtn.addEventListener("click", openUploadModal);
+
+if (mobileUploadBtn) {
+  mobileUploadBtn.addEventListener("click", openUploadModal);
+}
+
 closeUploadBtn.addEventListener("click", closeUploadModal);
 
 uploadModal.addEventListener("click", function (e) {
