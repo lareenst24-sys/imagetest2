@@ -30,6 +30,7 @@
             <strong id="monthUploadCount">0</strong>
           </div>
         </div>
+        <p class="muted-text">Daily uploads reset every day</p>
       </div>
 
       <div class="glass-card upload-card">
@@ -236,29 +237,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
-    const SUPABASE_URL = "https://rgunoayzvtibhhzwlxtk.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function protectDashboard() {
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if (error || !data.session) {
-          window.location.href = "index.html";
-          return;
-        }
-      } catch (err) {
-        console.error("Dashboard session check failed:", err);
-        window.location.href = "index.html";
-      }
-    }
-
-    protectDashboard();
-  </script>
-
   <script src="dashboard.js"></script>
 </body>
 </html>
