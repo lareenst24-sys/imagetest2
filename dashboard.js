@@ -1,6 +1,5 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-
 const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 250;
 const AD_BONUS_LIMIT = 25;
@@ -30,6 +29,7 @@ const currencySelect = document.getElementById("currencySelect");
 const currencyProfileSelect = document.getElementById("currencyProfileSelect");
 
 const todayUploadCountEl = document.getElementById("todayUploadCount");
+const todayUploadCountMirror = document.getElementById("todayUploadCountMirror");
 const monthUploadCountEl = document.getElementById("monthUploadCount");
 
 const totalEarnedValue = document.getElementById("totalEarnedValue");
@@ -56,6 +56,12 @@ const limitModal = document.getElementById("limitModal");
 const closeLimitBtn = document.getElementById("closeLimitBtn");
 const watchAdBtn = document.getElementById("watchAdBtn");
 const limitStatusText = document.getElementById("limitStatusText");
+
+const uploadProgressBar = document.getElementById("uploadProgressBar");
+const uploadProgressText = document.getElementById("uploadProgressText");
+const uploadProgressNote = document.getElementById("uploadProgressNote");
+const uploadStatusBadge = document.getElementById("uploadStatusBadge");
+const dailyLimitValue = document.getElementById("dailyLimitValue");
 
 let currentUser = null;
 let selectedFile = null;
@@ -199,18 +205,52 @@ async function getMonthUploadCount() {
   return count || 0;
 }
 
+function getCurrentDailyLimit() {
+  return DAILY_LIMIT + todayExtraLimit;
+}
+
+function updateProgressUI(todayCount, monthCount) {
+  const currentLimit = getCurrentDailyLimit();
+  const safeLimit = currentLimit > 0 ? currentLimit : DAILY_LIMIT;
+  const percent = Math.min((todayCount / safeLimit) * 100, 100);
+
+  if (todayUploadCountEl) todayUploadCountEl.textContent = todayCount;
+  if (todayUploadCountMirror) todayUploadCountMirror.textContent = todayCount;
+  if (monthUploadCountEl) monthUploadCountEl.textContent = monthCount;
+  if (dailyLimitValue) dailyLimitValue.textContent = safeLimit;
+  if (uploadProgressText) uploadProgressText.textContent = `${todayCount} / ${safeLimit}`;
+  if (uploadProgressBar) uploadProgressBar.style.width = `${percent}%`;
+
+  let badgeText = "Starting";
+  let noteText = "You’re just getting started today.";
+
+  if (todayCount === 0) {
+    badgeText = "New Day";
+    noteText = "Start your first upload and begin building today’s progress.";
+  } else if (percent < 30) {
+    badgeText = "Growing";
+    noteText = "Nice start. Keep uploading to build momentum.";
+  } else if (percent < 70) {
+    badgeText = "Active";
+    noteText = "Strong progress today. You’re building steady activity.";
+  } else if (percent < 100) {
+    badgeText = "Hot";
+    noteText = "You’re close to today’s limit. Keep going.";
+  } else {
+    badgeText = "Limit Reached";
+    noteText = "You hit today’s cap. Watch an ad to unlock more uploads.";
+  }
+
+  if (uploadStatusBadge) uploadStatusBadge.textContent = badgeText;
+  if (uploadProgressNote) uploadProgressNote.textContent = noteText;
+}
+
 async function updateUploadStatsUI() {
   if (!currentUser) return;
 
   const todayCount = await getTodayUploadCount();
   const monthCount = await getMonthUploadCount();
-
-  todayUploadCountEl.textContent = todayCount;
-  monthUploadCountEl.textContent = monthCount;
-}
-
-function getCurrentDailyLimit() {
-  return DAILY_LIMIT + todayExtraLimit;
+  updateProgressUI(todayCount, monthCount);
 }
 
 function openLimitModal() {
@@ -579,6 +619,7 @@ async function simulateWatchAdAndIncreaseLimit() {
 
   todayExtraLimit += AD_BONUS_LIMIT;
   saveTodayExtraLimit();
+  await updateUploadStatsUI();
 
   setTimeout(() => {
     watchAdBtn.disabled = false;
@@ -621,7 +662,11 @@ if (bankTransferActionBtn) {
 
     currentPayoutMode = currentPayoutMode === "giftcard" ? "bank" : "giftcard";
     updatePayoutAccessUI({});
-    alert("Payout route switched to " + (currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card") + ".");
+    alert(
+      "Payout route switched to " +
+      (currentPayoutMode === "bank" ? "Bank Transfer" : "Gift Card") +
+      "."
+    );
   });
 }
 
