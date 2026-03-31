@@ -9,11 +9,48 @@ const registerFormBox = document.getElementById("register-form");
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+
+function createMessageBox(formElement) {
+  let box = formElement.querySelector(".message-box");
+
+  if (!box) {
+    box = document.createElement("div");
+    box.className = "message-box";
+    formElement.insertBefore(box, formElement.children[1]);
+  }
+
+  return box;
+}
+
+function showMessage(formElement, text, type = "success") {
+  const box = createMessageBox(formElement);
+  box.textContent = text;
+  box.className = `message-box show ${type}`;
+}
+
+function clearMessage(formElement) {
+  const box = formElement.querySelector(".message-box");
+  if (box) {
+    box.className = "message-box";
+    box.textContent = "";
+  }
+}
+
+function goToDashboard() {
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 600);
+}
+
 if (showRegister && loginFormBox && registerFormBox) {
   showRegister.addEventListener("click", function (e) {
     e.preventDefault();
     loginFormBox.style.display = "none";
     registerFormBox.style.display = "block";
+    if (loginForm) clearMessage(loginForm);
   });
 }
 
@@ -22,6 +59,7 @@ if (showLogin && loginFormBox && registerFormBox) {
     e.preventDefault();
     registerFormBox.style.display = "none";
     loginFormBox.style.display = "block";
+    if (registerForm) clearMessage(registerForm);
   });
 }
 
@@ -30,12 +68,19 @@ async function checkSession() {
     const { data, error } = await supabaseClient.auth.getSession();
 
     if (error) {
-      console.error("Session check error:", error);
+      console.error("Session check error:", error.message);
       return;
     }
 
-    if (data.session && window.location.pathname.includes("index")) {
-      window.location.href = "dashboard.html";
+    if (data.session) {
+      const onAuthPage =
+        window.location.pathname.endsWith("/") ||
+        window.location.pathname.endsWith("index.html") ||
+        window.location.pathname.includes("index");
+
+      if (onAuthPage) {
+        window.location.href = "dashboard.html";
+      }
     }
   } catch (err) {
     console.error("Session check failed:", err);
@@ -44,57 +89,21 @@ async function checkSession() {
 
 checkSession();
 
-function showWelcomePopup() {
-  const alreadyShown = sessionStorage.getItem("welcomePopupShown");
-  if (alreadyShown) return;
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  const onAuthPage =
+    window.location.pathname.endsWith("/") ||
+    window.location.pathname.endsWith("index.html") ||
+    window.location.pathname.includes("index");
 
-  sessionStorage.setItem("welcomePopupShown", "true");
-
-  const popup = document.createElement("div");
-  popup.className = "popup-overlay";
-  popup.innerHTML = `
-    <div class="popup-box">
-      <button class="popup-close" id="closePopup">&times;</button>
-      <h2>Welcome!</h2>
-      <p>Your account was created successfully.</p>
-      <video controls autoplay muted class="popup-video">
-        <source src="welcome.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <button class="popup-btn" id="popupOkBtn">Continue</button>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-
-  const closePopup = document.getElementById("closePopup");
-  const popupOkBtn = document.getElementById("popupOkBtn");
-
-  if (closePopup) {
-    closePopup.addEventListener("click", function () {
-      popup.remove();
-      if (registerFormBox && loginFormBox) {
-        registerFormBox.style.display = "none";
-        loginFormBox.style.display = "block";
-      }
-    });
+  if (session && onAuthPage) {
+    window.location.href = "dashboard.html";
   }
+});
 
-  if (popupOkBtn) {
-    popupOkBtn.addEventListener("click", function () {
-      popup.remove();
-      if (registerFormBox && loginFormBox) {
-        registerFormBox.style.display = "none";
-        loginFormBox.style.display = "block";
-      }
-    });
-  }
-}
-
-const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    clearMessage(registerForm);
 
     const nameEl = document.getElementById("registerName");
     const emailEl = document.getElementById("registerEmail");
@@ -105,8 +114,8 @@ if (registerForm) {
     const email = emailEl ? emailEl.value.trim() : "";
     const password = passwordEl ? passwordEl.value.trim() : "";
 
-    if (!email || !password) {
-      alert("Please fill all required fields");
+    if (!name || !email || !password) {
+      showMessage(registerForm, "Please fill all fields.", "error");
       return;
     }
 
@@ -129,15 +138,30 @@ if (registerForm) {
       });
 
       if (error) {
-        alert("Register error: " + error.message);
+        showMessage(registerForm, "Register error: " + error.message, "error");
         return;
       }
 
-      showWelcomePopup();
+      if (data.session) {
+        goToDashboard();
+        return;
+      }
+
+      showMessage(
+        registerForm,
+        "Account created. Check your email if email confirmation is enabled, then log in.",
+        "success"
+      );
+
       registerForm.reset();
+
+      setTimeout(() => {
+        registerFormBox.style.display = "none";
+        loginFormBox.style.display = "block";
+      }, 1200);
     } catch (err) {
       console.error("REGISTER FAILED:", err);
-      alert("Register error: " + err.message);
+      showMessage(registerForm, "Register error: " + err.message, "error");
     } finally {
       if (registerBtn) {
         registerBtn.textContent = originalBtnText;
@@ -147,20 +171,22 @@ if (registerForm) {
   });
 }
 
-const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    clearMessage(loginForm);
 
     const emailEl = document.getElementById("loginEmail");
     const passwordEl = document.getElementById("loginPassword");
+    const rememberMeEl = document.getElementById("rememberMe");
     const loginBtn = loginForm.querySelector("button[type='submit'], button");
 
     const email = emailEl ? emailEl.value.trim() : "";
     const password = passwordEl ? passwordEl.value.trim() : "";
+    const rememberMe = rememberMeEl ? rememberMeEl.checked : true;
 
     if (!email || !password) {
-      alert("Please enter email and password");
+      showMessage(loginForm, "Please enter email and password.", "error");
       return;
     }
 
@@ -172,29 +198,27 @@ if (loginForm) {
         loginBtn.disabled = true;
       }
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
+      const { error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
       });
 
       if (error) {
-        alert("Login error: " + error.message);
-        if (loginBtn) {
-          loginBtn.textContent = originalBtnText;
-          loginBtn.disabled = false;
-        }
+        showMessage(loginForm, "Login error: " + error.message, "error");
         return;
       }
 
-      document.body.classList.add("fade-out");
+      if (!rememberMe) {
+        sessionStorage.setItem("tempLogin", "true");
+      } else {
+        sessionStorage.removeItem("tempLogin");
+      }
 
-      setTimeout(function () {
-        window.location.href = "dashboard.html";
-      }, 600);
+      goToDashboard();
     } catch (err) {
       console.error("LOGIN FAILED:", err);
-      alert("Login error: " + err.message);
-
+      showMessage(loginForm, "Login error: " + err.message, "error");
+    } finally {
       if (loginBtn) {
         loginBtn.textContent = originalBtnText;
         loginBtn.disabled = false;
@@ -202,3 +226,14 @@ if (loginForm) {
     }
   });
 }
+
+window.addEventListener("beforeunload", async () => {
+  const tempLogin = sessionStorage.getItem("tempLogin");
+  if (tempLogin === "true") {
+    try {
+      await supabaseClient.auth.signOut();
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
+  }
+});
