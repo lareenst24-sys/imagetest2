@@ -3,48 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
+  <title>Eanova Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
   <div class="dashboard-shell">
     <header class="topbar">
-      <div>
-        <h1 class="brand">Dashboard</h1>
-        <p class="top-sub">Welcome, <span id="dashboardUserName">Creator</span></p>
+      <div class="brand-wrap">
+        <div class="brand-mark">E</div>
+        <div>
+          <p class="eyebrow">Creator Dashboard</p>
+          <h1 class="brand">Eanova</h1>
+          <p class="top-sub">
+            Welcome back, <span id="dashboardUserName">Creator</span>
+          </p>
+        </div>
       </div>
 
-      <button id="profileBtn" class="profile-btn" type="button">Profile</button>
+      <div class="topbar-actions">
+        <div class="top-status-pill">
+          <span class="status-dot"></span>
+          <span>Live Earnings</span>
+        </div>
+        <button id="profileBtn" class="profile-btn" type="button">Profile</button>
+      </div>
     </header>
 
+    <section class="hero-strip glass-card">
+      <div class="hero-copy">
+        <p class="hero-badge">Keep uploading to grow your rewards</p>
+        <h2>Your creator space is active</h2>
+        <p class="muted-text hero-text">
+          Track uploads, monitor earnings, unlock more daily capacity, and manage payout access from one place.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-mini-card">
+          <span class="mini-label">Daily Limit</span>
+          <strong id="dailyLimitValue">250</strong>
+        </div>
+        <div class="hero-mini-card">
+          <span class="mini-label">Upload Progress</span>
+          <strong id="uploadProgressText">0 / 250</strong>
+        </div>
+      </div>
+    </section>
+
     <section class="top-grid">
-      <div class="glass-card stat-card">
-        <p class="card-label">Uploads</p>
-        <div class="upload-stats">
-          <div class="upload-stat-line">
-            <span class="upload-stat-title">Today</span>
+      <div class="glass-card stat-card spotlight-card">
+        <div class="card-topline">
+          <p class="card-label">Uploads</p>
+          <span id="uploadStatusBadge" class="status-badge">Starting</span>
+        </div>
+
+        <div class="progress-panel">
+          <div class="progress-head">
+            <span>Today’s Progress</span>
             <strong id="todayUploadCount">0</strong>
           </div>
-          <div class="upload-stat-line">
+          <div class="progress-bar-wrap">
+            <div id="uploadProgressBar" class="progress-bar-fill"></div>
+          </div>
+          <p id="uploadProgressNote" class="muted-text">You’re just getting started today.</p>
+        </div>
+
+        <div class="upload-stats two-col">
+          <div class="upload-stat-tile">
+            <span class="upload-stat-title">Today</span>
+            <strong id="todayUploadCountMirror">0</strong>
+          </div>
+          <div class="upload-stat-tile">
             <span class="upload-stat-title">This Month</span>
             <strong id="monthUploadCount">0</strong>
           </div>
         </div>
-        <p class="muted-text">Daily uploads reset every day</p>
+
+        <p class="muted-text">Daily uploads reset every day.</p>
       </div>
 
-      <div class="glass-card upload-card">
-        <p class="card-label">Upload</p>
-        <button id="openUploadBtn" class="primary-btn" type="button">Upload Image</button>
-        <p class="muted-text">Choose image and confirm upload.</p>
+      <div class="glass-card upload-card action-card">
+        <div class="card-topline">
+          <p class="card-label">Upload</p>
+          <span class="spark-pill">Boost Growth</span>
+        </div>
+
+        <h3 class="action-title">Add a new image</h3>
+        <p class="muted-text action-copy">
+          Upload your next image to increase your activity and grow your earnings potential.
+        </p>
+
+        <button id="openUploadBtn" class="primary-btn big-btn" type="button">
+          Upload Image
+        </button>
+
+        <div class="action-tip-box">
+          <span class="tip-dot"></span>
+          <p>Need more space later? Watch an ad to increase today’s upload limit.</p>
+        </div>
       </div>
     </section>
 
     <section class="gallery-card glass-card">
       <div class="earnings-topbar">
         <div class="gallery-head">
+          <p class="section-kicker">Performance</p>
           <h3>Your Earnings</h3>
-          <p class="muted-text">Track your rewards and payout progress</p>
+          <p class="muted-text">Track your rewards and payout progress.</p>
         </div>
 
         <div class="earnings-currency-area">
@@ -59,7 +128,7 @@
       </div>
 
       <div class="earnings-display">
-        <div class="earn-box">
+        <div class="earn-box total-box">
           <span>Total Earned</span>
           <strong id="totalEarnedValue">$0.00</strong>
         </div>
@@ -77,7 +146,11 @@
 
       <div class="payout-switch-card">
         <div class="switch-card-head">
-          <h4>Payout Access</h4>
+          <div>
+            <p class="section-kicker">Payout</p>
+            <h4>Payout Access</h4>
+          </div>
+          <span class="live-tag">Status</span>
         </div>
 
         <p id="payoutAccessMessage" class="switch-message">
@@ -125,8 +198,9 @@
       <button id="closeProfileBtn" class="profile-close" type="button">&times;</button>
 
       <div class="profile-header">
+        <p class="section-kicker">Account Center</p>
         <h2>Profile</h2>
-        <p class="profile-subtext">Manage your account details and review platform rules</p>
+        <p class="profile-subtext">Manage your details, review platform rules, and update settings.</p>
       </div>
 
       <div class="accordion-list">
@@ -210,6 +284,7 @@
   <div id="uploadModal" class="modal-overlay hidden">
     <div class="modal-box upload-modal-box">
       <button id="closeUploadBtn" class="modal-close" type="button">&times;</button>
+      <p class="section-kicker">Upload Flow</p>
       <h2>Upload Preview</h2>
 
       <input type="file" id="imageInput" accept="image/*" hidden />
@@ -227,6 +302,7 @@
   <div id="limitModal" class="modal-overlay hidden">
     <div class="modal-box limit-modal-box">
       <button id="closeLimitBtn" class="modal-close" type="button">&times;</button>
+      <p class="section-kicker">Daily Cap</p>
       <h2>Daily Limit Reached</h2>
       <p class="limit-text">
         You have reached your daily upload limit. Watch an ad to increase your upload limit for today only.
