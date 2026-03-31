@@ -19,7 +19,7 @@
           <p class="eyebrow">Creator Dashboard</p>
           <h1 class="brand">Eanova</h1>
           <p class="top-sub">
-            Welcome , <span id="dashboardUserName">Creator</span>
+            Welcome back, <span id="dashboardUserName">Creator</span>
           </p>
         </div>
       </div>
@@ -27,7 +27,7 @@
       <div class="topbar-actions">
         <div class="top-status-pill">
           <span class="status-dot"></span>
-          <span>Live Earnings</span>
+          <span>Live Activity</span>
         </div>
         <button id="profileBtn" class="profile-btn" type="button">Profile</button>
       </div>
@@ -45,11 +45,11 @@
       <div class="hero-stats">
         <div class="hero-mini-card">
           <span class="mini-label">Daily Limit</span>
-          <strong id="dailyLimitValue">250</strong>
+          <strong id="dailyLimitValue">50</strong>
         </div>
         <div class="hero-mini-card">
-          <span class="mini-label">Upload Progress</span>
-          <strong id="uploadProgressText">0 / 250</strong>
+          <span class="mini-label">Progress</span>
+          <strong id="uploadProgressText">0 / 50</strong>
         </div>
       </div>
     </section>
@@ -88,18 +88,19 @@
 
       <div class="glass-card upload-card action-card">
         <div class="card-topline">
-          <p class="card-label">Upload</p>
-          <span class="spark-pill">Boost Growth</span>
+          <p class="card-label">Earn</p>
+          <span class="spark-pill">Money Mode</span>
         </div>
 
-        <h3 class="action-title">Add a new image</h3>
+        <h3 class="action-title">Turn images into rewards</h3>
         <p class="muted-text action-copy">
-          Upload your next image to increase your activity and grow your earnings potential.
+          Every approved upload increases your earning potential and helps you build daily momentum.
         </p>
 
-        <button id="openUploadBtn" class="primary-btn big-btn" type="button">
-          Upload Image
+        <button id="openUploadBtn" class="primary-btn big-btn glow-btn" type="button">
+          Upload & Earn
         </button>
+        <p class="earn-hint">Upload more → earn more rewards</p>
 
         <div class="action-tip-box">
           <span class="tip-dot"></span>
@@ -141,6 +142,17 @@
         <div class="earn-box">
           <span>Fulfilled</span>
           <strong id="paidEarnedValue">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="pulse-info-row">
+        <div class="pulse-info-card">
+          <span class="pulse-info-label">Live Status</span>
+          <strong id="liveEarningStatus">Updating</strong>
+        </div>
+        <div class="pulse-info-card">
+          <span class="pulse-info-label">Reward Energy</span>
+          <strong id="rewardEnergyText">Low</strong>
         </div>
       </div>
 
@@ -200,7 +212,7 @@
       <div class="profile-header">
         <p class="section-kicker">Account Center</p>
         <h2>Profile</h2>
-        <p class="profile-subtext">Manage your details, review platform rules, and update settings.</p>
+        <p class="profile-subtext">Manage your details, contact links, and platform pages.</p>
       </div>
 
       <div class="accordion-list">
@@ -240,27 +252,33 @@
         </details>
 
         <details class="accordion-card">
-          <summary class="accordion-summary">Terms & Conditions</summary>
-          <div class="accordion-content legal-content">
-            <p>By using this platform, you agree to upload only content you have the right to submit and to avoid fraud, spam, bots, duplicate accounts, misleading behavior, or abusive activity.</p>
-            <p>Uploads may be reviewed, limited, rejected, or removed where policy violations, suspicious activity, or legal issues are detected.</p>
-            <p>We may restrict or suspend accounts involved in fake uploads, manipulation, unauthorized content, or other rule violations.</p>
+          <summary class="accordion-summary">Contact</summary>
+          <div class="accordion-content">
+            <div class="profile-field">
+              <label for="contactEmailInput">Contact Email</label>
+              <input id="contactEmailInput" type="text" placeholder="Add later in code" />
+            </div>
+
+            <div class="profile-field">
+              <label for="instagramHandleInput">Instagram Handle</label>
+              <input id="instagramHandleInput" type="text" placeholder="@yourhandle" />
+            </div>
+
+            <p class="muted-text small-note">
+              These fields can stay blank for now. You can also hardcode them later.
+            </p>
           </div>
         </details>
 
         <details class="accordion-card">
-          <summary class="accordion-summary">Payment Legal</summary>
-          <div class="accordion-content legal-content">
-            <p>Rewards are subject to platform review and approval. Activity may count only after successful processing and verification by the platform.</p>
-            <p>Gift card payouts are issued only for approved earnings and may be delayed, adjusted, withheld, or cancelled in cases of fraud review, policy violations, technical issues, duplicate submissions, or compliance checks.</p>
-            <p>Payout timing, thresholds, and eligibility rules may change over time. Use of the platform means you accept these payout conditions.</p>
-          </div>
-        </details>
-
-        <details class="accordion-card">
-          <summary class="accordion-summary">Data Notice</summary>
-          <div class="accordion-content legal-content">
-            <p>Basic account details, activity records, upload records, earnings rows, and settings may be processed for platform operations, account security, abuse prevention, and reward handling.</p>
+          <summary class="accordion-summary">Legal Pages</summary>
+          <div class="accordion-content">
+            <div class="legal-link-grid">
+              <a class="legal-link-card" href="privacy.html">Privacy Policy</a>
+              <a class="legal-link-card" href="terms.html">Terms & Conditions</a>
+              <a class="legal-link-card" href="payment-policy.html">Payment Policy</a>
+              <a class="legal-link-card" href="data-notice.html">Data Notice</a>
+            </div>
           </div>
         </details>
 
@@ -311,6 +329,8 @@
       <p id="limitStatusText" class="muted-text limit-status-text"></p>
     </div>
   </div>
+
+  <button id="mobileUploadBtn" class="mobile-upload-btn" type="button">Upload & Earn</button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
