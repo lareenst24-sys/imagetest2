@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works - Eanova</title>
+  <meta
+    name="description"
+    content="Learn how Eanova works, how image contributions are reviewed, and how eligible users can earn rewards."
+  />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    :root {
+      --bg: #05050b;
+      --card: rgba(20, 20, 31, 0.92);
+      --card-dark: #0b0b14;
+      --text: #f5f5fb;
+      --muted: #aaaabc;
+      --purple: #9b5cff;
+      --purple-dark: #6f35ff;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(155, 92, 255, 0.15), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(111, 53, 255, 0.12), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      padding: 40px 18px;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .page-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(18px);
+    }
+
+    .kicker {
+      color: #c5b4ff;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 1.02rem;
+      max-width: 760px;
+    }
+
+    .hero-box {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(155, 92, 255, 0.08);
+      border: 1px solid rgba(155, 92, 255, 0.2);
+    }
+
+    .hero-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .hero-box p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid var(--border);
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      box-shadow: 0 10px 24px rgba(111, 53, 255, 0.35);
+    }
+
+    .step h3 {
+      margin-bottom: 6px;
+      font-size: 1.05rem;
+    }
+
+    .step p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .notes {
+      display: grid;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+
+    .note strong {
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .note p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .back-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .back-link.primary {
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      color: #fff;
+    }
+
+    .back-link.secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: #e8e8f5;
+      border: 1px solid var(--border);
+    }
+
+    .back-link:hover {
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 640px) {
+      .page-card {
+        padding: 22px 16px;
+        border-radius: 22px;
+      }
+
+      .step {
+        padding: 16px;
+      }
+
+      .back-links {
+        flex-direction: column;
+      }
+
+      .back-link {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="page-card">
+      <p class="kicker">Eanova Guide</p>
+      <h1>Help improve AI datasets and earn rewards</h1>
+      <p class="lead">
+        Eanova is a creator platform where users can contribute image content that may support future AI dataset improvement and digital training workflows. Rewards may be added based on review, usefulness, quality, policy checks, and platform eligibility.
+      </p>
+
+      <div class="hero-box">
+        <strong>How Eanova works</strong>
+        <p>
+          Users upload image contributions through the dashboard. Those contributions may be reviewed by the platform for usefulness, originality, policy compliance, and other internal checks. Eligible contributions may help users earn rewards over time.
+        </p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <span class="step-number">1</span>
+          <div>
+            <h3>Create your account</h3>
+            <p>Register to access your creator dashboard, profile settings, upload tools, and payout information.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">2</span>
+          <div>
+            <h3>Upload image contributions</h3>
+            <p>Use the dashboard upload area to submit images within your available daily limit.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">3</span>
+          <div>
+            <h3>Platform review and assessment</h3>
+            <p>Uploads may be assessed for quality, policy compliance, originality, duplication, and usefulness to the platform.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">4</span>
+          <div>
+            <h3>Rewards may be added</h3>
+            <p>Reward values are not guaranteed for every upload and may vary depending on review outcomes and internal platform rules.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">5</span>
+          <div>
+            <h3>Claim eligible payouts</h3>
+            <p>Eligible users may claim supported rewards such as gift cards, with additional payout options potentially unlocking later.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <strong>Important</strong>
+          <p>
+            The amount displayed on the dashboard may not always be final. Additional reward amounts may be added based on assessment and internal review results.
+          </p>
+        </div>
+
+        <div class="note">
+          <strong>Fair use and platform rules</strong>
+          <p>
+            Spam, duplicate uploads, misleading content, or policy-violating submissions may reduce eligibility for rewards or payout access.
+          </p>
+        </div>
+      </div>
+
+      <div class="back-links">
+        <a class="back-link primary" href="/dashboard/">Back to Dashboard</a>
+        <a class="back-link secondary" href="/legal/terms/">View Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
