@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eanova - Privacy Policy</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #06060d;
+      color: #f7f5ff;
+      padding: 24px;
+      line-height: 1.7;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #11111b;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 28px;
+    }
+    a { color: #c7a5ff; }
+    h1, h2 { margin-top: 0; }
+    p { color: #c2c3d3; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Privacy Policy</h1>
+    <p>Eanova may process account details, upload activity, earnings records, payout settings, and security-related data to operate the platform, prevent abuse, and manage rewards.</p>
+    <p>We may use basic technical information, activity logs, and account information to maintain platform integrity, reduce fraud, and improve performance.</p>
+    <p>Uploaded content and related records may be reviewed for safety, moderation, platform operations, and policy compliance.</p>
+    <p>By using Eanova, you agree that platform-related data may be processed for account access, platform functionality, legal compliance, and abuse prevention.</p>
+    <p><a href="dashboard.html">Back to Dashboard</a></p>
+  </div>
+</body>
+</html>
