@@ -41,7 +41,7 @@ function clearMessage(formElement) {
 function goToDashboard() {
   document.body.classList.add("fade-out");
   setTimeout(() => {
-    window.location.href = "dashboard.html";
+    window.location.href = "dashboard/";
   }, 600);
 }
 
