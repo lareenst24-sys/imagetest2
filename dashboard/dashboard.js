@@ -17,6 +17,11 @@ let currentPayoutMode = "giftcard";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+
+const howItWorksModal = document.getElementById("howItWorksModal");
+const closeHowItWorksBtn = document.getElementById("closeHowItWorksBtn");
+const gotItHowItWorksBtn = document.getElementById("gotItHowItWorksBtn");
+const openHowItWorksPageBtn = document.getElementById("openHowItWorksPageBtn");
 const profileBtn = document.getElementById("profileBtn");
 const profileModal = document.getElementById("profileModal");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
