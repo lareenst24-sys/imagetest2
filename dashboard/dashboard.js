@@ -4,7 +4,7 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 25;
 
-const CONTACT_EMAIL = "";
+const CONTACT_EMAIL = "support@eanova.online";
 const INSTAGRAM_HANDLE = "";
 
 let bankTransferMode = "disabled";
