@@ -63,18 +63,26 @@ app.post("/api/claim-reward", async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    console.log("Claim request user:", user.id, user.email);
+
     const { data: wallet, error: walletError } = await supabase
       .from("creator_wallets")
       .select("*")
       .eq("user_id", user.id)
-      .single();
+      .maybeSingle();
+
+    console.log("Wallet query result:", wallet);
+    console.log("Wallet query error:", walletError);
 
     if (walletError) {
-      console.error("Wallet fetch error:", walletError);
       return res.status(500).json({ error: "Could not fetch wallet" });
     }
 
-    if (!wallet || Number(wallet.balance) < 10) {
+    if (!wallet) {
+      return res.status(400).json({ error: "No wallet found for this account" });
+    }
+
+    if (Number(wallet.balance) < 10) {
       return res.status(400).json({ error: "Minimum payout is $10" });
     }
 
@@ -85,7 +93,7 @@ app.post("/api/claim-reward", async (req, res) => {
       .eq("status", "pending");
 
     if (existingError) {
-      console.error("Existing payout check error:", existingError);
+      console.error("Existing payout error:", existingError);
       return res.status(500).json({ error: "Could not check existing payouts" });
     }
 
@@ -121,9 +129,9 @@ app.post("/api/claim-reward", async (req, res) => {
     );
 
     const tremendousData = await tremendousResponse.json();
+    console.log("Tremendous response:", tremendousData);
 
     if (!tremendousResponse.ok) {
-      console.error("Tremendous error:", tremendousData);
       return res.status(500).json({
         error: "Tremendous request failed",
         details: tremendousData
