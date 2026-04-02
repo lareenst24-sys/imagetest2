@@ -751,12 +751,12 @@ async function claimReward() {
     });
 
     const rawText = await response.text();
+    console.log("Claim raw response:", rawText);
 
-    let result;
+    let result = null;
     try {
       result = JSON.parse(rawText);
     } catch {
-      console.error("Non-JSON response:", rawText);
       throw new Error("Backend returned HTML instead of JSON");
     }
 
