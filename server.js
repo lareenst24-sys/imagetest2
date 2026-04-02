@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -20,7 +20,6 @@ app.use(
   })
 );
 
-app.options("*", cors());
 app.use(express.json());
 
 const supabase = createClient(
@@ -97,10 +96,7 @@ app.post("/api/claim-reward", async (req, res) => {
       return res.status(400).json({ error: "Already processing" });
     }
 
-    // 🔥 TEMP: disable Tremendous for debugging
-    console.log("Skipping Tremendous (debug mode)");
-
-    const orderId = "test-order-" + Date.now();
+    const orderId = `debug-${Date.now()}`;
 
     const { error: payoutError } = await supabase.from("payouts").insert({
       user_id: user.id,
@@ -128,62 +124,14 @@ app.post("/api/claim-reward", async (req, res) => {
       success: true,
       message: "Claim successful (debug mode)"
     });
-
   } catch (error) {
-    console.error("🔥 CRASH:", error);
-
+    console.error("Claim route crash:", error);
     return res.status(500).json({
       error: "Server crashed",
       details: error.message
     });
   }
 });
-
-    const tremendousData = await tremendousResponse.json();
-    console.log("Tremendous response:", tremendousData);
-
-    if (!tremendousResponse.ok) {
-      return res.status(500).json({
-        error: "Tremendous request failed",
-        details: tremendousData
-      });
-    }
-
-    const orderId = tremendousData?.order?.id || null;
-
-    const { error: payoutInsertError } = await supabase.from("payouts").insert({
-      user_id: user.id,
-      amount: Number(wallet.balance),
-      status: "pending",
-      order_id: orderId
-    });
-
-    if (payoutInsertError) {
-      console.error("Payout insert error:", payoutInsertError);
-      return res.status(500).json({ error: "Could not save payout" });
-    }
-
-    const { error: walletUpdateError } = await supabase
-      .from("creator_wallets")
-      .update({ balance: 0 })
-      .eq("user_id", user.id);
-
-    if (walletUpdateError) {
-      console.error("Wallet update error:", walletUpdateError);
-      return res.status(500).json({ error: "Could not update wallet" });
-    }
-
-    return res.json({
-      success: true,
-      message: "Reward claim submitted successfully"
-    });
-  } catch (error) {
-    console.error("Claim route crash:", error);
-    return res.status(500).json({ error: "Server error" });
-  }
-});
-
-const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
