@@ -750,7 +750,15 @@ async function claimReward() {
       }
     });
 
-    const result = await response.json();
+    const rawText = await response.text();
+
+    let result;
+    try {
+      result = JSON.parse(rawText);
+    } catch {
+      console.error("Non-JSON response:", rawText);
+      throw new Error("Backend returned HTML instead of JSON");
+    }
 
     if (!response.ok) {
       throw new Error(result.error || "Claim failed");
