@@ -11,7 +11,7 @@ let bankTransferMode = "disabled";
 let currentPayoutMode = "giftcard";
 
 const MINIMUM_PAYOUT_USD = 10;
-const CLAIM_API_URL = "https://imagetest2.onrender.com/api/claim-reward";
+const CLAIM_API_URL = "https://imagetest2.onrender.com/api/debug-user";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
