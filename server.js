@@ -63,70 +63,24 @@ app.post("/api/claim-reward", async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    console.log("Claim request user:", user.id, user.email);
-
     const { data: wallet, error: walletError } = await supabase
       .from("creator_wallets")
       .select("*")
       .eq("user_id", user.id)
       .maybeSingle();
 
-    console.log("Wallet query result:", wallet);
-    console.log("Wallet query error:", walletError);
-
-    if (walletError) {
-      return res.status(500).json({ error: "Could not fetch wallet" });
-    }
-
-    if (!wallet) {
-      return res.status(400).json({ error: "No wallet found for this account" });
-    }
-
-    if (Number(wallet.balance) < 10) {
-      return res.status(400).json({ error: "Minimum payout is $10" });
-    }
-
-    const { data: existing, error: existingError } = await supabase
-      .from("payouts")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("status", "pending");
-
-    if (existingError) {
-      console.error("Existing payout error:", existingError);
-      return res.status(500).json({ error: "Could not check existing payouts" });
-    }
-
-    if (existing && existing.length > 0) {
-      return res.status(400).json({ error: "Already processing" });
-    }
-
-    const tremendousResponse = await fetch(
-      "https://testflight.tremendous.com/api/v2/orders",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.TREMENDOUS_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          reward: {
-            campaign_id: process.env.CAMPAIGN_ID,
-            value: {
-              denomination: Number(wallet.balance),
-              currency_code: "USD"
-            },
-            delivery: {
-              method: "EMAIL"
-            },
-            recipient: {
-              name: user.email,
-              email: user.email
-            }
-          }
-        })
-      }
-    );
+    return res.json({
+      debug: true,
+      logged_in_user_id: user.id,
+      logged_in_email: user.email,
+      wallet_row: wallet,
+      wallet_error: walletError
+    });
+  } catch (error) {
+    console.error("Debug route crash:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
 
     const tremendousData = await tremendousResponse.json();
     console.log("Tremendous response:", tremendousData);
