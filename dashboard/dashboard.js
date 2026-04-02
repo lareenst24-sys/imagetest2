@@ -757,7 +757,7 @@ async function claimReward() {
     try {
       result = JSON.parse(rawText);
     } catch {
-      throw new Error("Backend returned HTML instead of JSON");
+      throw new Error("Backend returned HTML instead of JSON. Check Render logs.");
     }
 
     if (!response.ok) {
