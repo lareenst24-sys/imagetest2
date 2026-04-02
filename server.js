@@ -63,18 +63,14 @@ app.post("/api/claim-reward", async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    console.log("Claim request user:", user.id, user.email);
-
     const { data: wallet, error: walletError } = await supabase
       .from("creator_wallets")
       .select("*")
       .eq("user_id", user.id)
       .maybeSingle();
 
-    console.log("Wallet query result:", wallet);
-    console.log("Wallet query error:", walletError);
-
     if (walletError) {
+      console.error("Wallet fetch error:", walletError);
       return res.status(500).json({ error: "Could not fetch wallet" });
     }
 
@@ -94,39 +90,54 @@ app.post("/api/claim-reward", async (req, res) => {
 
     if (existingError) {
       console.error("Existing payout error:", existingError);
-      return res.status(500).json({ error: "Could not check existing payouts" });
+      return res.status(500).json({ error: "Could not check payouts" });
     }
 
     if (existing && existing.length > 0) {
       return res.status(400).json({ error: "Already processing" });
     }
 
-    const tremendousResponse = await fetch(
-      "https://testflight.tremendous.com/api/v2/orders",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.TREMENDOUS_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          reward: {
-            campaign_id: process.env.CAMPAIGN_ID,
-            value: {
-              denomination: Number(wallet.balance),
-              currency_code: "USD"
-            },
-            delivery: {
-              method: "EMAIL"
-            },
-            recipient: {
-              name: user.email,
-              email: user.email
-            }
-          }
-        })
-      }
-    );
+    // 🔥 TEMP: disable Tremendous for debugging
+    console.log("Skipping Tremendous (debug mode)");
+
+    const orderId = "test-order-" + Date.now();
+
+    const { error: payoutError } = await supabase.from("payouts").insert({
+      user_id: user.id,
+      amount: Number(wallet.balance),
+      status: "pending",
+      order_id: orderId
+    });
+
+    if (payoutError) {
+      console.error("Payout insert error:", payoutError);
+      return res.status(500).json({ error: "Failed to save payout" });
+    }
+
+    const { error: updateError } = await supabase
+      .from("creator_wallets")
+      .update({ balance: 0 })
+      .eq("user_id", user.id);
+
+    if (updateError) {
+      console.error("Wallet update error:", updateError);
+      return res.status(500).json({ error: "Failed to update wallet" });
+    }
+
+    return res.json({
+      success: true,
+      message: "Claim successful (debug mode)"
+    });
+
+  } catch (error) {
+    console.error("🔥 CRASH:", error);
+
+    return res.status(500).json({
+      error: "Server crashed",
+      details: error.message
+    });
+  }
+});
 
     const tremendousData = await tremendousResponse.json();
     console.log("Tremendous response:", tremendousData);
