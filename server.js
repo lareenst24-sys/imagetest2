@@ -127,7 +127,32 @@ app.post("/api/claim-reward", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+app.post("/api/debug-user", async (req, res) => {
+  try {
+    const user = await getUser(req);
 
+    if (!user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { data: wallet, error: walletError } = await supabase
+      .from("creator_wallets")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    return res.json({
+      logged_in_user_id: user.id,
+      logged_in_email: user.email,
+      wallet_row: wallet,
+      wallet_error: walletError,
+      supabase_url: process.env.SUPABASE_URL
+    });
+  } catch (error) {
+    console.error("Debug route crash:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
