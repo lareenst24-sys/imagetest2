@@ -5,12 +5,8 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 15;
 
-const CONTACT_EMAIL = "support@eanova.online";
-const INSTAGRAM_HANDLE = "@yourhandle";
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* main dashboard */
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 
@@ -36,31 +32,11 @@ const progressNoteEl = document.getElementById("uploadProgressNote");
 const uploadStatusBadge = document.getElementById("uploadStatusBadge");
 const dailyLimitTextEl = document.getElementById("dailyLimitText");
 
-/* profile */
-const profileBtn = document.querySelector(".profile-btn") || document.getElementById("profileBtn");
-const profileNavBtn = document.querySelector(".profile-nav-btn");
-const profileModal = document.getElementById("profileModal");
-const closeProfileBtn = document.getElementById("closeProfileBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const deleteAccountBtn = document.getElementById("deleteAccountBtn");
-
-const profileEmail = document.getElementById("profileEmail");
-const profileNameInput = document.getElementById("profileName");
-const countryInput = document.getElementById("profileCountry");
-const currencyProfileSelect = document.getElementById("currencyProfileSelect");
-
-const businessEmailLink = document.getElementById("businessEmailLink");
-const businessEmailText = document.getElementById("businessEmailText");
-const businessInstagramLink = document.getElementById("businessInstagramLink");
-const businessInstagramText = document.getElementById("businessInstagramText");
-
 let currentUser = null;
 let selectedFile = null;
 let previewURL = null;
 let todayExtraLimit = 0;
-let profileSaveTimer = null;
 
-/* helpers */
 function getTodayKey() {
   const d = new Date();
   const year = d.getFullYear();
@@ -91,7 +67,7 @@ function loadTodayExtraLimit() {
       todayExtraLimit = 0;
       localStorage.removeItem(getDailyBonusStorageKey());
     }
-  } catch (error) {
+  } catch {
     todayExtraLimit = 0;
     localStorage.removeItem(getDailyBonusStorageKey());
   }
@@ -137,7 +113,6 @@ function getStartOfNextMonthISO() {
   return date.toISOString();
 }
 
-/* auth */
 async function getCurrentUser() {
   const { data, error } = await supabaseClient.auth.getUser();
 
@@ -159,12 +134,9 @@ async function requireLogin() {
 
   currentUser = user;
   loadTodayExtraLimit();
-  loadContactPlaceholders();
-  await ensureProfile();
   return true;
 }
 
-/* counts */
 async function getTodayUploadCount() {
   if (!currentUser) return 0;
 
@@ -244,148 +216,6 @@ async function updateUploadStatsUI() {
   updateProgressUI(todayCount, monthCount);
 }
 
-/* profile */
-function loadContactPlaceholders() {
-  const emailText = CONTACT_EMAIL && CONTACT_EMAIL.trim()
-    ? CONTACT_EMAIL.trim()
-    : "support@eanova.online";
-
-  const igText = INSTAGRAM_HANDLE && INSTAGRAM_HANDLE.trim()
-    ? INSTAGRAM_HANDLE.trim()
-    : "@yourhandle";
-
-  if (businessEmailText) businessEmailText.textContent = emailText;
-  if (businessEmailLink) businessEmailLink.href = `mailto:${emailText}`;
-
-  if (businessInstagramText) businessInstagramText.textContent = igText;
-
-  if (businessInstagramLink) {
-    const cleanHandle = igText.replace(/^@/, "").trim();
-    businessInstagramLink.href = cleanHandle ? `https://instagram.com/${cleanHandle}` : "#";
-  }
-}
-
-async function ensureProfile() {
-  if (!currentUser) return;
-
-  const { data: existing, error: fetchError } = await supabaseClient
-    .from("profiles")
-    .select("*")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-  if (fetchError) {
-    console.error("Profile fetch error:", fetchError);
-    return;
-  }
-
-  if (!existing) {
-    const { error: insertError } = await supabaseClient
-      .from("profiles")
-      .insert({
-        id: currentUser.id,
-        email: currentUser.email,
-        display_name: "",
-        country: "",
-        currency: "USD"
-      });
-
-    if (insertError) {
-      console.error("Profile create error:", insertError);
-      return;
-    }
-
-    if (profileNameInput) profileNameInput.value = "";
-    if (countryInput) countryInput.value = "";
-    if (currencyProfileSelect) currencyProfileSelect.value = "USD";
-    if (profileEmail) profileEmail.textContent = currentUser.email;
-    return;
-  }
-
-  if (profileNameInput) profileNameInput.value = existing.display_name || "";
-  if (countryInput) countryInput.value = existing.country || "";
-  if (currencyProfileSelect) currencyProfileSelect.value = existing.currency || "USD";
-  if (profileEmail) profileEmail.textContent = existing.email || currentUser.email;
-}
-
-async function saveProfileFields() {
-  if (!currentUser) return;
-
-  const payload = {
-    email: currentUser.email,
-    display_name: profileNameInput ? profileNameInput.value.trim() : "",
-    country: countryInput ? countryInput.value.trim() : "",
-    currency: currencyProfileSelect ? currencyProfileSelect.value : "USD"
-  };
-
-  const { error } = await supabaseClient
-    .from("profiles")
-    .update(payload)
-    .eq("id", currentUser.id);
-
-  if (error) {
-    console.error("Save profile error:", error);
-  }
-}
-
-function scheduleProfileSave() {
-  clearTimeout(profileSaveTimer);
-  profileSaveTimer = setTimeout(saveProfileFields, 500);
-}
-
-function openProfileModal() {
-  if (!profileModal) return;
-  profileModal.classList.remove("hidden");
-}
-
-function closeProfileModal() {
-  if (!profileModal) return;
-  profileModal.classList.add("hidden");
-}
-
-async function deleteAccountData() {
-  if (!currentUser) return;
-
-  const confirmed = window.confirm(
-    "This will delete your app data from the database and log you out. Continue?"
-  );
-
-  if (!confirmed) return;
-
-  if (deleteAccountBtn) {
-    deleteAccountBtn.disabled = true;
-    deleteAccountBtn.textContent = "Deleting...";
-  }
-
-  try {
-    const { error: deleteUploadsError } = await supabaseClient
-      .from("uploads")
-      .delete()
-      .eq("user_id", currentUser.id);
-
-    if (deleteUploadsError) throw deleteUploadsError;
-
-    const { error: deleteProfileError } = await supabaseClient
-      .from("profiles")
-      .delete()
-      .eq("id", currentUser.id);
-
-    if (deleteProfileError) throw deleteProfileError;
-
-    await supabaseClient.auth.signOut();
-    window.location.href = "/";
-  } catch (error) {
-    console.error("Delete account data error:", error);
-    alert("Could not delete account data.");
-
-    if (deleteAccountBtn) {
-      deleteAccountBtn.disabled = false;
-      deleteAccountBtn.textContent = "Delete Account Data";
-    }
-  }
-}
-
-/* upload preview */
 function resetPreview() {
   selectedFile = null;
 
@@ -429,7 +259,6 @@ function closeLimitModal() {
   limitModal.classList.add("hidden");
 }
 
-/* upload */
 async function handleUpload(file) {
   if (!currentUser) {
     alert("Please login again.");
@@ -514,7 +343,6 @@ async function handleUpload(file) {
   }
 }
 
-/* ad bonus */
 async function simulateWatchAdAndIncreaseLimit() {
   if (!watchAdBtn) return;
 
@@ -534,50 +362,6 @@ async function simulateWatchAdAndIncreaseLimit() {
     watchAdBtn.textContent = "Watch Ad to Increase Limit";
     closeLimitModal();
   }, 1000);
-}
-
-/* events */
-if (profileBtn) {
-  profileBtn.onclick = openProfileModal;
-}
-
-if (profileNavBtn) {
-  profileNavBtn.onclick = openProfileModal;
-}
-
-if (closeProfileBtn) {
-  closeProfileBtn.onclick = closeProfileModal;
-}
-
-if (profileModal) {
-  profileModal.addEventListener("click", (e) => {
-    if (e.target === profileModal) {
-      closeProfileModal();
-    }
-  });
-}
-
-if (profileNameInput) {
-  profileNameInput.addEventListener("input", scheduleProfileSave);
-}
-
-if (countryInput) {
-  countryInput.addEventListener("input", scheduleProfileSave);
-}
-
-if (currencyProfileSelect) {
-  currencyProfileSelect.addEventListener("change", scheduleProfileSave);
-}
-
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    await supabaseClient.auth.signOut();
-    window.location.href = "/";
-  });
-}
-
-if (deleteAccountBtn) {
-  deleteAccountBtn.addEventListener("click", deleteAccountData);
 }
 
 if (uploadBtn) {
@@ -648,7 +432,6 @@ if (watchAdBtn) {
   watchAdBtn.addEventListener("click", simulateWatchAdAndIncreaseLimit);
 }
 
-/* init */
 (async function initDashboard() {
   const ok = await requireLogin();
   if (!ok) return;
