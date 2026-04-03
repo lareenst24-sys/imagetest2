@@ -8,7 +8,6 @@
 </head>
 <body>
   <div class="dashboard-page">
-
     <div class="dashboard-shell">
 
       <!-- TOP BAR -->
@@ -18,13 +17,13 @@
           <div class="top-text">
             <p class="eyebrow">CREATOR DASHBOARD</p>
             <h1>Eanova</h1>
-            <p class="sub-text">Welcome back</p>
+            <p class="sub-text">Welcome back, Creator</p>
           </div>
         </div>
 
         <div class="top-right">
-          <button class="ghost-btn">Dashboard</button>
-          <button class="ghost-btn">Monetisation</button>
+          <button class="nav-btn active">Dashboard</button>
+          <button class="nav-btn">Monetisation</button>
           <button class="profile-btn">Profile</button>
         </div>
       </header>
@@ -32,21 +31,52 @@
       <!-- MAIN CONTENT -->
       <main class="main-grid">
 
-        <!-- UPLOAD CARD -->
-        <section class="card upload-card">
-          <div class="section-head">
-            <p class="eyebrow">UPLOADS</p>
-            <span class="status-pill">One Full Block</span>
-          </div>
+        <!-- TOP SECTION -->
+        <section class="top-content-grid">
+          <!-- UPLOAD PROGRESS -->
+          <div class="card progress-card">
+            <div class="progress-box">
+              <div class="progress-head">
+                <span>Today's Progress</span>
+                <strong>0</strong>
+              </div>
 
-          <div class="upload-inner">
-            <div class="upload-left">
-              <h2>Save</h2>
-              <p class="upload-note">Upload your content here</p>
+              <div class="progress-bar">
+                <div class="progress-fill"></div>
+              </div>
+
+              <p class="progress-note">You're just getting started today.</p>
             </div>
 
-            <div class="upload-center">
-              <button class="upload-btn">Save Upload</button>
+            <div class="mini-stats">
+              <div class="mini-card">
+                <p>Today</p>
+                <h3>0</h3>
+              </div>
+
+              <div class="mini-card">
+                <p>This Month</p>
+                <h3>0</h3>
+              </div>
+            </div>
+
+            <p class="bottom-note">Daily uploads reset every day.</p>
+          </div>
+
+          <!-- EARN CARD -->
+          <div class="card earn-card">
+            <h2>Turn images into rewards</h2>
+            <p class="earn-text">
+              Every approved upload increases your earning potential and helps you build daily momentum.
+            </p>
+
+            <button class="upload-btn">Upload &amp; Earn</button>
+
+            <p class="earn-sub">Upload more → earn more rewards</p>
+
+            <div class="info-pill">
+              <span class="dot"></span>
+              <p>Need more space later? Watch an ad to increase today’s upload limit.</p>
             </div>
           </div>
         </section>
