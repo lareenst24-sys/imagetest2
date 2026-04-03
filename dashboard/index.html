@@ -90,24 +90,38 @@
       </main>
     </div>
   </div>
-
-<div class="upload-modal" id="uploadModal">
-  <div class="upload-preview-card">
-    <div class="upload-header">
+  <div id="uploadModal" class="modal-overlay hidden">
+    <div class="modal-box upload-modal-box">
+      <button id="closeUploadBtn" class="modal-close" type="button">&times;</button>
+      <p class="section-kicker">Upload Flow</p>
       <h2>Upload Preview</h2>
-      <span class="close-btn" id="modalCloseBtn">✕</span>
-    </div>
 
-    <div class="preview-box" id="previewBox">
-      <span id="previewText">No image selected</span>
-      <img id="previewImage" alt="Selected preview" />
-    </div>
+      <input type="file" id="imageInput" accept="image/*" hidden />
 
-    <button class="choose-btn" id="modalUploadBtn" type="button">Choose Image</button>
-    <button class="confirm-btn" id="modalConfirmBtn" type="button" disabled>Confirm Upload</button>
+      <button id="chooseFileBtn" class="secondary-btn modal-top-btn" type="button">Choose Image</button>
+
+      <div id="previewWrap" class="preview-wrap hidden">
+        <img id="previewImage" class="preview-image" alt="Preview" />
+      </div>
+
+      <button id="confirmUploadBtn" class="primary-btn" type="button">Confirm Upload</button>
+    </div>
   </div>
-</div>
-<input type="file" id="fileInput" accept="image/*" hidden />
+
+  <div id="limitModal" class="modal-overlay hidden">
+    <div class="modal-box limit-modal-box">
+      <button id="closeLimitBtn" class="modal-close" type="button">&times;</button>
+      <p class="section-kicker">Daily Cap</p>
+      <h2>Daily Limit Reached</h2>
+      <p class="limit-text">
+        You have reached your daily upload limit. Watch an ad to increase your upload limit for today only.
+      </p>
+      <button id="watchAdBtn" class="primary-btn" type="button">Watch Ad to Increase Limit</button>
+      <p id="limitStatusText" class="muted-text limit-status-text"></p>
+    </div>
+  </div>
+
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
 </body>
