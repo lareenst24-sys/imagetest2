@@ -29,6 +29,7 @@
           <span class="status-dot"></span>
           <span>Live Activity</span>
         </div>
+        <button id="adminBtn" class="secondary-btn hidden" type="button">Admin</button>
         <button id="profileBtn" class="profile-btn" type="button">Profile</button>
       </div>
     </header>
@@ -290,6 +291,90 @@
 
       <div class="profile-actions single-action">
         <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminModal" class="profile-modal hidden">
+    <div class="profile-panel admin-panel">
+      <button id="closeAdminBtn" class="profile-close" type="button">&times;</button>
+
+      <div class="profile-header">
+        <p class="section-kicker">Admin Center</p>
+        <h2>Admin Dashboard</h2>
+        <p class="profile-subtext">Manage reward rules, preview user groups, and apply monthly wallet balances.</p>
+      </div>
+
+      <div class="admin-grid">
+        <div class="accordion-card admin-stat-card">
+          <div class="admin-stat-label">Total Users</div>
+          <div id="adminTotalUsers" class="admin-stat-value">0</div>
+        </div>
+
+        <div class="accordion-card admin-stat-card">
+          <div class="admin-stat-label">Uploads This Month</div>
+          <div id="adminTotalUploads" class="admin-stat-value">0</div>
+        </div>
+
+        <div class="accordion-card admin-stat-card">
+          <div class="admin-stat-label">Users In Preview</div>
+          <div id="adminPreviewUsers" class="admin-stat-value">0</div>
+        </div>
+
+        <div class="accordion-card admin-stat-card">
+          <div class="admin-stat-label">Wallet Total</div>
+          <div id="adminWalletTotal" class="admin-stat-value">$0.00</div>
+        </div>
+      </div>
+
+      <div class="accordion-card admin-section-card">
+        <div class="admin-section-head">
+          <div>
+            <p class="section-kicker">Reward Rules</p>
+            <h3 class="admin-section-title">Monthly Upload Groups</h3>
+          </div>
+          <button id="addRuleBtn" class="secondary-btn admin-small-btn" type="button">Add Rule</button>
+        </div>
+
+        <div id="adminRulesList" class="admin-rules-list"></div>
+
+        <div class="admin-actions-row">
+          <button id="saveRulesBtn" class="secondary-btn" type="button">Save Rules</button>
+          <button id="refreshAdminBtn" class="secondary-btn" type="button">Refresh Preview</button>
+          <button id="applyRewardsBtn" class="btn-primary" type="button">Apply Rewards</button>
+        </div>
+
+        <p class="muted-text small-note">
+          Example: 0-99 = $0, 100-199 = $5, 200-299 = $12. When you apply rewards, each user’s wallet is set from their current monthly upload bracket.
+        </p>
+      </div>
+
+      <div class="accordion-card admin-section-card">
+        <div class="admin-section-head">
+          <div>
+            <p class="section-kicker">Preview</p>
+            <h3 class="admin-section-title">Users & Reward Brackets</h3>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Uploads This Month</th>
+                <th>Bracket</th>
+                <th>Reward</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+              <tr>
+                <td colspan="5" class="admin-empty-cell">No admin data yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
