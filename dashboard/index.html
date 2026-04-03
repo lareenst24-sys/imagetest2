@@ -22,41 +22,42 @@
         </div>
 
         <div class="top-right">
-          <button class="nav-btn active">Dashboard</button>
-          <button class="nav-btn">Monetisation</button>
-          <button class="profile-btn">Profile</button>
+          <button class="nav-btn active" type="button">Dashboard</button>
+          <button class="nav-btn" type="button">Monetisation</button>
+          <button class="profile-btn" type="button">Profile</button>
         </div>
       </header>
 
       <!-- MAIN CONTENT -->
       <main class="main-grid">
 
-        <!-- TOP SECTION -->
+        <!-- TOP TWO CARDS -->
         <section class="top-content-grid">
-          <!-- UPLOAD PROGRESS -->
+
+          <!-- PROGRESS CARD -->
           <div class="card progress-card">
             <div class="progress-box">
               <div class="progress-head">
-                <span>Today's Progress</span>
+                <span>Today’s Progress</span>
                 <strong><span id="progressCount">0</span> / 50</strong>
               </div>
 
               <div class="progress-bar">
-                <div class="progress-fill"></div>
+                <div class="progress-fill" id="progressFill"></div>
               </div>
 
-              <p class="progress-note">You're just getting started today.</p>
+              <p class="progress-note">You’re just getting started today.</p>
             </div>
 
             <div class="mini-stats">
               <div class="mini-card">
                 <p>Today</p>
-                <h3>0</h3>
+                <h3 id="todayCount">0</h3>
               </div>
 
               <div class="mini-card">
                 <p>This Month</p>
-                <h3>0</h3>
+                <h3 id="monthCount">0</h3>
               </div>
             </div>
 
@@ -70,7 +71,8 @@
               Every approved upload increases your earning potential and helps you build daily momentum.
             </p>
 
-            <button class="upload-btn">Upload &amp; Earn</button>
+            <button class="upload-btn" id="uploadBtn" type="button">Upload &amp; Earn</button>
+            <input type="file" id="fileInput" accept="image/*" hidden />
 
             <p class="earn-sub">Upload more → earn more rewards</p>
 
@@ -93,5 +95,8 @@
       </main>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
