@@ -4,9 +4,6 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 25;
 
-const BUCKET_NAME = "user-images";
-const DAILY_LIMIT = 50;
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const uploadBtn = document.getElementById("uploadBtn");
