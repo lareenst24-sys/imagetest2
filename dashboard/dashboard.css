@@ -6,23 +6,19 @@
 
 :root {
   --bg-main: #05060b;
-  --bg-card: rgba(17, 18, 31, 0.92);
-  --bg-card-2: rgba(22, 23, 38, 0.92);
-  --stroke: rgba(164, 119, 255, 0.18);
+  --stroke: rgba(164, 119, 255, 0.16);
   --text-main: #f4f2ff;
-  --text-soft: #b8b0d6;
-  --text-dim: #8d86ac;
+  --text-soft: #aaa7c5;
   --purple-1: #7b2cff;
-  --purple-2: #a95cff;
-  --purple-3: #c78cff;
-  --glow: rgba(149, 92, 255, 0.35);
+  --purple-2: #b066ff;
+  --glow: rgba(149, 92, 255, 0.28);
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(123, 44, 255, 0.20), transparent 28%),
-    radial-gradient(circle at top right, rgba(0, 145, 255, 0.10), transparent 20%),
+    radial-gradient(circle at top left, rgba(123, 44, 255, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(0, 145, 255, 0.08), transparent 20%),
     linear-gradient(180deg, #05060b 0%, #03040a 100%);
   color: var(--text-main);
   min-height: 100vh;
@@ -31,26 +27,25 @@ body {
 .dashboard-page {
   width: 100%;
   min-height: 100vh;
-  padding: 24px;
+  padding: 22px;
 }
 
 .dashboard-shell {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
 .card {
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
-    linear-gradient(180deg, rgba(15,16,27,0.96), rgba(9,10,18,0.96));
+    linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)),
+    linear-gradient(180deg, rgba(13,14,25,0.96), rgba(8,9,18,0.96));
   border: 1px solid var(--stroke);
   border-radius: 28px;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.015) inset,
-    0 16px 40px rgba(0,0,0,0.45),
-    0 0 35px rgba(123, 44, 255, 0.08);
-  backdrop-filter: blur(10px);
+    0 0 0 1px rgba(255,255,255,0.01) inset,
+    0 16px 40px rgba(0,0,0,0.42),
+    0 0 30px rgba(123, 44, 255, 0.07);
 }
 
 /* TOP BAR */
@@ -59,7 +54,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 26px;
+  padding: 26px 28px;
   margin-bottom: 22px;
 }
 
@@ -78,9 +73,9 @@ body {
   justify-content: center;
   font-size: 30px;
   font-weight: 800;
-  color: white;
+  color: #fff;
   background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
-  box-shadow: 0 10px 30px var(--glow);
+  box-shadow: 0 10px 28px var(--glow);
 }
 
 .eyebrow {
@@ -92,14 +87,14 @@ body {
 }
 
 .top-text h1 {
-  font-size: 52px;
+  font-size: 42px;
   line-height: 1;
   margin-bottom: 8px;
 }
 
 .sub-text {
   color: var(--text-soft);
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .top-right {
@@ -116,8 +111,7 @@ body {
   font-size: 15px;
   font-weight: 700;
   color: white;
-  cursor: default;
-  transition: 0.2s ease;
+  border: none;
 }
 
 .nav-btn {
@@ -127,19 +121,17 @@ body {
 }
 
 .nav-btn.active {
-  background: linear-gradient(135deg, rgba(123, 44, 255, 0.25), rgba(169, 92, 255, 0.18));
-  border-color: rgba(180, 130, 255, 0.35);
-  box-shadow: 0 8px 20px rgba(123, 44, 255, 0.18);
+  background: linear-gradient(135deg, rgba(123, 44, 255, 0.24), rgba(176, 102, 255, 0.16));
+  border-color: rgba(180, 130, 255, 0.32);
 }
 
 .profile-btn {
-  border: none;
   min-width: 120px;
   background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
-  box-shadow: 0 10px 26px rgba(149, 92, 255, 0.28);
+  box-shadow: 0 10px 24px rgba(149, 92, 255, 0.24);
 }
 
-/* MAIN */
+/* CONTENT */
 .main-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -158,20 +150,19 @@ body {
   padding: 22px;
 }
 
-/* PROGRESS CARD */
+/* LEFT CARD */
 .progress-box {
-  padding: 16px;
+  padding: 18px;
   border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.07);
   background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
   margin-bottom: 18px;
 }
 
 .progress-head {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -181,8 +172,7 @@ body {
 }
 
 .progress-head strong {
-  font-size: 22px;
-  color: white;
+  font-size: 20px;
 }
 
 .progress-bar {
@@ -190,7 +180,6 @@ body {
   height: 14px;
   border-radius: 999px;
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
   margin-bottom: 14px;
 }
@@ -198,8 +187,8 @@ body {
 .progress-fill {
   width: 0%;
   height: 100%;
-  border-radius: inherit;
   background: linear-gradient(90deg, var(--purple-1), var(--purple-2));
+  border-radius: 999px;
 }
 
 .progress-note {
@@ -216,9 +205,9 @@ body {
 
 .mini-card {
   padding: 18px 16px;
-  min-height: 88px;
+  min-height: 86px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.07);
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
 }
 
@@ -229,8 +218,7 @@ body {
 }
 
 .mini-card h3 {
-  font-size: 22px;
-  color: white;
+  font-size: 20px;
 }
 
 .bottom-note {
@@ -238,25 +226,19 @@ body {
   font-size: 15px;
 }
 
-/* EARN CARD */
-.earn-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
+/* RIGHT CARD */
 .earn-card h2 {
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1.2;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .earn-text {
+  color: var(--text-soft);
   font-size: 16px;
   line-height: 1.7;
-  color: var(--text-soft);
   margin-bottom: 20px;
-  max-width: 520px;
+  max-width: 500px;
 }
 
 .upload-btn {
@@ -267,10 +249,9 @@ body {
   font-size: 18px;
   font-weight: 800;
   color: white;
-  background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
+  background: linear-gradient(135deg, #8b3fff, #ba72ff);
   box-shadow: 0 12px 30px rgba(149, 92, 255, 0.28);
   margin-bottom: 14px;
-  cursor: default;
 }
 
 .earn-sub {
@@ -286,8 +267,8 @@ body {
   gap: 12px;
   padding: 14px 16px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.07);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
 }
 
 .dot {
@@ -296,7 +277,7 @@ body {
   min-width: 10px;
   border-radius: 50%;
   background: #61ffb0;
-  box-shadow: 0 0 12px rgba(97, 255, 176, 0.8);
+  box-shadow: 0 0 12px rgba(97, 255, 176, 0.7);
 }
 
 .info-pill p {
@@ -305,7 +286,7 @@ body {
   line-height: 1.5;
 }
 
-/* LOCKED CARD */
+/* LOCKED */
 .locked-card {
   min-height: 230px;
   display: flex;
@@ -318,21 +299,21 @@ body {
 }
 
 .lock-icon {
-  font-size: 56px;
+  font-size: 54px;
   margin-bottom: 14px;
 }
 
 .lock-wrap h3 {
-  font-size: 32px;
+  font-size: 30px;
   margin-bottom: 10px;
 }
 
 .lock-wrap p {
   color: var(--text-soft);
-  font-size: 17px;
+  font-size: 16px;
 }
 
-/* RESPONSIVE */
+/* MOBILE */
 @media (max-width: 900px) {
   .top-content-grid {
     grid-template-columns: 1fr;
@@ -341,10 +322,6 @@ body {
   .top-bar {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .top-text h1 {
-    font-size: 40px;
   }
 }
 
@@ -368,13 +345,13 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .top-right {
+    width: 100%;
+  }
+
   .nav-btn,
   .profile-btn {
     width: 100%;
     text-align: center;
-  }
-
-  .top-right {
-    width: 100%;
   }
 }
