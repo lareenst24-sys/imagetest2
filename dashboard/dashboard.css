@@ -435,15 +435,9 @@ body {
 }
 
 @keyframes pulseGlow {
-  0% {
-    box-shadow: 0 0 0 rgba(140, 82, 255, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 22px rgba(140, 82, 255, 0.95);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(140, 82, 255, 0.4);
-  }
+  0% { box-shadow: 0 0 0 rgba(140, 82, 255, 0.4); }
+  50% { box-shadow: 0 0 22px rgba(140, 82, 255, 0.95); }
+  100% { box-shadow: 0 0 0 rgba(140, 82, 255, 0.4); }
 }
 
 .earn-hint {
@@ -531,21 +525,14 @@ body {
   font-size: 1rem;
 }
 
-.earnings-display,
-.pulse-info-row {
+.earnings-display {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 20px;
 }
 
-.pulse-info-row {
-  grid-template-columns: 1fr 1fr;
-  margin-top: -4px;
-}
-
-.earn-box,
-.pulse-info-card {
+.earn-box {
   background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 24px;
@@ -562,16 +549,14 @@ body {
     linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
 }
 
-.earn-box span,
-.pulse-info-label {
+.earn-box span {
   display: block;
   color: var(--muted);
   font-size: 14px;
   margin-bottom: 10px;
 }
 
-.earn-box strong,
-.pulse-info-card strong {
+.earn-box strong {
   font-size: 1.9rem;
   font-weight: 800;
   color: #ffffff;
@@ -602,7 +587,7 @@ body {
 .switch-message {
   color: var(--muted);
   line-height: 1.7;
-  margin-bottom: 18px;
+  margin-top: 18px;
 }
 
 .switch-option-row,
@@ -613,8 +598,7 @@ body {
 }
 
 .switch-option,
-.payout-action-card,
-.earnings-message-card {
+.payout-action-card {
   padding: 18px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.03);
@@ -639,29 +623,6 @@ body {
 
 .payout-action-btn {
   margin-top: 12px;
-}
-
-.earnings-message-card {
-  margin-top: 18px;
-}
-
-.earnings-message-title {
-  font-size: 1rem;
-  font-weight: 800;
-  margin-bottom: 12px;
-  color: #ffffff;
-}
-
-.earnings-message-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.earnings-message-item {
-  color: var(--muted);
-  line-height: 1.6;
-  padding-left: 2px;
 }
 
 .profile-modal {
@@ -962,131 +923,7 @@ body {
   display: none;
 }
 
-.hidden {
-  display: none !important;
-}
-
-@media (max-width: 1100px) {
-  .hero-strip,
-  .top-grid,
-  .earnings-display,
-  .switch-option-row,
-  .payout-action-row,
-  .pulse-info-row {
-    grid-template-columns: 1fr;
-  }
-
-  .earnings-topbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .earnings-currency-area {
-    width: 100%;
-    max-width: 320px;
-  }
-}
-
-@media (max-width: 760px) {
-  body {
-    padding: 14px 14px 88px;
-  }
-
-  .topbar,
-  .glass-card,
-  .modal-box,
-  .profile-panel {
-    border-radius: 24px;
-  }
-
-  .topbar {
-    position: static;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 18px;
-  }
-
-  .brand-wrap {
-    align-items: flex-start;
-  }
-
-  .topbar-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .hero-strip,
-  .top-grid {
-    gap: 14px;
-  }
-
-  .hero-mini-card,
-  .upload-stat-tile,
-  .switch-option,
-  .payout-action-card,
-  .earn-box,
-  .pulse-info-card {
-    border-radius: 20px;
-  }
-
-  .upload-stats.two-col,
-  .hero-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-panel {
-    width: 100%;
-    padding: 22px;
-    border-radius: 22px;
-  }
-
-  .profile-header h2 {
-    font-size: 34px;
-  }
-
-  .mobile-upload-btn {
-    display: block;
-  }
-}
-
-@media (max-width: 520px) {
-  .brand-mark {
-    width: 52px;
-    height: 52px;
-    border-radius: 18px;
-  }
-
-  .brand {
-    font-size: 1.8rem;
-  }
-
-  .card-label,
-  .gallery-head h3,
-  .action-title {
-    font-size: 1.35rem;
-  }
-
-  .progress-head strong,
-  .upload-stat-tile strong,
-  .hero-mini-card strong,
-  .earn-box strong,
-  .pulse-info-card strong {
-    font-size: 1.45rem;
-  }
-
-  .profile-btn,
-  .primary-btn,
-  .secondary-btn,
-  .btn-primary,
-  .btn-danger,
-  .mobile-upload-btn {
-    min-height: 52px;
-  }
-
-  .accordion-summary {
-    padding-right: 52px;
-    
- .how-it-works-modal-box {
+.how-it-works-modal-box {
   width: min(90vw, 560px);
   max-width: 560px;
   max-height: 82vh;
@@ -1100,133 +937,85 @@ body {
 }
 
 .how-it-works-hero h2 {
-  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  margin: 6px 0 10px;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
   line-height: 1.15;
-  margin-bottom: 8px;
-}
-
-.how-it-works-hero .muted-text {
-  font-size: 0.98rem;
-  line-height: 1.5;
 }
 
 .how-it-works-content {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .how-step-list {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .how-step-card {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
-  padding: 12px 13px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .how-step-number {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
   display: grid;
   place-items: center;
-  font-weight: 700;
-  font-size: 0.9rem;
+  flex-shrink: 0;
+  font-size: 0.96rem;
+  font-weight: 800;
   color: #fff;
-  background: linear-gradient(135deg, #9b5cff, #6f35ff);
-  box-shadow: 0 8px 18px rgba(111, 53, 255, 0.28);
+  background: linear-gradient(135deg, var(--purple), var(--purple-2));
 }
 
 .how-step-card h4 {
-  margin: 0 0 4px;
-  font-size: 0.98rem;
-  color: #f5f5fb;
+  margin-bottom: 6px;
+  font-size: 1rem;
 }
 
 .how-step-card p {
-  margin: 0;
   color: var(--muted);
-  line-height: 1.45;
+  line-height: 1.55;
   font-size: 0.95rem;
 }
 
 .how-info-box {
-  padding: 12px 14px;
-  border-radius: 15px;
-  background: rgba(155, 92, 255, 0.08);
-  border: 1px solid rgba(155, 92, 255, 0.2);
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .how-info-box strong {
-  display: inline-block;
-  margin-bottom: 4px;
-  color: #efe9ff;
-}
-
-.how-info-box p {
-  margin: 0;
-  font-size: 0.94rem;
-  line-height: 1.5;
+  display: block;
+  margin-bottom: 8px;
 }
 
 .how-modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .how-modal-actions .secondary-btn,
 .how-modal-actions .primary-btn {
-  min-width: 150px;
+  flex: 1;
 }
 
-@media (max-width: 640px) {
-  .how-it-works-modal-box {
-    width: min(94vw, 520px);
-    padding: 18px 14px;
-    border-radius: 20px;
-  }
-
-  .how-it-works-hero h2 {
-    font-size: 1.5rem;
-  }
-
-  .how-step-card {
-    padding: 11px;
-  }
-
-  .how-modal-actions {
-    flex-direction: column;
-  }
-
-  .how-modal-actions .secondary-btn,
-  .how-modal-actions .primary-btn {
-    width: 100%;
-    min-width: 100%;
-    .single-action .payout-action-btn,
-.single-action .btn-primary {
-  width: 100%;
-  max-width: 360px;
-  display: block;
-  margin: 0 auto;
+.hidden {
+  display: none !important;
 }
 
-#claimableBalance,
-#minimumPayoutValue {
-  font-size: 1.6rem;
-  font-weight: 800;
-}
-
+/* Admin */
 .admin-panel {
   width: min(1180px, 100%);
 }
@@ -1386,7 +1175,39 @@ body {
   text-align: center !important;
 }
 
+.single-action .payout-action-btn,
+.single-action .btn-primary {
+  width: 100%;
+  max-width: 360px;
+  display: block;
+  margin: 0 auto;
+}
+
+#claimableBalance,
+#minimumPayoutValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
 @media (max-width: 1100px) {
+  .hero-strip,
+  .top-grid,
+  .earnings-display,
+  .switch-option-row,
+  .payout-action-row {
+    grid-template-columns: 1fr;
+  }
+
+  .earnings-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .earnings-currency-area {
+    width: 100%;
+    max-width: 320px;
+  }
+
   .admin-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -1397,8 +1218,69 @@ body {
 }
 
 @media (max-width: 760px) {
+  body {
+    padding: 14px 14px 88px;
+  }
+
+  .topbar,
+  .glass-card,
+  .modal-box,
+  .profile-panel {
+    border-radius: 24px;
+  }
+
+  .topbar {
+    position: static;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 18px;
+  }
+
+  .brand-wrap {
+    align-items: flex-start;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .hero-strip,
+  .top-grid {
+    gap: 14px;
+  }
+
+  .hero-mini-card,
+  .upload-stat-tile,
+  .switch-option,
+  .payout-action-card,
+  .earn-box {
+    border-radius: 20px;
+  }
+
+  .upload-stats.two-col,
+  .hero-stats,
   .admin-grid {
     grid-template-columns: 1fr;
+  }
+
+  .profile-panel {
+    width: 100%;
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .profile-header h2 {
+    font-size: 34px;
+  }
+
+  .mobile-upload-btn {
+    display: block;
+  }
+
+  .how-modal-actions {
+    flex-direction: column;
   }
 
   .admin-rule-row {
@@ -1416,5 +1298,42 @@ body {
     width: 100%;
   }
 }
+
+@media (max-width: 520px) {
+  .brand-mark {
+    width: 52px;
+    height: 52px;
+    border-radius: 18px;
+  }
+
+  .brand {
+    font-size: 1.8rem;
+  }
+
+  .card-label,
+  .gallery-head h3,
+  .action-title {
+    font-size: 1.35rem;
+  }
+
+  .progress-head strong,
+  .upload-stat-tile strong,
+  .hero-mini-card strong,
+  .earn-box strong,
+  .admin-stat-value {
+    font-size: 1.45rem;
+  }
+
+  .profile-btn,
+  .primary-btn,
+  .secondary-btn,
+  .btn-primary,
+  .btn-danger,
+  .mobile-upload-btn {
+    min-height: 52px;
+  }
+
+  .accordion-summary {
+    padding-right: 52px;
   }
 }
