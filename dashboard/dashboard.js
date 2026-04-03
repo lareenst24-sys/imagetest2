@@ -11,7 +11,6 @@ const INSTAGRAM_HANDLE = "@yourhandle";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* main dashboard */
-/* main dashboard */
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 
@@ -39,6 +38,7 @@ const dailyLimitTextEl = document.getElementById("dailyLimitText");
 
 /* profile */
 const profileBtn = document.querySelector(".profile-btn") || document.getElementById("profileBtn");
+const profileNavBtn = document.querySelector(".profile-nav-btn");
 const profileModal = document.getElementById("profileModal");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -59,6 +59,7 @@ let selectedFile = null;
 let previewURL = null;
 let todayExtraLimit = 0;
 let profileSaveTimer = null;
+
 /* helpers */
 function getTodayKey() {
   const d = new Date();
@@ -332,6 +333,16 @@ function scheduleProfileSave() {
   profileSaveTimer = setTimeout(saveProfileFields, 500);
 }
 
+function openProfileModal() {
+  if (!profileModal) return;
+  profileModal.classList.remove("hidden");
+}
+
+function closeProfileModal() {
+  if (!profileModal) return;
+  profileModal.classList.add("hidden");
+}
+
 async function deleteAccountData() {
   if (!currentUser) return;
 
@@ -527,21 +538,21 @@ async function simulateWatchAdAndIncreaseLimit() {
 
 /* events */
 if (profileBtn) {
-  profileBtn.addEventListener("click", () => {
-    if (profileModal) profileModal.classList.remove("hidden");
-  });
+  profileBtn.onclick = openProfileModal;
+}
+
+if (profileNavBtn) {
+  profileNavBtn.onclick = openProfileModal;
 }
 
 if (closeProfileBtn) {
-  closeProfileBtn.addEventListener("click", () => {
-    if (profileModal) profileModal.classList.add("hidden");
-  });
+  closeProfileBtn.onclick = closeProfileModal;
 }
 
 if (profileModal) {
   profileModal.addEventListener("click", (e) => {
     if (e.target === profileModal) {
-      profileModal.classList.add("hidden");
+      closeProfileModal();
     }
   });
 }
