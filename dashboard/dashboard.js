@@ -4,8 +4,9 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 25;
 
-const CONTACT_EMAIL = "support@eanova.online";
+const CONTACT_EMAIL = "";
 const INSTAGRAM_HANDLE = "";
+const ADMIN_EMAIL = "";
 
 let bankTransferMode = "disabled";
 let currentPayoutMode = "giftcard";
@@ -13,15 +14,27 @@ let currentPayoutMode = "giftcard";
 const MINIMUM_PAYOUT_USD = 10;
 const CLAIM_API_URL = "https://imagetest2.onrender.com/api/claim-reward";
 
+const ADMIN_RULES_STORAGE_KEY = "eanova_admin_reward_rules_v1";
+const DEFAULT_ADMIN_RULES = [
+  { id: "rule-1", min: 0, max: 99, reward: 0 },
+  { id: "rule-2", min: 100, max: 199, reward: 5 },
+  { id: "rule-3", min: 200, max: 299, reward: 12 },
+  { id: "rule-4", min: 300, max: 999999, reward: 25 }
+];
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const howItWorksModal = document.getElementById("howItWorksModal");
 const closeHowItWorksBtn = document.getElementById("closeHowItWorksBtn");
 const gotItHowItWorksBtn = document.getElementById("gotItHowItWorksBtn");
 const openHowItWorksPageBtn = document.getElementById("openHowItWorksPageBtn");
+
 const profileBtn = document.getElementById("profileBtn");
+const adminBtn = document.getElementById("adminBtn");
 const profileModal = document.getElementById("profileModal");
+const adminModal = document.getElementById("adminModal");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
+const closeAdminBtn = document.getElementById("closeAdminBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const profileEmail = document.getElementById("profileEmail");
@@ -75,12 +88,26 @@ const uploadStatusBadge = document.getElementById("uploadStatusBadge");
 const dailyLimitValue = document.getElementById("dailyLimitValue");
 const mobileUploadBtn = document.getElementById("mobileUploadBtn");
 
+const adminRulesList = document.getElementById("adminRulesList");
+const addRuleBtn = document.getElementById("addRuleBtn");
+const saveRulesBtn = document.getElementById("saveRulesBtn");
+const refreshAdminBtn = document.getElementById("refreshAdminBtn");
+const applyRewardsBtn = document.getElementById("applyRewardsBtn");
+const adminUsersTableBody = document.getElementById("adminUsersTableBody");
+const adminTotalUsers = document.getElementById("adminTotalUsers");
+const adminTotalUploads = document.getElementById("adminTotalUploads");
+const adminPreviewUsers = document.getElementById("adminPreviewUsers");
+const adminWalletTotal = document.getElementById("adminWalletTotal");
+
 let currentUser = null;
 let selectedFile = null;
 let currentCurrency = "USD";
 let todayExtraLimit = 0;
 let profileSaveTimer = null;
 let settingsSaveTimer = null;
+
+let adminRules = [];
+let adminUsersPreview = [];
 
 function currencySymbol(code) {
   const map = {
@@ -94,6 +121,10 @@ function currencySymbol(code) {
 
 function money(value) {
   return `${currencySymbol(currentCurrency)}${Number(value || 0).toFixed(2)}`;
+}
+
+function moneyUsd(value) {
+  return `$${Number(value || 0).toFixed(2)}`;
 }
 
 function animateValue(element, finalValue) {
@@ -118,20 +149,18 @@ function animateValue(element, finalValue) {
   requestAnimationFrame(tick);
 }
 
-function updatePayoutButtons() {
-  if (claimGiftCardBtn) {
-    claimGiftCardBtn.textContent = "Claim Reward";
-    claimGiftCardBtn.disabled = currentPayoutMode !== "giftcard";
-  }
+function isAdminUser() {
+  if (!currentUser || !ADMIN_EMAIL || !ADMIN_EMAIL.trim()) return false;
+  return currentUser.email?.toLowerCase() === ADMIN_EMAIL.trim().toLowerCase();
+}
 
-  if (bankTransferActionBtn) {
-    if (bankTransferMode === "switch") {
-      bankTransferActionBtn.textContent = "Switch";
-      bankTransferActionBtn.disabled = false;
-    } else {
-      bankTransferActionBtn.textContent = "Disabled";
-      bankTransferActionBtn.disabled = true;
-    }
+function syncAdminVisibility() {
+  if (!adminBtn) return;
+  if (isAdminUser()) {
+    adminBtn.classList.remove("hidden");
+  } else {
+    adminBtn.classList.add("hidden");
+    if (adminModal) adminModal.classList.add("hidden");
   }
 }
 
@@ -141,6 +170,13 @@ function getTodayKey() {
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function getMonthKey() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  return `${year}-${month}`;
 }
 
 function getDailyBonusStorageKey() {
@@ -163,7 +199,7 @@ function loadTodayExtraLimit() {
       todayExtraLimit = 0;
       localStorage.removeItem(getDailyBonusStorageKey());
     }
-  } catch (error) {
+  } catch {
     todayExtraLimit = 0;
     localStorage.removeItem(getDailyBonusStorageKey());
   }
@@ -293,6 +329,239 @@ function openHowItWorksModal() {
 function closeHowItWorksModal() {
   if (!howItWorksModal) return;
   howItWorksModal.classList.add("hidden");
+}
+
+function loadAdminRules() {
+  const raw = localStorage.getItem(ADMIN_RULES_STORAGE_KEY);
+
+  if (!raw) {
+    adminRules = structuredClone(DEFAULT_ADMIN_RULES);
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length) {
+      adminRules = parsed.map((rule, index) => ({
+        id: rule.id || `rule-${index + 1}`,
+        min: Number(rule.min || 0),
+        max: Number(rule.max || 0),
+        reward: Number(rule.reward || 0)
+      }));
+    } else {
+      adminRules = structuredClone(DEFAULT_ADMIN_RULES);
+    }
+  } catch {
+    adminRules = structuredClone(DEFAULT_ADMIN_RULES);
+  }
+}
+
+function saveAdminRules() {
+  localStorage.setItem(ADMIN_RULES_STORAGE_KEY, JSON.stringify(adminRules));
+}
+
+function renderAdminRules() {
+  if (!adminRulesList) return;
+
+  adminRulesList.innerHTML = "";
+
+  adminRules.forEach((rule, index) => {
+    const row = document.createElement("div");
+    row.className = "admin-rule-row";
+    row.innerHTML = `
+      <div class="admin-rule-field">
+        <label>Min Uploads</label>
+        <input type="number" min="0" value="${Number(rule.min)}" data-rule-index="${index}" data-rule-key="min" />
+      </div>
+      <div class="admin-rule-field">
+        <label>Max Uploads</label>
+        <input type="number" min="0" value="${Number(rule.max)}" data-rule-index="${index}" data-rule-key="max" />
+      </div>
+      <div class="admin-rule-field">
+        <label>Reward (USD)</label>
+        <input type="number" min="0" step="0.01" value="${Number(rule.reward)}" data-rule-index="${index}" data-rule-key="reward" />
+      </div>
+      <button class="btn-danger admin-rule-remove" type="button" data-remove-rule="${index}">Remove</button>
+    `;
+    adminRulesList.appendChild(row);
+  });
+
+  adminRulesList.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", function () {
+      const index = Number(this.getAttribute("data-rule-index"));
+      const key = this.getAttribute("data-rule-key");
+      adminRules[index][key] = Number(this.value || 0);
+    });
+  });
+
+  adminRulesList.querySelectorAll("[data-remove-rule]").forEach((button) => {
+    button.addEventListener("click", function () {
+      const index = Number(this.getAttribute("data-remove-rule"));
+      adminRules.splice(index, 1);
+      if (!adminRules.length) {
+        adminRules = structuredClone(DEFAULT_ADMIN_RULES);
+      }
+      renderAdminRules();
+    });
+  });
+}
+
+function addAdminRule() {
+  adminRules.push({
+    id: `rule-${Date.now()}`,
+    min: 0,
+    max: 0,
+    reward: 0
+  });
+  renderAdminRules();
+}
+
+function getRewardRuleForUploads(uploadCount) {
+  const safeRules = [...adminRules].sort((a, b) => Number(a.min) - Number(b.min));
+
+  for (const rule of safeRules) {
+    const min = Number(rule.min || 0);
+    const max = Number(rule.max || 0);
+    if (uploadCount >= min && uploadCount <= max) {
+      return rule;
+    }
+  }
+
+  return null;
+}
+
+function updateAdminSummary(users) {
+  const totalUsers = users.length;
+  const totalUploads = users.reduce((sum, user) => sum + Number(user.uploads_this_month || 0), 0);
+  const walletTotal = users.reduce((sum, user) => {
+    const rule = getRewardRuleForUploads(Number(user.uploads_this_month || 0));
+    return sum + Number(rule?.reward || 0);
+  }, 0);
+
+  if (adminTotalUsers) adminTotalUsers.textContent = totalUsers;
+  if (adminTotalUploads) adminTotalUploads.textContent = totalUploads;
+  if (adminPreviewUsers) adminPreviewUsers.textContent = totalUsers;
+  if (adminWalletTotal) adminWalletTotal.textContent = moneyUsd(walletTotal);
+}
+
+function renderAdminUsersTable(users) {
+  if (!adminUsersTableBody) return;
+
+  if (!users.length) {
+    adminUsersTableBody.innerHTML = `<tr><td colspan="5" class="admin-empty-cell">No admin data yet.</td></tr>`;
+    updateAdminSummary([]);
+    return;
+  }
+
+  adminUsersTableBody.innerHTML = "";
+
+  users.forEach((user) => {
+    const uploads = Number(user.uploads_this_month || 0);
+    const rule = getRewardRuleForUploads(uploads);
+    const bracket = rule ? `${rule.min}-${rule.max}` : "No Match";
+    const reward = rule ? moneyUsd(rule.reward) : moneyUsd(0);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${user.email || "-"}</td>
+      <td>${user.name || "-"}</td>
+      <td>${uploads}</td>
+      <td>${bracket}</td>
+      <td>${reward}</td>
+    `;
+    adminUsersTableBody.appendChild(row);
+  });
+
+  updateAdminSummary(users);
+}
+
+async function loadAdminData() {
+  if (!isAdminUser()) return;
+
+  const { data, error } = await supabaseClient
+    .from("admin_creator_stats")
+    .select("user_id,email,name,uploads_this_month")
+    .order("uploads_this_month", { ascending: false });
+
+  if (error) {
+    console.error("Admin data load error:", error);
+    adminUsersPreview = [];
+    renderAdminUsersTable([]);
+    return;
+  }
+
+  adminUsersPreview = data || [];
+  renderAdminUsersTable(adminUsersPreview);
+}
+
+async function applyMonthlyRewards() {
+  if (!isAdminUser()) {
+    alert("Admin access only.");
+    return;
+  }
+
+  if (!adminUsersPreview.length) {
+    alert("No users found in admin preview.");
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Apply reward rules to all preview users? This will set each user's wallet balance from the current monthly upload bracket."
+  );
+
+  if (!confirmed) return;
+
+  if (applyRewardsBtn) {
+    applyRewardsBtn.disabled = true;
+    applyRewardsBtn.textContent = "Applying...";
+  }
+
+  try {
+    for (const user of adminUsersPreview) {
+      const uploads = Number(user.uploads_this_month || 0);
+      const rule = getRewardRuleForUploads(uploads);
+      const reward = Number(rule?.reward || 0);
+
+      const { error } = await supabaseClient
+        .from("creator_wallets")
+        .upsert({
+          user_id: user.user_id,
+          balance: reward
+        });
+
+      if (error) {
+        throw error;
+      }
+    }
+
+    alert("Monthly rewards applied successfully.");
+    await loadAdminData();
+  } catch (error) {
+    console.error("Apply rewards error:", error);
+    alert("Could not apply rewards.");
+  } finally {
+    if (applyRewardsBtn) {
+      applyRewardsBtn.disabled = false;
+      applyRewardsBtn.textContent = "Apply Rewards";
+    }
+  }
+}
+
+function updatePayoutButtons() {
+  if (claimGiftCardBtn) {
+    claimGiftCardBtn.textContent = "Claim Reward";
+    claimGiftCardBtn.disabled = currentPayoutMode !== "giftcard";
+  }
+
+  if (bankTransferActionBtn) {
+    if (bankTransferMode === "switch") {
+      bankTransferActionBtn.textContent = "Switch";
+      bankTransferActionBtn.disabled = false;
+    } else {
+      bankTransferActionBtn.textContent = "Disabled";
+      bankTransferActionBtn.disabled = true;
+    }
+  }
 }
 
 async function ensureProfile() {
@@ -461,9 +730,7 @@ function loadContactPlaceholders() {
     ? INSTAGRAM_HANDLE.trim()
     : "@yourhandle";
 
-  if (businessEmailText) {
-    businessEmailText.textContent = emailText;
-  }
+  if (businessEmailText) businessEmailText.textContent = emailText;
 
   if (businessEmailLink) {
     businessEmailLink.href = CONTACT_EMAIL && CONTACT_EMAIL.trim()
@@ -471,9 +738,7 @@ function loadContactPlaceholders() {
       : "mailto:";
   }
 
-  if (businessInstagramText) {
-    businessInstagramText.textContent = igText;
-  }
+  if (businessInstagramText) businessInstagramText.textContent = igText;
 
   if (businessInstagramLink) {
     const cleanHandle = igText.replace(/^@/, "").trim();
@@ -482,6 +747,23 @@ function loadContactPlaceholders() {
         ? `https://instagram.com/${cleanHandle}`
         : "#";
   }
+}
+
+async function loadWalletBalance() {
+  if (!currentUser) return 0;
+
+  const { data, error } = await supabaseClient
+    .from("creator_wallets")
+    .select("balance")
+    .eq("user_id", currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Wallet load error:", error);
+    return 0;
+  }
+
+  return Number(data?.balance || 0);
 }
 
 async function loadEarnings() {
@@ -517,10 +799,12 @@ async function loadEarnings() {
     }
   });
 
+  const walletBalance = await loadWalletBalance();
+
   if (totalEarnedValue) animateValue(totalEarnedValue, total);
   if (pendingEarnedValue) animateValue(pendingEarnedValue, pending);
   if (paidEarnedValue) animateValue(paidEarnedValue, fulfilled);
-  if (claimableBalance) claimableBalance.textContent = money(pending);
+  if (claimableBalance) claimableBalance.textContent = money(walletBalance);
   if (minimumPayoutValue) minimumPayoutValue.textContent = money(MINIMUM_PAYOUT_USD);
 }
 
@@ -592,13 +876,20 @@ async function requireLogin() {
 
   loadTodayExtraLimit();
   loadContactPlaceholders();
+  loadAdminRules();
 
   await ensureProfile();
   await ensureBasicSettings();
   await loadEarnings();
   await updateUploadStatsUI();
 
+  syncAdminVisibility();
   updatePayoutButtons();
+
+  if (isAdminUser()) {
+    renderAdminRules();
+    await loadAdminData();
+  }
 }
 
 function resetUploadModal() {
@@ -781,6 +1072,53 @@ if (profileBtn) {
   });
 }
 
+if (adminBtn) {
+  adminBtn.addEventListener("click", async function () {
+    if (!isAdminUser()) return;
+    renderAdminRules();
+    await loadAdminData();
+    if (adminModal) adminModal.classList.remove("hidden");
+  });
+}
+
+if (closeAdminBtn) {
+  closeAdminBtn.addEventListener("click", function () {
+    if (adminModal) adminModal.classList.add("hidden");
+  });
+}
+
+if (adminModal) {
+  adminModal.addEventListener("click", function (e) {
+    if (e.target === adminModal) {
+      adminModal.classList.add("hidden");
+    }
+  });
+}
+
+if (addRuleBtn) {
+  addRuleBtn.addEventListener("click", addAdminRule);
+}
+
+if (saveRulesBtn) {
+  saveRulesBtn.addEventListener("click", function () {
+    saveAdminRules();
+    renderAdminRules();
+    renderAdminUsersTable(adminUsersPreview);
+    alert("Admin rules saved.");
+  });
+}
+
+if (refreshAdminBtn) {
+  refreshAdminBtn.addEventListener("click", async function () {
+    saveAdminRules();
+    await loadAdminData();
+  });
+}
+
+if (applyRewardsBtn) {
+  applyRewardsBtn.addEventListener("click", applyMonthlyRewards);
+}
+
 if (closeProfileBtn) {
   closeProfileBtn.addEventListener("click", function () {
     if (profileModal) profileModal.classList.add("hidden");
@@ -928,6 +1266,9 @@ window.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
     if (profileModal && !profileModal.classList.contains("hidden")) {
       profileModal.classList.add("hidden");
+    }
+    if (adminModal && !adminModal.classList.contains("hidden")) {
+      adminModal.classList.add("hidden");
     }
     if (uploadModal && !uploadModal.classList.contains("hidden")) {
       closeUploadModal();
