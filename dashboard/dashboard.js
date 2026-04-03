@@ -11,6 +11,7 @@ const INSTAGRAM_HANDLE = "@yourhandle";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* main dashboard */
+/* main dashboard */
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 
@@ -58,7 +59,6 @@ let selectedFile = null;
 let previewURL = null;
 let todayExtraLimit = 0;
 let profileSaveTimer = null;
-
 /* helpers */
 function getTodayKey() {
   const d = new Date();
