@@ -1,6 +1,7 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
 
+
 const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 15;
