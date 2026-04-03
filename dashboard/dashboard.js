@@ -14,14 +14,6 @@ let currentPayoutMode = "giftcard";
 const MINIMUM_PAYOUT_USD = 10;
 const CLAIM_API_URL = "https://imagetest2.onrender.com/api/claim-reward";
 
-const ADMIN_RULES_STORAGE_KEY = "eanova_admin_reward_rules_v1";
-const DEFAULT_ADMIN_RULES = [
-  { id: "rule-1", min: 0, max: 99, reward: 0 },
-  { id: "rule-2", min: 100, max: 199, reward: 5 },
-  { id: "rule-3", min: 200, max: 299, reward: 12 },
-  { id: "rule-4", min: 300, max: 999999, reward: 25 }
-];
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const howItWorksModal = document.getElementById("howItWorksModal");
@@ -331,91 +323,11 @@ function closeHowItWorksModal() {
   howItWorksModal.classList.add("hidden");
 }
 
-function loadAdminRules() {
-  const raw = localStorage.getItem(ADMIN_RULES_STORAGE_KEY);
+const adminBtn = document.getElementById("adminBtn");
 
-  if (!raw) {
-    adminRules = structuredClone(DEFAULT_ADMIN_RULES);
-    return;
-  }
-
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length) {
-      adminRules = parsed.map((rule, index) => ({
-        id: rule.id || `rule-${index + 1}`,
-        min: Number(rule.min || 0),
-        max: Number(rule.max || 0),
-        reward: Number(rule.reward || 0)
-      }));
-    } else {
-      adminRules = structuredClone(DEFAULT_ADMIN_RULES);
-    }
-  } catch {
-    adminRules = structuredClone(DEFAULT_ADMIN_RULES);
-  }
-}
-
-function saveAdminRules() {
-  localStorage.setItem(ADMIN_RULES_STORAGE_KEY, JSON.stringify(adminRules));
-}
-
-function renderAdminRules() {
-  if (!adminRulesList) return;
-
-  adminRulesList.innerHTML = "";
-
-  adminRules.forEach((rule, index) => {
-    const row = document.createElement("div");
-    row.className = "admin-rule-row";
-    row.innerHTML = `
-      <div class="admin-rule-field">
-        <label>Min Uploads</label>
-        <input type="number" min="0" value="${Number(rule.min)}" data-rule-index="${index}" data-rule-key="min" />
-      </div>
-      <div class="admin-rule-field">
-        <label>Max Uploads</label>
-        <input type="number" min="0" value="${Number(rule.max)}" data-rule-index="${index}" data-rule-key="max" />
-      </div>
-      <div class="admin-rule-field">
-        <label>Reward (USD)</label>
-        <input type="number" min="0" step="0.01" value="${Number(rule.reward)}" data-rule-index="${index}" data-rule-key="reward" />
-      </div>
-      <button class="btn-danger admin-rule-remove" type="button" data-remove-rule="${index}">Remove</button>
-    `;
-    adminRulesList.appendChild(row);
-  });
-
-  adminRulesList.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", function () {
-      const index = Number(this.getAttribute("data-rule-index"));
-      const key = this.getAttribute("data-rule-key");
-      adminRules[index][key] = Number(this.value || 0);
-    });
-  });
-
-  adminRulesList.querySelectorAll("[data-remove-rule]").forEach((button) => {
-    button.addEventListener("click", function () {
-      const index = Number(this.getAttribute("data-remove-rule"));
-      adminRules.splice(index, 1);
-      if (!adminRules.length) {
-        adminRules = structuredClone(DEFAULT_ADMIN_RULES);
-      }
-      renderAdminRules();
-    });
-  });
-}
-
-function addAdminRule() {
-  adminRules.push({
-    id: `rule-${Date.now()}`,
-    min: 0,
-    max: 0,
-    reward: 0
-  });
-  renderAdminRules();
-}
-
+function isAdminUser() {
+  if (!currentUser || !ADMIN_EMAIL || !ADMIN_EMAIL.trim()) return false;
+  return
 function getRewardRuleForUploads(uploadCount) {
   const safeRules = [...adminRules].sort((a, b) => Number(a.min) - Number(b.min));
 
