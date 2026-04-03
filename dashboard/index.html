@@ -120,6 +120,109 @@
     </section>
   </div>
 
+  <div id="profileModal" class="profile-modal hidden">
+  <div class="profile-panel">
+    <button id="closeProfileBtn" class="profile-close" type="button">&times;</button>
+
+    <div class="profile-header">
+      <p class="section-kicker">Account Center</p>
+      <h2>Profile</h2>
+      <p class="profile-subtext">Manage your details, business contact, and legal pages.</p>
+    </div>
+
+    <div class="accordion-list">
+      <details class="accordion-card" open>
+        <summary class="accordion-summary">Account</summary>
+        <div class="accordion-content">
+          <div class="profile-field">
+            <label for="profileName">Display Name</label>
+            <input id="profileName" type="text" placeholder="Your display name" />
+          </div>
+
+          <div class="profile-field">
+            <label>Email</label>
+            <div id="profileEmail" class="profile-static-box">you@example.com</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion-card">
+        <summary class="accordion-summary">Location & Currency</summary>
+        <div class="accordion-content">
+          <div class="profile-field">
+            <label for="profileCountry">Country</label>
+            <input id="profileCountry" type="text" placeholder="Your country" />
+          </div>
+
+          <div class="profile-field">
+            <label for="currencyProfileSelect">Currency</label>
+            <select id="currencyProfileSelect" class="profile-select">
+              <option value="USD">USD</option>
+              <option value="INR">INR</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion-card">
+        <summary class="accordion-summary">Business Contact</summary>
+        <div class="accordion-content">
+          <div class="business-contact-list">
+            <a id="businessEmailLink" class="business-contact-card" href="mailto:support@eanova.online">
+              <span class="business-contact-label">Contact Email</span>
+              <strong id="businessEmailText">support@eanova.online</strong>
+            </a>
+
+            <a
+              id="businessInstagramLink"
+              class="business-contact-card"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="business-contact-label">Instagram</span>
+              <strong id="businessInstagramText">@yourhandle</strong>
+            </a>
+          </div>
+
+          <p class="muted-text small-note">
+            These are business contact links for support and social reach.
+          </p>
+        </div>
+      </details>
+
+      <details class="accordion-card">
+        <summary class="accordion-summary">Legal Pages</summary>
+        <div class="accordion-content">
+          <div class="legal-button-list">
+            <a class="legal-page-btn" href="/how-it-works/">How It Works</a>
+            <a class="legal-page-btn" href="/legal/privacy/">Privacy Policy</a>
+            <a class="legal-page-btn" href="/legal/terms/">Terms & Conditions</a>
+            <a class="legal-page-btn" href="/legal/payment-policy/">Payment Policy</a>
+            <a class="legal-page-btn" href="/legal/data-notice/">Data Notice</a>
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion-card danger-accordion">
+        <summary class="accordion-summary">Delete Account</summary>
+        <div class="accordion-content">
+          <p class="danger-text">
+            This will delete your app data from the database, including profile details and upload records, then log you out.
+          </p>
+          <button id="deleteAccountBtn" class="btn-danger" type="button">Delete Account Data</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="profile-actions single-action">
+      <button id="logoutBtn" class="btn-danger" type="button">Logout</button>
+    </div>
+  </div>
+</div>
+  
   <input type="file" id="fileInput" accept="image/*" hidden />
 
   <div id="uploadModal" class="modal-overlay hidden">
