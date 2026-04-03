@@ -4,10 +4,16 @@ const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 25;
 
+const BUCKET_NAME = "user-images";
+const DAILY_LIMIT = 50;
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
+const uploadModal = document.getElementById("uploadModal");
+const modalUploadBtn = document.getElementById("modalUploadBtn");
+const modalCloseBtn = document.getElementById("modalCloseBtn");
 
 const progressCountEl = document.getElementById("progressCount");
 const todayCountEl = document.getElementById("todayCount");
@@ -16,10 +22,12 @@ const progressFillEl = document.getElementById("progressFill");
 
 async function getCurrentUser() {
   const { data, error } = await supabaseClient.auth.getUser();
+
   if (error) {
     console.error("Error getting user:", error.message);
     return null;
   }
+
   return data.user;
 }
 
@@ -47,6 +55,7 @@ function getMonthRange() {
 
 async function loadCounts() {
   const user = await getCurrentUser();
+
   if (!user) {
     window.location.href = "/";
     return;
@@ -100,6 +109,7 @@ async function loadCounts() {
 
 async function handleUpload(file) {
   const user = await getCurrentUser();
+
   if (!user) {
     alert("You must be logged in.");
     window.location.href = "/";
@@ -117,7 +127,7 @@ async function handleUpload(file) {
 
   if (countError) {
     alert("Could not check daily limit.");
-    console.error(countError.message);
+    console.error("Daily limit check failed:", countError);
     return;
   }
 
@@ -126,7 +136,7 @@ async function handleUpload(file) {
     return;
   }
 
-  const fileExt = file.name.split(".").pop();
+  const fileExt = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
   const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
 
   const { error: uploadError } = await supabaseClient.storage
@@ -135,7 +145,7 @@ async function handleUpload(file) {
 
   if (uploadError) {
     alert("Upload failed.");
-    console.error(uploadError.message);
+    console.error("Storage upload failed:", uploadError);
     return;
   }
 
@@ -149,7 +159,7 @@ async function handleUpload(file) {
 
   if (insertError) {
     alert("Upload saved in storage, but database record failed.");
-    console.error(insertError.message);
+    console.error("Database insert failed:", insertError);
     return;
   }
 
@@ -157,17 +167,43 @@ async function handleUpload(file) {
   await loadCounts();
 }
 
-if (uploadBtn && fileInput) {
+if (uploadBtn && uploadModal) {
   uploadBtn.addEventListener("click", () => {
+    uploadModal.classList.add("active");
+  });
+}
+
+if (modalCloseBtn && uploadModal) {
+  modalCloseBtn.addEventListener("click", () => {
+    uploadModal.classList.remove("active");
+  });
+}
+
+if (modalUploadBtn && fileInput) {
+  modalUploadBtn.addEventListener("click", () => {
     fileInput.click();
   });
+}
 
+if (fileInput) {
   fileInput.addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (uploadModal) {
+      uploadModal.classList.remove("active");
+    }
+
     await handleUpload(file);
     fileInput.value = "";
+  });
+}
+
+if (uploadModal) {
+  uploadModal.addEventListener("click", (event) => {
+    if (event.target === uploadModal) {
+      uploadModal.classList.remove("active");
+    }
   });
 }
 
