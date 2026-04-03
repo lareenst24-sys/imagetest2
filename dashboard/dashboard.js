@@ -2,7 +2,6 @@ const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
 const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
-const AD_BONUS_LIMIT = 25;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -10,12 +9,20 @@ const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 const uploadModal = document.getElementById("uploadModal");
 const modalUploadBtn = document.getElementById("modalUploadBtn");
+const modalConfirmBtn = document.getElementById("modalConfirmBtn");
 const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+const previewBox = document.getElementById("previewBox");
+const previewImage = document.getElementById("previewImage");
+const previewText = document.getElementById("previewText");
 
 const progressCountEl = document.getElementById("progressCount");
 const todayCountEl = document.getElementById("todayCount");
 const monthCountEl = document.getElementById("monthCount");
 const progressFillEl = document.getElementById("progressFill");
+
+let selectedFile = null;
+let previewURL = null;
 
 async function getCurrentUser() {
   const { data, error } = await supabaseClient.auth.getUser();
@@ -48,6 +55,35 @@ function getMonthRange() {
     start: start.toISOString(),
     end: end.toISOString()
   };
+}
+
+function resetPreview() {
+  selectedFile = null;
+
+  if (previewURL) {
+    URL.revokeObjectURL(previewURL);
+    previewURL = null;
+  }
+
+  if (previewImage) {
+    previewImage.src = "";
+  }
+
+  if (previewBox) {
+    previewBox.classList.remove("active");
+  }
+
+  if (previewText) {
+    previewText.textContent = "No image selected";
+  }
+
+  if (modalConfirmBtn) {
+    modalConfirmBtn.disabled = true;
+  }
+
+  if (fileInput) {
+    fileInput.value = "";
+  }
 }
 
 async function loadCounts() {
@@ -110,7 +146,7 @@ async function handleUpload(file) {
   if (!user) {
     alert("You must be logged in.");
     window.location.href = "/";
-    return;
+    return false;
   }
 
   const todayRange = getTodayRange();
@@ -125,12 +161,12 @@ async function handleUpload(file) {
   if (countError) {
     alert("Could not check daily limit.");
     console.error("Daily limit check failed:", countError);
-    return;
+    return false;
   }
 
   if ((todayCount || 0) >= DAILY_LIMIT) {
     alert("Daily upload limit reached.");
-    return;
+    return false;
   }
 
   const fileExt = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
@@ -143,7 +179,7 @@ async function handleUpload(file) {
   if (uploadError) {
     alert("Upload failed.");
     console.error("Storage upload failed:", uploadError);
-    return;
+    return false;
   }
 
   const { error: insertError } = await supabaseClient
@@ -157,15 +193,17 @@ async function handleUpload(file) {
   if (insertError) {
     alert("Upload saved in storage, but database record failed.");
     console.error("Database insert failed:", insertError);
-    return;
+    return false;
   }
 
-  alert("Upload successful.");
   await loadCounts();
+  alert("Upload successful.");
+  return true;
 }
 
 if (uploadBtn && uploadModal) {
   uploadBtn.addEventListener("click", () => {
+    resetPreview();
     uploadModal.classList.add("active");
   });
 }
@@ -173,6 +211,7 @@ if (uploadBtn && uploadModal) {
 if (modalCloseBtn && uploadModal) {
   modalCloseBtn.addEventListener("click", () => {
     uploadModal.classList.remove("active");
+    resetPreview();
   });
 }
 
@@ -183,16 +222,52 @@ if (modalUploadBtn && fileInput) {
 }
 
 if (fileInput) {
-  fileInput.addEventListener("change", async (event) => {
+  fileInput.addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    if (uploadModal) {
-      uploadModal.classList.remove("active");
+    selectedFile = file;
+
+    if (previewURL) {
+      URL.revokeObjectURL(previewURL);
     }
 
-    await handleUpload(file);
-    fileInput.value = "";
+    previewURL = URL.createObjectURL(file);
+
+    if (previewImage) {
+      previewImage.src = previewURL;
+    }
+
+    if (previewBox) {
+      previewBox.classList.add("active");
+    }
+
+    if (previewText) {
+      previewText.textContent = file.name;
+    }
+
+    if (modalConfirmBtn) {
+      modalConfirmBtn.disabled = false;
+    }
+  });
+}
+
+if (modalConfirmBtn) {
+  modalConfirmBtn.addEventListener("click", async () => {
+    if (!selectedFile) return;
+
+    modalConfirmBtn.disabled = true;
+
+    const success = await handleUpload(selectedFile);
+
+    if (success) {
+      if (uploadModal) {
+        uploadModal.classList.remove("active");
+      }
+      resetPreview();
+    } else {
+      modalConfirmBtn.disabled = false;
+    }
   });
 }
 
@@ -200,6 +275,7 @@ if (uploadModal) {
   uploadModal.addEventListener("click", (event) => {
     if (event.target === uploadModal) {
       uploadModal.classList.remove("active");
+      resetPreview();
     }
   });
 }
