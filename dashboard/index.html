@@ -10,7 +10,6 @@
   <div class="dashboard-page">
     <div class="dashboard-shell">
 
-      <!-- TOP BAR -->
       <header class="top-bar card">
         <div class="top-left">
           <div class="logo-box">E</div>
@@ -28,13 +27,8 @@
         </div>
       </header>
 
-      <!-- MAIN CONTENT -->
       <main class="main-grid">
-
-        <!-- TOP TWO CARDS -->
         <section class="top-content-grid">
-
-          <!-- PROGRESS CARD -->
           <div class="card progress-card">
             <div class="progress-box">
               <div class="progress-head">
@@ -64,7 +58,6 @@
             <p class="bottom-note">Daily uploads reset every day.</p>
           </div>
 
-          <!-- EARN CARD -->
           <div class="card earn-card">
             <h2>Turn images into rewards</h2>
             <p class="earn-text">
@@ -83,7 +76,6 @@
           </div>
         </section>
 
-        <!-- LOCKED CARD -->
         <section class="card locked-card">
           <div class="lock-wrap">
             <div class="lock-icon">🔒</div>
@@ -91,8 +83,16 @@
             <p>Unlock after meeting the required threshold.</p>
           </div>
         </section>
-
       </main>
+    </div>
+  </div>
+
+  <div class="upload-modal" id="uploadModal">
+    <div class="modal-content">
+      <h2>Select Image</h2>
+      <p>Choose an image to upload</p>
+      <button class="modal-upload-btn" id="modalUploadBtn" type="button">Choose File</button>
+      <button class="modal-close-btn" id="modalCloseBtn" type="button">Cancel</button>
     </div>
   </div>
 
