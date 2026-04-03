@@ -2,24 +2,19 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 :root {
-  --bg: #05050b;
-  --card: rgba(16, 16, 27, 0.88);
-  --card-dark: #0b0b14;
   --text: #f7f5ff;
   --muted: #a6a7bc;
   --purple: #8b3dff;
   --purple-2: #b06cff;
-  --cyan: #69d8ff;
   --success: #64f0a5;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
-  --shadow:
-    0 18px 50px rgba(0, 0, 0, 0.45),
-    0 0 36px rgba(139, 61, 255, 0.12);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45), 0 0 36px rgba(139, 61, 255, 0.12);
+  --card-grad: linear-gradient(180deg, rgba(18, 18, 30, 0.92), rgba(12, 12, 20, 0.88));
 }
 
 body {
@@ -78,12 +73,22 @@ body {
   z-index: 1;
 }
 
+.glass-card {
+  background: var(--card-grad);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+/* top */
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   padding: 26px 24px;
   background: linear-gradient(180deg, rgba(16, 16, 29, 0.95), rgba(10, 10, 18, 0.92));
   border: 1px solid var(--border);
@@ -107,9 +112,7 @@ body {
   font-weight: 800;
   color: #fff;
   background: linear-gradient(135deg, var(--purple), var(--purple-2));
-  box-shadow:
-    0 12px 28px rgba(139, 61, 255, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 28px rgba(139, 61, 255, 0.35);
 }
 
 .eyebrow,
@@ -167,7 +170,8 @@ body {
 
 .profile-btn,
 .primary-btn,
-.secondary-btn {
+.secondary-btn,
+.nav-tab {
   border: none;
   border-radius: 18px;
   font-weight: 700;
@@ -190,9 +194,10 @@ body {
 
 .profile-btn:hover,
 .primary-btn:hover,
-.secondary-btn:hover {
+.secondary-btn:hover,
+.nav-tab:hover {
   opacity: 0.98;
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(-2px);
 }
 
 .primary-btn:disabled,
@@ -208,6 +213,40 @@ body {
   min-width: 118px;
 }
 
+/* nav */
+.dashboard-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px;
+}
+
+.nav-tab {
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.98rem;
+}
+
+.nav-tab.active {
+  background: linear-gradient(135deg, rgba(139,61,255,0.22), rgba(176,108,255,0.10));
+  border-color: rgba(176,108,255,0.28);
+}
+
+.nav-icon {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+/* layout */
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 0.9fr;
@@ -217,26 +256,9 @@ body {
     "locked locked";
 }
 
-.uploads-card {
-  grid-area: uploads;
-}
-
-.upload-card {
-  grid-area: earn;
-}
-
-.locked-card {
-  grid-area: locked;
-}
-
-.glass-card {
-  background: linear-gradient(180deg, rgba(18, 18, 30, 0.92), rgba(12, 12, 20, 0.88));
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  padding: 24px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(16px);
-}
+.uploads-card { grid-area: uploads; }
+.upload-card { grid-area: earn; }
+.locked-card { grid-area: locked; }
 
 .card-topline {
   display: flex;
@@ -278,7 +300,6 @@ body {
   text-align: right;
   font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: 0.02em;
 }
 
 .progress-bar-wrap {
@@ -455,9 +476,7 @@ body {
   border-radius: 28px;
   padding: 28px;
   position: relative;
-  box-shadow:
-    0 0 35px rgba(139, 61, 255, 0.18),
-    0 14px 50px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 35px rgba(139, 61, 255, 0.18), 0 14px 50px rgba(0, 0, 0, 0.45);
 }
 
 .upload-modal-box,
@@ -492,7 +511,7 @@ body {
   min-height: 250px;
   margin-bottom: 16px;
   border-radius: 20px;
-  background: var(--card-dark);
+  background: #0b0b14;
   border: 1px solid rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
@@ -555,10 +574,6 @@ body {
     padding: 12px;
   }
 
-  .dashboard-shell {
-    max-width: 100%;
-  }
-
   .topbar,
   .glass-card,
   .modal-box {
@@ -578,18 +593,14 @@ body {
   }
 
   .brand-mark {
-    width: 54px;
-    height: 54px;
+    width: 52px;
+    height: 52px;
     border-radius: 18px;
     flex-shrink: 0;
   }
 
   .brand {
     font-size: 2rem;
-  }
-
-  .top-sub {
-    font-size: 0.98rem;
   }
 
   .topbar-actions {
@@ -605,28 +616,43 @@ body {
   }
 
   .profile-btn {
-    min-width: 108px;
+    min-width: 110px;
     min-height: 44px;
     padding: 12px 18px;
+  }
+
+  .dashboard-nav {
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .nav-tab {
+    min-height: 52px;
+    font-size: 0.82rem;
+    padding: 8px 6px;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 16px;
+  }
+
+  .nav-icon {
+    font-size: 1rem;
   }
 
   .glass-card {
     padding: 18px;
   }
 
-  .card-topline {
-    margin-bottom: 16px;
-  }
-
   .card-label {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 
   .status-badge,
   .spark-pill {
-    min-height: 38px;
-    padding: 0 14px;
-    font-size: 0.88rem;
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 0.82rem;
   }
 
   .progress-panel {
@@ -635,14 +661,12 @@ body {
   }
 
   .progress-head {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
   }
 
   .progress-head strong {
-    min-width: auto;
-    text-align: left;
+    min-width: 80px;
     font-size: 1rem;
   }
 
@@ -651,25 +675,21 @@ body {
   }
 
   .upload-stat-tile {
-    min-height: 90px;
+    min-height: 88px;
     padding: 16px;
   }
 
-  .upload-stat-title {
-    margin-bottom: 10px;
-  }
-
   .upload-stat-tile strong {
-    font-size: 1.7rem;
+    font-size: 1.65rem;
   }
 
   .action-title {
-    font-size: 1.95rem;
+    font-size: 1.8rem;
     line-height: 1.15;
   }
 
   .action-copy {
-    font-size: 1rem;
+    font-size: 0.98rem;
   }
 
   .big-btn {
@@ -677,17 +697,12 @@ body {
     font-size: 1rem;
   }
 
-  .action-tip-box {
-    padding: 14px;
-    border-radius: 18px;
-  }
-
   .locked-card {
-    min-height: 210px;
+    min-height: 200px;
   }
 
   .locked-inner {
-    min-height: 150px;
+    min-height: 145px;
     padding: 20px;
   }
 
@@ -700,7 +715,6 @@ body {
   }
 }
 
-/* small phone */
 @media (max-width: 480px) {
   body {
     padding: 10px;
@@ -711,21 +725,28 @@ body {
   }
 
   .brand {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
 
   .eyebrow {
     font-size: 0.72rem;
   }
 
-  .topbar-actions {
-    flex-direction: row;
-    width: 100%;
+  .top-sub {
+    font-size: 0.95rem;
   }
 
-  .top-status-pill,
-  .profile-btn {
-    min-height: 42px;
+  .topbar-actions {
+    flex-direction: row;
+  }
+
+  .dashboard-nav {
+    gap: 6px;
+  }
+
+  .nav-tab {
+    min-height: 50px;
+    font-size: 0.76rem;
   }
 
   .glass-card {
@@ -733,16 +754,27 @@ body {
     border-radius: 22px;
   }
 
+  .card-topline {
+    align-items: center;
+  }
+
   .card-label {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
   }
 
   .action-title {
-    font-size: 1.7rem;
+    font-size: 1.55rem;
   }
 
-  .locked-inner h3 {
-    font-size: 1.45rem;
+  .progress-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .progress-head strong {
+    min-width: auto;
+    text-align: left;
   }
 
   .modal-box {
