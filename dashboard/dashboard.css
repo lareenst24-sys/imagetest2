@@ -109,22 +109,33 @@ body {
   flex-wrap: wrap;
 }
 
-.ghost-btn,
+.nav-btn,
 .profile-btn {
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
-  color: white;
-  padding: 13px 20px;
+  padding: 13px 22px;
   border-radius: 999px;
   font-size: 15px;
   font-weight: 700;
+  color: white;
   cursor: default;
+  transition: 0.2s ease;
+}
+
+.nav-btn {
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, rgba(123, 44, 255, 0.25), rgba(169, 92, 255, 0.18));
+  border-color: rgba(180, 130, 255, 0.35);
+  box-shadow: 0 8px 20px rgba(123, 44, 255, 0.18);
 }
 
 .profile-btn {
-  background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
   border: none;
   min-width: 120px;
+  background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
   box-shadow: 0 10px 26px rgba(149, 92, 255, 0.28);
 }
 
@@ -135,59 +146,122 @@ body {
   gap: 22px;
 }
 
-.upload-card,
-.locked-card {
-  padding: 24px;
+.top-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
 }
 
-.section-head {
+.progress-card,
+.earn-card,
+.locked-card {
+  padding: 22px;
+}
+
+/* PROGRESS CARD */
+.progress-box {
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+  margin-bottom: 18px;
+}
+
+.progress-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.status-pill {
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 700;
+.progress-head span {
+  color: var(--text-soft);
+  font-size: 15px;
+}
+
+.progress-head strong {
+  font-size: 22px;
   color: white;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
 }
 
-.upload-inner {
-  min-height: 280px;
-  border-radius: 24px;
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.04);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--purple-1), var(--purple-2));
+}
+
+.progress-note {
+  color: var(--text-soft);
+  font-size: 15px;
+}
+
+.mini-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.mini-card {
+  padding: 18px 16px;
+  min-height: 88px;
+  border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.08);
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 32px;
 }
 
-.upload-left h2 {
-  font-size: 54px;
+.mini-card p {
+  color: var(--text-soft);
+  font-size: 15px;
   margin-bottom: 10px;
 }
 
-.upload-note {
-  font-size: 18px;
-  color: var(--text-soft);
+.mini-card h3 {
+  font-size: 22px;
+  color: white;
 }
 
-.upload-center {
+.bottom-note {
+  color: var(--text-soft);
+  font-size: 15px;
+}
+
+/* EARN CARD */
+.earn-card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
 }
 
+.earn-card h2 {
+  font-size: 30px;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+.earn-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-soft);
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
 .upload-btn {
-  min-width: 230px;
-  padding: 18px 28px;
+  width: 100%;
+  min-height: 56px;
   border: none;
   border-radius: 18px;
   font-size: 18px;
@@ -195,9 +269,43 @@ body {
   color: white;
   background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
   box-shadow: 0 12px 30px rgba(149, 92, 255, 0.28);
+  margin-bottom: 14px;
   cursor: default;
 }
 
+.earn-sub {
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.info-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 50%;
+  background: #61ffb0;
+  box-shadow: 0 0 12px rgba(97, 255, 176, 0.8);
+}
+
+.info-pill p {
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* LOCKED CARD */
 .locked-card {
   min-height: 230px;
   display: flex;
@@ -225,27 +333,18 @@ body {
 }
 
 /* RESPONSIVE */
-@media (max-width: 860px) {
-  .top-bar,
-  .upload-inner {
+@media (max-width: 900px) {
+  .top-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .top-bar {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .top-text h1 {
     font-size: 40px;
-  }
-
-  .upload-left h2 {
-    font-size: 42px;
-  }
-
-  .upload-center {
-    width: 100%;
-  }
-
-  .upload-btn {
-    width: 100%;
   }
 }
 
@@ -255,7 +354,8 @@ body {
   }
 
   .top-bar,
-  .upload-card,
+  .progress-card,
+  .earn-card,
   .locked-card {
     padding: 18px;
   }
@@ -264,12 +364,17 @@ body {
     font-size: 34px;
   }
 
-  .upload-inner {
-    padding: 22px;
-    min-height: 220px;
+  .mini-stats {
+    grid-template-columns: 1fr;
   }
 
-  .upload-left h2 {
-    font-size: 34px;
+  .nav-btn,
+  .profile-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .top-right {
+    width: 100%;
   }
 }
