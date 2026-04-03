@@ -37,7 +37,7 @@ const uploadStatusBadge = document.getElementById("uploadStatusBadge");
 const dailyLimitTextEl = document.getElementById("dailyLimitText");
 
 /* profile */
-const profileBtn = document.querySelector(".profile-btn");
+const profileBtn = document.getElementById("profileBtn");
 const profileModal = document.getElementById("profileModal");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
 const logoutBtn = document.getElementById("logoutBtn");
