@@ -79,7 +79,7 @@ async function checkSession() {
         window.location.pathname.includes("index");
 
       if (onAuthPage) {
-        window.location.href = "dashboard.html";
+        window.location.href = "dashboard";
       }
     }
   } catch (err) {
