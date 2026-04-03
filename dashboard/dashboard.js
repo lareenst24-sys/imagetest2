@@ -6,7 +6,7 @@ const AD_BONUS_LIMIT = 25;
 
 const CONTACT_EMAIL = "";
 const INSTAGRAM_HANDLE = "";
-const ADMIN_EMAIL = "";
+const ADMIN_EMAIL = "alieo.8x@gmail.com";
 
 let bankTransferMode = "disabled";
 let currentPayoutMode = "giftcard";
