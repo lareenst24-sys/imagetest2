@@ -91,19 +91,25 @@
     </div>
   </div>
 
- <div class="upload-modal" id="uploadModal">
-  <div class="modal-content">
-    <h2>Select Image</h2>
-    <p>Choose an image to upload</p>
+<div class="upload-modal" id="uploadModal">
+  <div class="upload-preview-card">
 
-    <div class="image-preview-box" id="imagePreviewBox">
-      <img id="imagePreview" alt="Selected preview" />
-      <span id="imagePreviewText">No image selected</span>
+    <div class="upload-header">
+      <h2>Upload Preview</h2>
+      <span class="close-btn" id="modalCloseBtn">✕</span>
     </div>
 
-    <button class="modal-upload-btn" id="modalUploadBtn" type="button">Choose File</button>
-    <button class="modal-confirm-btn" id="modalConfirmBtn" type="button" disabled>Upload Now</button>
-    <button class="modal-close-btn" id="modalCloseBtn" type="button">Cancel</button>
+    <div class="preview-box" id="previewBox">
+      <span id="previewText">No image selected</span>
+      <img id="previewImage" />
+    </div>
+
+    <button class="choose-btn" id="modalUploadBtn">Choose Image</button>
+
+    <button class="confirm-btn" id="modalConfirmBtn" disabled>
+      Confirm Upload
+    </button>
+
   </div>
 </div>
 
