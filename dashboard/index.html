@@ -7,120 +7,133 @@
   <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
-  <div class="dashboard-page">
-    <div class="dashboard-shell">
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
 
-      <header class="top-bar card">
-        <div class="top-left">
-          <div class="logo-box">E</div>
-          <div class="top-text">
-            <p class="eyebrow">CREATOR DASHBOARD</p>
-            <h1>Eanova</h1>
-            <p class="sub-text">Welcome back, Creator</p>
+  <div class="dashboard-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-mark">E</div>
+        <div>
+          <p class="eyebrow">Creator Dashboard</p>
+          <h1 class="brand">Eanova</h1>
+          <p class="top-sub">Welcome back, Creator</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="top-status-pill">
+          <span class="status-dot"></span>
+          <span>Live Activity</span>
+        </div>
+        <button class="profile-btn" type="button">Profile</button>
+      </div>
+    </header>
+
+    <section class="top-grid">
+      <div class="glass-card stat-card spotlight-card">
+        <div class="card-topline">
+          <p class="card-label">Uploads</p>
+          <span id="uploadStatusBadge" class="status-badge">New Day</span>
+        </div>
+
+        <div class="progress-panel">
+          <div class="progress-head">
+            <span>Today’s Progress</span>
+            <strong id="uploadProgressText">0 / 50</strong>
+          </div>
+
+          <div class="progress-bar-wrap">
+            <div id="uploadProgressBar" class="progress-bar-fill"></div>
+          </div>
+
+          <p id="uploadProgressNote" class="muted-text">
+            Start your first upload and begin building today’s progress.
+          </p>
+        </div>
+
+        <div class="upload-stats two-col">
+          <div class="upload-stat-tile">
+            <span class="upload-stat-title">Today</span>
+            <strong id="todayUploadCount">0</strong>
+          </div>
+
+          <div class="upload-stat-tile">
+            <span class="upload-stat-title">This Month</span>
+            <strong id="monthUploadCount">0</strong>
           </div>
         </div>
 
-        <div class="top-right">
-          <button class="nav-btn active" type="button">Dashboard</button>
-          <button class="nav-btn" type="button">Monetisation</button>
-          <button class="profile-btn" type="button">Profile</button>
+        <p class="muted-text limit-footnote" id="dailyLimitText">
+          Daily uploads reset every day.
+        </p>
+      </div>
+
+      <div class="glass-card upload-card action-card">
+        <div class="card-topline">
+          <p class="card-label">Earn</p>
+          <span class="spark-pill">Money Mode</span>
         </div>
-      </header>
 
-      <main class="main-grid">
-        <section class="top-content-grid">
-          <div class="card progress-card">
-            <div class="progress-box">
-              <div class="progress-head">
-                <span>Today’s Progress</span>
-                <strong class="progress-total">
-                <span id="progressCount">0</span>
-                <span class="progress-divider">/</span>
-                <span class="progress-limit">50</span>
-                </strong>
-              </div>
+        <h3 class="action-title">Turn images into rewards</h3>
+        <p class="muted-text action-copy">
+          Every approved upload increases your earning potential and helps you build daily momentum.
+        </p>
 
-              <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
+        <button id="uploadBtn" class="primary-btn big-btn glow-btn" type="button">
+          Upload &amp; Earn
+        </button>
+        <p class="earn-hint">Upload more → earn more rewards</p>
 
-              <p class="progress-note">You’re just getting started today.</p>
-            </div>
-
-            <div class="mini-stats">
-              <div class="mini-card">
-                <p>Today</p>
-                <h3 id="todayCount">0</h3>
-              </div>
-
-              <div class="mini-card">
-                <p>This Month</p>
-                <h3 id="monthCount">0</h3>
-              </div>
-            </div>
-
-            <p class="bottom-note">Daily uploads reset every day.</p>
-          </div>
-
-          <div class="card earn-card">
-            <h2>Turn images into rewards</h2>
-            <p class="earn-text">
-              Every approved upload increases your earning potential and helps you build daily momentum.
-            </p>
-
-            <button class="upload-btn" id="uploadBtn" type="button">Upload &amp; Earn</button>
-            <input type="file" id="fileInput" accept="image/*" hidden />
-
-            <p class="earn-sub">Upload more → earn more rewards</p>
-            
-            <div class="info-pill">
-              <span class="dot"></span>
-              <p>Need more space later? Watch an ad to increase today’s upload limit.</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="card locked-card">
-          <div class="lock-wrap">
-            <div class="lock-icon">🔒</div>
-            <h3>Locked</h3>
-            <p>Unlock after meeting the required threshold.</p>
-          </div>
-        </section>
-      </main>
-    </div>
+        <div class="action-tip-box">
+          <span class="tip-dot"></span>
+          <p>Need more space later? Watch an ad to increase today’s upload limit.</p>
+        </div>
+      </div>
+    </section>
   </div>
+
+  <!-- hidden file input -->
+  <input type="file" id="fileInput" accept="image/*" hidden />
+
+  <!-- upload modal -->
   <div id="uploadModal" class="modal-overlay hidden">
     <div class="modal-box upload-modal-box">
-      <button id="closeUploadBtn" class="modal-close" type="button">&times;</button>
+      <button id="modalCloseBtn" class="modal-close" type="button">&times;</button>
       <p class="section-kicker">Upload Flow</p>
       <h2>Upload Preview</h2>
 
-      <input type="file" id="imageInput" accept="image/*" hidden />
-
-      <button id="chooseFileBtn" class="secondary-btn modal-top-btn" type="button">Choose Image</button>
-
-      <div id="previewWrap" class="preview-wrap hidden">
-        <img id="previewImage" class="preview-image" alt="Preview" />
+      <div id="previewBox" class="preview-box">
+        <span id="previewText">No image selected</span>
+        <img id="previewImage" alt="Preview" />
       </div>
 
-      <button id="confirmUploadBtn" class="primary-btn" type="button">Confirm Upload</button>
+      <button id="modalUploadBtn" class="secondary-btn modal-top-btn" type="button">
+        Choose Image
+      </button>
+
+      <button id="modalConfirmBtn" class="primary-btn" type="button" disabled>
+        Confirm Upload
+      </button>
     </div>
   </div>
 
+  <!-- limit modal -->
   <div id="limitModal" class="modal-overlay hidden">
     <div class="modal-box limit-modal-box">
       <button id="closeLimitBtn" class="modal-close" type="button">&times;</button>
       <p class="section-kicker">Daily Cap</p>
       <h2>Daily Limit Reached</h2>
       <p class="limit-text">
-        You have reached your daily upload limit. Watch an ad to increase your upload limit for today only.
+        You have reached your daily upload limit. Watch an ad to increase your upload limit by 15 for today only.
       </p>
-      <button id="watchAdBtn" class="primary-btn" type="button">Watch Ad to Increase Limit</button>
+      <button id="watchAdBtn" class="primary-btn" type="button">
+        Watch Ad to Increase Limit
+      </button>
       <p id="limitStatusText" class="muted-text limit-status-text"></p>
     </div>
   </div>
-
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
