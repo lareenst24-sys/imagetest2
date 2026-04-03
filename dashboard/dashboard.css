@@ -1213,10 +1213,7 @@ body {
   .how-modal-actions .primary-btn {
     width: 100%;
     min-width: 100%;
-  }
-}
-
-.single-action .payout-action-btn,
+    .single-action .payout-action-btn,
 .single-action .btn-primary {
   width: 100%;
   max-width: 360px;
@@ -1417,5 +1414,7 @@ body {
   .admin-small-btn,
   .admin-rule-remove {
     width: 100%;
+  }
+}
   }
 }
