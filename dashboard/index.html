@@ -93,7 +93,6 @@
 
 <div class="upload-modal" id="uploadModal">
   <div class="upload-preview-card">
-
     <div class="upload-header">
       <h2>Upload Preview</h2>
       <span class="close-btn" id="modalCloseBtn">✕</span>
@@ -101,18 +100,14 @@
 
     <div class="preview-box" id="previewBox">
       <span id="previewText">No image selected</span>
-      <img id="previewImage" />
+      <img id="previewImage" alt="Selected preview" />
     </div>
 
-    <button class="choose-btn" id="modalUploadBtn">Choose Image</button>
-
-    <button class="confirm-btn" id="modalConfirmBtn" disabled>
-      Confirm Upload
-    </button>
-
+    <button class="choose-btn" id="modalUploadBtn" type="button">Choose Image</button>
+    <button class="confirm-btn" id="modalConfirmBtn" type="button" disabled>Confirm Upload</button>
   </div>
 </div>
-
+<input type="file" id="fileInput" accept="image/*" hidden />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
 </body>
