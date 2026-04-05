@@ -6,10 +6,9 @@
   <title>Eanova Profile</title>
   <link rel="stylesheet" href="dashboard.css" />
 </head>
-<body data-page="profile">
+<body>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
   <div class="bg-grid"></div>
 
   <div class="dashboard-shell">
@@ -17,118 +16,130 @@
       <div class="brand-wrap">
         <div class="brand-mark">E</div>
         <div>
-          <p class="eyebrow">CREATOR PROFILE</p>
+          <p class="eyebrow">CREATOR DASHBOARD</p>
           <h1 class="brand">Eanova</h1>
-          <p class="top-sub">Your account, creator identity, and support info</p>
-        </div>
-      </div>
-
-      <div class="topbar-right">
-        <div class="mini-chip">
-          <span class="mini-dot"></span>
-          <span>Account Active</span>
+          <p class="top-sub">Your creator profile</p>
         </div>
       </div>
     </header>
 
     <nav class="dashboard-nav glass-card">
-      <button class="nav-tab" type="button" data-nav="dashboard">
+      <button class="nav-tab" type="button">
         <span class="nav-icon">⌂</span>
         <span>Dashboard</span>
       </button>
-      <button class="nav-tab" type="button" data-nav="monetisation">
+      <button class="nav-tab" type="button">
         <span class="nav-icon">◈</span>
         <span>Monetisation</span>
       </button>
-      <button class="nav-tab" type="button" data-nav="profile">
+      <button class="nav-tab active" type="button">
         <span class="nav-icon">◉</span>
         <span>Profile</span>
       </button>
     </nav>
 
-    <section class="profile-grid">
-      <div class="glass-card profile-hero">
-        <div class="profile-avatar" id="profileAvatar">C</div>
+    <section class="profile-shell">
+      <div class="glass-card">
+        <div class="profile-card-main">
+          <div class="profile-avatar" data-creator-initial>A</div>
 
-        <div class="profile-hero-info">
-          <p class="section-kicker">Creator Identity</p>
-          <h2 id="profileName" class="profile-name">Creator</h2>
-          <p id="profileEmail" class="muted-text profile-email">creator@email.com</p>
-
-          <div class="profile-tags">
-            <span class="profile-tag">Creator</span>
-            <span class="profile-tag">Active</span>
-            <span class="profile-tag">Reward Path</span>
+          <div class="profile-main-copy">
+            <h2 id="profileName" data-creator-name>Creator</h2>
+            <p id="profileEmail" data-creator-email>email@example.com</p>
           </div>
+
+          <div class="profile-status-pill" id="profileStatus">Active</div>
         </div>
       </div>
 
-      <div class="glass-card profile-info-card">
+      <div class="glass-card">
         <div class="card-topline">
-          <p class="card-label">Account Details</p>
-          <span class="top-status-pill">Live</span>
+          <p class="card-label">Profile Details</p>
         </div>
 
-        <div class="info-list">
-          <div class="info-row">
-            <span>Email</span>
-            <strong id="accountEmailValue">-</strong>
+        <div class="profile-details-grid">
+          <div class="detail-box">
+            <label>Name</label>
+            <strong id="profileNameMirror" data-creator-name>Creator</strong>
           </div>
-          <div class="info-row">
-            <span>User ID</span>
-            <strong id="accountUserIdValue">-</strong>
+
+          <div class="detail-box">
+            <label>Email</label>
+            <span id="profileEmailMirror" data-creator-email>email@example.com</span>
           </div>
-          <div class="info-row">
-            <span>Joined</span>
-            <strong id="accountJoinedValue">-</strong>
+
+          <div class="detail-box">
+            <label>Joined</label>
+            <span id="profileJoinDate">—</span>
           </div>
-          <div class="info-row">
-            <span>Status</span>
-            <strong>Active</strong>
+
+          <div class="detail-box">
+            <label>Account Status</label>
+            <span>Active</span>
           </div>
         </div>
       </div>
 
-      <div class="glass-card profile-stats-card">
+      <div class="glass-card">
         <div class="card-topline">
           <p class="card-label">Creator Stats</p>
-          <span class="spark-pill">Premium</span>
+          <span class="soft-pill">Premium</span>
         </div>
 
-        <div class="upload-stats two-col">
-          <div class="upload-stat-tile pop-tile">
-            <span class="upload-stat-title">Today</span>
-            <strong id="profileTodayCount">0</strong>
+        <div class="clean-two-col">
+          <div class="clean-stat-tile">
+            <span class="clean-stat-title">Lifetime Uploads</span>
+            <strong data-lifetime-uploads>0</strong>
           </div>
 
-          <div class="upload-stat-tile pop-tile">
-            <span class="upload-stat-title">This Month</span>
-            <strong id="profileMonthCount">0</strong>
+          <div class="clean-stat-tile">
+            <span class="clean-stat-title">This Month</span>
+            <strong data-month-uploads>0</strong>
           </div>
         </div>
       </div>
 
-      <div class="glass-card support-card">
+      <div class="glass-card">
         <div class="card-topline">
           <p class="card-label">Support</p>
-          <span class="top-status-pill">Help</span>
+          <span class="soft-pill">Help</span>
         </div>
 
-        <div class="support-box">
-          <p class="muted-text">
-            Add your real business email and Instagram below when you are ready.
-          </p>
-
-          <div class="support-links">
-            <a class="support-link" href="mailto:support@eanova.online">support@eanova.online</a>
-            <a class="support-link" href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer">@yourhandle</a>
+        <div class="profile-form-grid">
+          <div class="profile-field">
+            <label for="profileBusinessEmail">Business Email</label>
+            <input
+              type="email"
+              id="profileBusinessEmail"
+              placeholder="support@yourbrand.com"
+            />
           </div>
+
+          <div class="profile-field">
+            <label for="profileInstagram">Instagram</label>
+            <input
+              type="text"
+              id="profileInstagram"
+              placeholder="@yourhandle"
+            />
+          </div>
+
+          <div class="profile-field full">
+            <label for="profileBio">Short Note</label>
+            <textarea
+              id="profileBio"
+              placeholder="Add a short creator note or business contact info."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="saveProfileBtn" class="primary-btn" type="button">Save Details</button>
+          <button id="logoutBtn" class="ghost-btn" type="button">Log Out</button>
         </div>
       </div>
     </section>
   </div>
-
-  <div id="toast" class="toast hidden"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
