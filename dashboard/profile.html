@@ -9,6 +9,7 @@
 <body data-page="profile">
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
   <div class="bg-grid"></div>
 
   <div class="dashboard-shell">
@@ -16,9 +17,16 @@
       <div class="brand-wrap">
         <div class="brand-mark">E</div>
         <div>
-          <p class="eyebrow">CREATOR DASHBOARD</p>
+          <p class="eyebrow">CREATOR PROFILE</p>
           <h1 class="brand">Eanova</h1>
-          <p class="top-sub">Manage your account details</p>
+          <p class="top-sub">Your account, creator identity, and support info</p>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="mini-chip">
+          <span class="mini-dot"></span>
+          <span>Account Active</span>
         </div>
       </div>
     </header>
@@ -32,82 +40,95 @@
         <span class="nav-icon">◈</span>
         <span>Monetisation</span>
       </button>
-      <button class="nav-tab active" type="button" data-nav="profile">
+      <button class="nav-tab" type="button" data-nav="profile">
         <span class="nav-icon">◉</span>
         <span>Profile</span>
       </button>
     </nav>
 
     <section class="profile-grid">
-      <div class="glass-card profile-main-card">
-        <div class="profile-header">
-          <div class="profile-avatar">C</div>
-          <div>
-            <p class="card-label">Creator Profile</p>
-            <p class="muted-text">Your public and account details</p>
+      <div class="glass-card profile-hero">
+        <div class="profile-avatar" id="profileAvatar">C</div>
+
+        <div class="profile-hero-info">
+          <p class="section-kicker">Creator Identity</p>
+          <h2 id="profileName" class="profile-name">Creator</h2>
+          <p id="profileEmail" class="muted-text profile-email">creator@email.com</p>
+
+          <div class="profile-tags">
+            <span class="profile-tag">Creator</span>
+            <span class="profile-tag">Active</span>
+            <span class="profile-tag">Reward Path</span>
           </div>
         </div>
+      </div>
 
-        <div class="profile-info-grid">
-          <div class="profile-info-box">
-            <span class="profile-info-title">Name</span>
-            <strong id="profileName">Creator</strong>
+      <div class="glass-card profile-info-card">
+        <div class="card-topline">
+          <p class="card-label">Account Details</p>
+          <span class="top-status-pill">Live</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span>Email</span>
+            <strong id="accountEmailValue">-</strong>
           </div>
-
-          <div class="profile-info-box">
-            <span class="profile-info-title">Email</span>
-            <strong id="profileEmail">Not available</strong>
+          <div class="info-row">
+            <span>User ID</span>
+            <strong id="accountUserIdValue">-</strong>
           </div>
-
-          <div class="profile-info-box">
-            <span class="profile-info-title">Account Status</span>
+          <div class="info-row">
+            <span>Joined</span>
+            <strong id="accountJoinedValue">-</strong>
+          </div>
+          <div class="info-row">
+            <span>Status</span>
             <strong>Active</strong>
           </div>
+        </div>
+      </div>
 
-          <div class="profile-info-box">
-            <span class="profile-info-title">Upload Tier</span>
-            <strong>Standard</strong>
+      <div class="glass-card profile-stats-card">
+        <div class="card-topline">
+          <p class="card-label">Creator Stats</p>
+          <span class="spark-pill">Premium</span>
+        </div>
+
+        <div class="upload-stats two-col">
+          <div class="upload-stat-tile pop-tile">
+            <span class="upload-stat-title">Today</span>
+            <strong id="profileTodayCount">0</strong>
+          </div>
+
+          <div class="upload-stat-tile pop-tile">
+            <span class="upload-stat-title">This Month</span>
+            <strong id="profileMonthCount">0</strong>
           </div>
         </div>
       </div>
 
-      <div class="glass-card profile-side-card">
+      <div class="glass-card support-card">
         <div class="card-topline">
           <p class="card-label">Support</p>
-          <span class="spark-pill">Contact</span>
+          <span class="top-status-pill">Help</span>
         </div>
 
-        <div class="notes-stack">
-          <div class="note-box">
-            <span class="tip-dot"></span>
-            <p>Email: <span id="supportEmail">support@eanova.online</span></p>
-          </div>
-          <div class="note-box">
-            <span class="tip-dot"></span>
-            <p>Instagram: <span id="supportInstagram">@yourhandle</span></p>
-          </div>
-        </div>
-      </div>
+        <div class="support-box">
+          <p class="muted-text">
+            Add your real business email and Instagram below when you are ready.
+          </p>
 
-      <div class="glass-card profile-side-card">
-        <div class="card-topline">
-          <p class="card-label">Activity</p>
-          <span class="status-badge">Overview</span>
-        </div>
-
-        <div class="mini-info-grid single-col">
-          <div class="mini-info-box">
-            <span class="mini-info-title">Today Uploads</span>
-            <strong id="profileTodayUploads">0</strong>
-          </div>
-          <div class="mini-info-box">
-            <span class="mini-info-title">This Month</span>
-            <strong id="profileMonthUploads">0</strong>
+          <div class="support-links">
+            <a class="support-link" href="mailto:support@eanova.online">support@eanova.online</a>
+            <a class="support-link" href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer">@yourhandle</a>
           </div>
         </div>
       </div>
     </section>
   </div>
+
+  <div id="toast" class="toast hidden"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
