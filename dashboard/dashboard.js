@@ -96,10 +96,17 @@ function getDisplayName(user) {
   const metaName =
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
+    user.user_metadata?.display_name ||
     user.user_metadata?.username;
 
-  if (metaName && String(metaName).trim()) return String(metaName).trim();
-  if (user.email) return user.email.split("@")[0];
+  if (metaName && String(metaName).trim()) {
+    return String(metaName).trim();
+  }
+
+  if (user.email) {
+    return user.email.split("@")[0];
+  }
+
   return "Creator";
 }
 
