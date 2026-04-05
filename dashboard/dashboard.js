@@ -1,6 +1,5 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-
 const BUCKET_NAME = "user-images";
 const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 15;
@@ -8,28 +7,22 @@ const MIN_PAYOUT = 100;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* shared dom */
-const body = document.body;
 const navTabs = document.querySelectorAll(".nav-tab");
 
-/* dashboard dom */
+/* dashboard */
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
-
 const uploadModal = document.getElementById("uploadModal");
 const modalUploadBtn = document.getElementById("modalUploadBtn");
 const modalConfirmBtn = document.getElementById("modalConfirmBtn");
 const modalCloseBtn = document.getElementById("modalCloseBtn");
-
 const previewBox = document.getElementById("previewBox");
 const previewImage = document.getElementById("previewImage");
 const previewText = document.getElementById("previewText");
-
 const limitModal = document.getElementById("limitModal");
 const closeLimitBtn = document.getElementById("closeLimitBtn");
 const watchAdBtn = document.getElementById("watchAdBtn");
 const limitStatusText = document.getElementById("limitStatusText");
-
 const todayCountEl = document.getElementById("todayUploadCount");
 const monthCountEl = document.getElementById("monthUploadCount");
 const progressFillEl = document.getElementById("uploadProgressBar");
@@ -38,40 +31,38 @@ const progressNoteEl = document.getElementById("uploadProgressNote");
 const uploadStatusBadge = document.getElementById("uploadStatusBadge");
 const dailyLimitTextEl = document.getElementById("dailyLimitText");
 
-/* optional shared / premium ui dom */
+/* profile */
 const creatorNameEls = document.querySelectorAll("[data-creator-name]");
 const creatorEmailEls = document.querySelectorAll("[data-creator-email]");
 const creatorInitialEls = document.querySelectorAll("[data-creator-initial]");
-const pageGreetingEl = document.querySelector("[data-greeting]");
-const pageSubGreetingEl = document.querySelector("[data-sub-greeting]");
-
-/* monetisation dom */
-const balanceAmountEl = document.getElementById("balanceAmount");
-const minPayoutEl = document.getElementById("minPayoutAmount");
-const payoutProgressBarEl = document.getElementById("payoutProgressBar");
-const payoutProgressTextEl = document.getElementById("payoutProgressText");
-const payoutStatusEl = document.getElementById("payoutStatus");
-const claimBtn = document.getElementById("claimBtn");
-const rewardUnlockTextEl = document.getElementById("rewardUnlockText");
-const activityListEl = document.getElementById("activityList");
-const milestoneFirstEl = document.getElementById("milestoneFirst");
-const milestoneSecondEl = document.getElementById("milestoneSecond");
-const milestoneThirdEl = document.getElementById("milestoneThird");
-
-/* profile dom */
 const profileNameEl = document.getElementById("profileName");
 const profileEmailEl = document.getElementById("profileEmail");
 const profileJoinDateEl = document.getElementById("profileJoinDate");
 const profileStatusEl = document.getElementById("profileStatus");
+const profileBusinessEmailInput = document.getElementById("profileBusinessEmail");
+const profileInstagramInput = document.getElementById("profileInstagram");
+const profileBioInput = document.getElementById("profileBio");
+const saveProfileBtn = document.getElementById("saveProfileBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 
-/* state */
+/* monetisation */
+const balanceAmountEl = document.getElementById("balanceAmount");
+const minPayoutEl = document.getElementById("minPayoutAmount");
+const estimatedMonthValueEl = document.getElementById("estimatedMonthValue");
+const payoutProgressBarEl = document.getElementById("payoutProgressBar");
+const payoutProgressTextEl = document.getElementById("payoutProgressText");
+const payoutStatusEl = document.getElementById("payoutStatus");
+const rewardUnlockTextEl = document.getElementById("rewardUnlockText");
+const claimBtn = document.getElementById("claimBtn");
+const activityListEl = document.getElementById("activityList");
+const routeChips = document.querySelectorAll(".route-chip");
+
 let currentUser = null;
 let selectedFile = null;
 let previewURL = null;
 let todayExtraLimit = 0;
+let selectedRoute = "Gift Card";
 
-/* ---------------- helpers ---------------- */
 function getTodayKey() {
   const d = new Date();
   const year = d.getFullYear();
@@ -81,33 +72,39 @@ function getTodayKey() {
 }
 
 function getCurrentPageName() {
-  const page = window.location.pathname.split("/").pop();
-  return page || "index.html";
+  return window.location.pathname.split("/").pop() || "index.html";
 }
 
 function formatMoney(value) {
-  const safe = Number(value || 0);
-  return `$${safe.toFixed(2)}`;
+  return `$${Number(value || 0).toFixed(2)}`;
 }
 
 function formatDate(value) {
   if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-
-  return date.toLocaleDateString(undefined, {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric"
   });
 }
 
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
+function getDisplayName(user) {
+  if (!user) return "Creator";
+
+  const metaName =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.user_metadata?.username;
+
+  if (metaName && String(metaName).trim()) return String(metaName).trim();
+  if (user.email) return user.email.split("@")[0];
+  return "Creator";
 }
 
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function getInitial(name) {
+  return String(name || "C").trim().charAt(0).toUpperCase();
 }
 
 function getDailyBonusStorageKey() {
@@ -123,6 +120,11 @@ function getRewardStorageKey() {
 function getClaimHistoryStorageKey() {
   if (!currentUser) return "claim_history_guest";
   return `claim_history_${currentUser.id}`;
+}
+
+function getProfileStorageKey() {
+  if (!currentUser) return "profile_details_guest";
+  return `profile_details_${currentUser.id}`;
 }
 
 function loadTodayExtraLimit() {
@@ -188,128 +190,6 @@ function getStartOfNextMonthISO() {
   return date.toISOString();
 }
 
-function getDisplayName(user) {
-  if (!user) return "Creator";
-
-  const metaName =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    user.user_metadata?.username;
-
-  if (metaName && String(metaName).trim()) {
-    return String(metaName).trim();
-  }
-
-  if (user.email) {
-    return user.email.split("@")[0];
-  }
-
-  return "Creator";
-}
-
-function getInitial(name) {
-  if (!name) return "C";
-  return String(name).trim().charAt(0).toUpperCase();
-}
-
-/* ---------------- premium ui ---------------- */
-function injectGlobalUX() {
-  if (!document.getElementById("eanova-js-ux-style")) {
-    const style = document.createElement("style");
-    style.id = "eanova-js-ux-style";
-    style.textContent = `
-      .toast-stack{
-        position:fixed;
-        top:18px;
-        right:18px;
-        z-index:10000;
-        display:flex;
-        flex-direction:column;
-        gap:12px;
-        pointer-events:none;
-      }
-      .eanova-toast{
-        min-width:240px;
-        max-width:320px;
-        padding:14px 16px;
-        border-radius:18px;
-        color:#fff;
-        background:linear-gradient(180deg, rgba(26,26,42,0.96), rgba(16,16,28,0.96));
-        border:1px solid rgba(255,255,255,0.08);
-        box-shadow:0 18px 45px rgba(0,0,0,0.45), 0 0 30px rgba(139,61,255,0.16);
-        backdrop-filter:blur(12px);
-        transform:translateY(-10px) scale(0.98);
-        opacity:0;
-        transition:all .28s ease;
-      }
-      .eanova-toast.show{
-        opacity:1;
-        transform:translateY(0) scale(1);
-      }
-      .eanova-toast-title{
-        font-size:0.96rem;
-        font-weight:800;
-        margin-bottom:4px;
-      }
-      .eanova-toast-text{
-        font-size:0.88rem;
-        color:#bfc2da;
-        line-height:1.45;
-      }
-      .dopamine-pop{
-        animation:dopaminePop .45s ease;
-      }
-      @keyframes dopaminePop{
-        0%{transform:scale(.96)}
-        45%{transform:scale(1.04)}
-        100%{transform:scale(1)}
-      }
-      .soft-pulse{
-        animation:softPulse 1.8s infinite;
-      }
-      @keyframes softPulse{
-        0%{box-shadow:0 0 0 rgba(139,61,255,0)}
-        50%{box-shadow:0 0 28px rgba(139,61,255,.28)}
-        100%{box-shadow:0 0 0 rgba(139,61,255,0)}
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  if (!document.querySelector(".toast-stack")) {
-    const toastStack = document.createElement("div");
-    toastStack.className = "toast-stack";
-    document.body.appendChild(toastStack);
-  }
-}
-
-function showToast(title, text = "") {
-  injectGlobalUX();
-
-  const stack = document.querySelector(".toast-stack");
-  if (!stack) return;
-
-  const toast = document.createElement("div");
-  toast.className = "eanova-toast";
-  toast.innerHTML = `
-    <div class="eanova-toast-title">${title}</div>
-    <div class="eanova-toast-text">${text}</div>
-  `;
-
-  stack.appendChild(toast);
-
-  requestAnimationFrame(() => {
-    toast.classList.add("show");
-  });
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => {
-      toast.remove();
-    }, 280);
-  }, 2800);
-}
-
 function animateCount(el, endValue, formatter = (v) => String(v), duration = 700) {
   if (!el) return;
 
@@ -318,11 +198,12 @@ function animateCount(el, endValue, formatter = (v) => String(v), duration = 700
   const startTime = performance.now();
 
   function frame(now) {
-    const progress = clamp((now - startTime) / duration, 0, 1);
+    const progress = Math.min((now - startTime) / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
     const current = startValue + (finalValue - startValue) * eased;
 
     el.textContent = formatter(current);
+
     if (progress < 1) {
       requestAnimationFrame(frame);
     } else {
@@ -334,20 +215,45 @@ function animateCount(el, endValue, formatter = (v) => String(v), duration = 700
   requestAnimationFrame(frame);
 }
 
-function addPop(el) {
-  if (!el) return;
-  el.classList.remove("dopamine-pop");
-  void el.offsetWidth;
-  el.classList.add("dopamine-pop");
-}
-
 function setProgressWidth(el, percent) {
   if (!el) return;
-  el.style.width = `${clamp(percent, 0, 100)}%`;
-  addPop(el);
+  el.style.width = `${Math.max(0, Math.min(100, percent))}%`;
 }
 
-/* ---------------- auth ---------------- */
+function showToast(title, text = "") {
+  let stack = document.querySelector(".toast-stack");
+
+  if (!stack) {
+    stack = document.createElement("div");
+    stack.className = "toast-stack";
+    stack.style.position = "fixed";
+    stack.style.top = "18px";
+    stack.style.right = "18px";
+    stack.style.zIndex = "10000";
+    stack.style.display = "flex";
+    stack.style.flexDirection = "column";
+    stack.style.gap = "12px";
+    document.body.appendChild(stack);
+  }
+
+  const toast = document.createElement("div");
+  toast.style.minWidth = "240px";
+  toast.style.maxWidth = "320px";
+  toast.style.padding = "14px 16px";
+  toast.style.borderRadius = "18px";
+  toast.style.color = "#fff";
+  toast.style.background = "linear-gradient(180deg, rgba(26,26,42,0.96), rgba(16,16,28,0.96))";
+  toast.style.border = "1px solid rgba(255,255,255,0.08)";
+  toast.style.boxShadow = "0 18px 45px rgba(0,0,0,0.45), 0 0 30px rgba(139,61,255,0.16)";
+  toast.innerHTML = `<strong style="display:block;margin-bottom:4px;">${title}</strong><span style="color:#bfc2da;">${text}</span>`;
+
+  stack.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 2600);
+}
+
 async function getCurrentUser() {
   const { data, error } = await supabaseClient.auth.getUser();
 
@@ -370,20 +276,10 @@ async function requireLogin() {
   currentUser = user;
   loadTodayExtraLimit();
   hydrateUserUI();
+  loadProfileInputs();
   return true;
 }
 
-async function logoutUser() {
-  try {
-    await supabaseClient.auth.signOut();
-  } catch (error) {
-    console.error("Logout failed:", error);
-  }
-
-  window.location.href = "/";
-}
-
-/* ---------------- user ui ---------------- */
 function hydrateUserUI() {
   if (!currentUser) return;
 
@@ -391,71 +287,40 @@ function hydrateUserUI() {
   const email = currentUser.email || "—";
   const initial = getInitial(displayName);
 
-  creatorNameEls.forEach((el) => {
-    el.textContent = displayName;
-  });
-
-  creatorEmailEls.forEach((el) => {
-    el.textContent = email;
-  });
-
-  creatorInitialEls.forEach((el) => {
-    el.textContent = initial;
-  });
+  creatorNameEls.forEach((el) => (el.textContent = displayName));
+  creatorEmailEls.forEach((el) => (el.textContent = email));
+  creatorInitialEls.forEach((el) => (el.textContent = initial));
 
   if (profileNameEl) profileNameEl.textContent = displayName;
   if (profileEmailEl) profileEmailEl.textContent = email;
   if (profileJoinDateEl) profileJoinDateEl.textContent = formatDate(currentUser.created_at);
   if (profileStatusEl) profileStatusEl.textContent = "Active";
-
-  if (pageGreetingEl) {
-    const first = displayName.split(" ")[0];
-    pageGreetingEl.textContent = `Welcome back, ${first}`;
-  }
-
-  if (pageSubGreetingEl) {
-    pageSubGreetingEl.textContent = "Keep your streak alive and build your rewards.";
-  }
-}
-
-/* ---------------- navigation ---------------- */
-function setActiveNav() {
-  if (!navTabs.length) return;
-
-  const currentPage = getCurrentPageName();
-
-  navTabs.forEach((tab) => {
-    tab.classList.remove("active");
-  });
-
-  if (currentPage === "index.html" || currentPage === "dashboard.html") {
-    if (navTabs[0]) navTabs[0].classList.add("active");
-  } else if (currentPage === "monetisation.html") {
-    if (navTabs[1]) navTabs[1].classList.add("active");
-  } else if (currentPage === "profile.html") {
-    if (navTabs[2]) navTabs[2].classList.add("active");
-  }
 }
 
 function setupNavigation() {
   if (!navTabs.length) return;
 
+  const page = getCurrentPageName();
+
+  navTabs.forEach((tab) => tab.classList.remove("active"));
+
+  if (page === "index.html" || page === "dashboard.html") {
+    if (navTabs[0]) navTabs[0].classList.add("active");
+  } else if (page === "monetisation.html") {
+    if (navTabs[1]) navTabs[1].classList.add("active");
+  } else if (page === "profile.html") {
+    if (navTabs[2]) navTabs[2].classList.add("active");
+  }
+
   navTabs.forEach((tab, index) => {
     tab.addEventListener("click", () => {
-      if (index === 0) {
-        window.location.href = "index.html";
-      } else if (index === 1) {
-        window.location.href = "monetisation.html";
-      } else if (index === 2) {
-        window.location.href = "profile.html";
-      }
+      if (index === 0) window.location.href = "index.html";
+      if (index === 1) window.location.href = "monetisation.html";
+      if (index === 2) window.location.href = "profile.html";
     });
   });
-
-  setActiveNav();
 }
 
-/* ---------------- counts ---------------- */
 async function getTodayUploadCount() {
   if (!currentUser) return 0;
 
@@ -492,6 +357,22 @@ async function getMonthUploadCount() {
   return count || 0;
 }
 
+async function getLifetimeUploadCount() {
+  if (!currentUser) return 0;
+
+  const { count, error } = await supabaseClient
+    .from("uploads")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", currentUser.id);
+
+  if (error) {
+    console.error("Lifetime count error:", error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
 function calculateEstimatedRewards(monthCount) {
   return Number((monthCount * 0.2).toFixed(2));
 }
@@ -501,8 +382,7 @@ function getStoredClaimedAmount() {
   if (!raw) return 0;
 
   try {
-    const parsed = JSON.parse(raw);
-    return Number(parsed.totalClaimed || 0);
+    return Number(JSON.parse(raw).totalClaimed || 0);
   } catch (error) {
     return 0;
   }
@@ -523,8 +403,7 @@ function getStoredRewardBalance() {
   if (!raw) return 0;
 
   try {
-    const parsed = JSON.parse(raw);
-    return Number(parsed.balance || 0);
+    return Number(JSON.parse(raw).balance || 0);
   } catch (error) {
     return 0;
   }
@@ -548,12 +427,11 @@ function syncRewardBalanceFromUploads(monthCount) {
   return available;
 }
 
-/* ---------------- dashboard ui ---------------- */
-function updateProgressUI(todayCount, monthCount) {
+function updateProgressUI(todayCount, monthCount, lifetimeCount) {
   const currentLimit = getCurrentDailyLimit();
   const percent = Math.min((todayCount / currentLimit) * 100, 100);
 
-  if (todayCountEl) animateCount(todayCountEl, todayCount, (v) => `${Math.round(v)}`);
+  if (todayCountEl) animateCount(todayCountEl, lifetimeCount, (v) => `${Math.round(v)}`);
   if (monthCountEl) animateCount(monthCountEl, monthCount, (v) => `${Math.round(v)}`);
   if (progressTextEl) progressTextEl.textContent = `${todayCount} / ${currentLimit}`;
   if (progressFillEl) setProgressWidth(progressFillEl, percent);
@@ -563,10 +441,10 @@ function updateProgressUI(todayCount, monthCount) {
 
   if (todayCount > 0 && percent < 30) {
     badgeText = "Starting";
-    noteText = "You’re building momentum. Keep going.";
+    noteText = "You’re building momentum.";
   } else if (percent >= 30 && percent < 70) {
     badgeText = "Active";
-    noteText = "Nice progress today. You’re in the zone.";
+    noteText = "Nice progress today.";
   } else if (percent >= 70 && percent < 100) {
     badgeText = "Hot";
     noteText = "You’re getting close to today’s limit.";
@@ -575,11 +453,7 @@ function updateProgressUI(todayCount, monthCount) {
     noteText = "You hit today’s limit. Watch an ad to unlock 15 more uploads for today.";
   }
 
-  if (uploadStatusBadge) {
-    uploadStatusBadge.textContent = badgeText;
-    addPop(uploadStatusBadge);
-  }
-
+  if (uploadStatusBadge) uploadStatusBadge.textContent = badgeText;
   if (progressNoteEl) progressNoteEl.textContent = noteText;
 
   if (dailyLimitTextEl) {
@@ -588,23 +462,33 @@ function updateProgressUI(todayCount, monthCount) {
         ? `Daily uploads reset every day. Bonus unlocked today: +${todayExtraLimit}.`
         : "Daily uploads reset every day.";
   }
-
-  if (uploadBtn) {
-    uploadBtn.classList.toggle("soft-pulse", todayCount < currentLimit);
-  }
 }
 
 async function updateUploadStatsUI() {
   const todayCount = await getTodayUploadCount();
   const monthCount = await getMonthUploadCount();
+  const lifetimeCount = await getLifetimeUploadCount();
 
-  updateProgressUI(todayCount, monthCount);
+  updateProgressUI(todayCount, monthCount, lifetimeCount);
 
   const availableBalance = syncRewardBalanceFromUploads(monthCount);
   updateMonetisationUI(availableBalance, monthCount);
+  updateProfileStats(lifetimeCount, monthCount);
 }
 
-/* ---------------- upload preview ---------------- */
+function updateProfileStats(lifetimeCount, monthCount) {
+  const lifetimeEls = document.querySelectorAll("[data-lifetime-uploads]");
+  const monthEls = document.querySelectorAll("[data-month-uploads]");
+
+  lifetimeEls.forEach((el) => {
+    animateCount(el, lifetimeCount, (v) => `${Math.round(v)}`);
+  });
+
+  monthEls.forEach((el) => {
+    animateCount(el, monthCount, (v) => `${Math.round(v)}`);
+  });
+}
+
 function resetPreview() {
   selectedFile = null;
 
@@ -648,7 +532,6 @@ function closeLimitModal() {
   limitModal.classList.add("hidden");
 }
 
-/* ---------------- upload logic ---------------- */
 async function handleUpload(file) {
   if (!currentUser) {
     showToast("Session expired", "Please log in again.");
@@ -697,7 +580,7 @@ async function handleUpload(file) {
 
     if (insertError) {
       console.error("Database insert failed:", insertError);
-      showToast("Upload saved, record failed", "Check your database rules.");
+      showToast("Upload record failed", "Check database rules.");
       return false;
     }
 
@@ -705,9 +588,7 @@ async function handleUpload(file) {
       .from(BUCKET_NAME)
       .remove([filePath]);
 
-    if (deleteStorageError) {
-      console.error("Auto delete storage error:", deleteStorageError);
-    } else {
+    if (!deleteStorageError) {
       await supabaseClient
         .from("uploads")
         .update({ storage_deleted: true })
@@ -717,7 +598,7 @@ async function handleUpload(file) {
 
     await updateUploadStatsUI();
     closeUploadModal();
-    showToast("Upload complete", "Nice. Your progress just increased.");
+    showToast("Upload complete", "Your stats just increased.");
     return true;
   } catch (error) {
     console.error("Upload error:", error);
@@ -731,7 +612,6 @@ async function handleUpload(file) {
   }
 }
 
-/* ---------------- ad bonus ---------------- */
 async function simulateWatchAdAndIncreaseLimit() {
   if (!watchAdBtn) return;
 
@@ -742,27 +622,26 @@ async function simulateWatchAdAndIncreaseLimit() {
     limitStatusText.textContent = "Boosting your daily limit...";
   }
 
-  await delay(900);
+  setTimeout(async () => {
+    todayExtraLimit += AD_BONUS_LIMIT;
+    saveTodayExtraLimit();
+    await updateUploadStatsUI();
 
-  todayExtraLimit += AD_BONUS_LIMIT;
-  saveTodayExtraLimit();
-  await updateUploadStatsUI();
+    if (limitStatusText) {
+      limitStatusText.textContent = "Ad completed. Daily limit increased by 15 for today.";
+    }
 
-  if (limitStatusText) {
-    limitStatusText.textContent = "Ad completed. Daily limit increased by 15 for today.";
-  }
+    showToast("Boost unlocked", `+${AD_BONUS_LIMIT} uploads added for today.`);
 
-  showToast("Boost unlocked", `+${AD_BONUS_LIMIT} uploads added for today.`);
-
-  setTimeout(() => {
     watchAdBtn.disabled = false;
     watchAdBtn.textContent = "Watch Ad to Increase Limit";
     closeLimitModal();
-  }, 1000);
+  }, 900);
 }
 
-/* ---------------- monetisation ---------------- */
 function getPayoutStatus(balance) {
+  const percent = Math.min((balance / MIN_PAYOUT) * 100, 100);
+
   if (balance >= MIN_PAYOUT) {
     return {
       label: "Ready to Claim",
@@ -771,28 +650,18 @@ function getPayoutStatus(balance) {
     };
   }
 
-  const percent = Math.min((balance / MIN_PAYOUT) * 100, 100);
-
   if (percent === 0) {
     return {
-      label: "Just Started",
-      note: "Start uploading to unlock rewards.",
-      percent
-    };
-  }
-
-  if (percent < 50) {
-    return {
-      label: "Building",
-      note: "You’re moving toward the first payout.",
-      percent
+      label: "Growing",
+      note: "Your balance grows as your upload activity increases.",
+      percent: 1
     };
   }
 
   if (percent < 100) {
     return {
-      label: "Almost There",
-      note: `Only ${formatMoney(MIN_PAYOUT - balance)} left to unlock payout.`,
+      label: "Growing",
+      note: `Keep uploading to move closer to your first payout.`,
       percent
     };
   }
@@ -800,78 +669,34 @@ function getPayoutStatus(balance) {
   return {
     label: "Ready to Claim",
     note: "Your balance is ready for payout.",
-    percent
+    percent: 100
   };
-}
-
-function renderActivity(monthCount, balance) {
-  if (!activityListEl) return;
-
-  const items = [
-    `Monthly uploads counted: ${monthCount}`,
-    `Estimated available rewards: ${formatMoney(balance)}`,
-    balance >= MIN_PAYOUT
-      ? "Claim is unlocked for this account."
-      : `Need ${formatMoney(Math.max(MIN_PAYOUT - balance, 0))} more to unlock claim.`
-  ];
-
-  activityListEl.innerHTML = items
-    .map((item) => `<div class="activity-item">${item}</div>`)
-    .join("");
-}
-
-function updateMilestones(balance) {
-  if (milestoneFirstEl) {
-    milestoneFirstEl.textContent = balance >= 10 ? "Unlocked" : "In Progress";
-  }
-
-  if (milestoneSecondEl) {
-    milestoneSecondEl.textContent = balance >= 50 ? "Unlocked" : "Locked";
-  }
-
-  if (milestoneThirdEl) {
-    milestoneThirdEl.textContent = balance >= MIN_PAYOUT ? "Unlocked" : "Locked";
-  }
 }
 
 function updateMonetisationUI(balance, monthCount = 0) {
   const safeBalance = Number(balance || 0);
   const status = getPayoutStatus(safeBalance);
 
-  if (balanceAmountEl) {
-    animateCount(balanceAmountEl, safeBalance, (v) => formatMoney(v), 800);
-  }
-
-  if (minPayoutEl) {
-    minPayoutEl.textContent = formatMoney(MIN_PAYOUT);
-  }
-
-  if (payoutProgressBarEl) {
-    setProgressWidth(payoutProgressBarEl, status.percent);
-  }
-
-  if (payoutProgressTextEl) {
-    payoutProgressTextEl.textContent = `${Math.round(status.percent)}% to payout`;
-  }
-
-  if (payoutStatusEl) {
-    payoutStatusEl.textContent = status.label;
-    addPop(payoutStatusEl);
-  }
-
-  if (rewardUnlockTextEl) {
-    rewardUnlockTextEl.textContent = status.note;
-  }
+  if (balanceAmountEl) animateCount(balanceAmountEl, safeBalance, (v) => formatMoney(v), 800);
+  if (minPayoutEl) minPayoutEl.textContent = formatMoney(MIN_PAYOUT);
+  if (estimatedMonthValueEl) estimatedMonthValueEl.textContent = formatMoney(calculateEstimatedRewards(monthCount));
+  if (payoutProgressBarEl) setProgressWidth(payoutProgressBarEl, status.percent);
+  if (payoutProgressTextEl) payoutProgressTextEl.textContent = `${Math.round(status.percent)}% to payout`;
+  if (payoutStatusEl) payoutStatusEl.textContent = status.label;
+  if (rewardUnlockTextEl) rewardUnlockTextEl.textContent = status.note;
 
   if (claimBtn) {
-    const canClaim = safeBalance >= MIN_PAYOUT;
-    claimBtn.disabled = !canClaim;
-    claimBtn.textContent = canClaim ? "Claim Rewards" : "Claim Locked";
-    claimBtn.classList.toggle("soft-pulse", canClaim);
+    claimBtn.disabled = safeBalance < MIN_PAYOUT;
+    claimBtn.textContent = safeBalance >= MIN_PAYOUT ? "Claim Rewards" : "Claim Locked";
   }
 
-  updateMilestones(safeBalance);
-  renderActivity(monthCount, safeBalance);
+  if (activityListEl) {
+    activityListEl.innerHTML = `
+      <div class="activity-item">Minimum payout: <strong>${formatMoney(MIN_PAYOUT)}</strong></div>
+      <div class="activity-item">Estimated month value: <strong>${formatMoney(calculateEstimatedRewards(monthCount))}</strong></div>
+      <div class="activity-item">Selected payout route: <strong>${selectedRoute}</strong></div>
+    `;
+  }
 }
 
 function handleClaim() {
@@ -889,14 +714,61 @@ function handleClaim() {
   showToast("Claim submitted", "Your reward request was recorded.");
 }
 
-/* ---------------- profile ---------------- */
-function setupProfileUI() {
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", logoutUser);
+function setupRouteChips() {
+  if (!routeChips.length) return;
+
+  routeChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      routeChips.forEach((item) => item.classList.remove("active"));
+      chip.classList.add("active");
+      selectedRoute = chip.dataset.route || chip.textContent.trim();
+
+      const balance = getStoredRewardBalance();
+      updateMonetisationUI(balance, 0);
+    });
+  });
+}
+
+function loadProfileInputs() {
+  if (!currentUser) return;
+
+  const raw = localStorage.getItem(getProfileStorageKey());
+  if (!raw) return;
+
+  try {
+    const data = JSON.parse(raw);
+
+    if (profileBusinessEmailInput) profileBusinessEmailInput.value = data.businessEmail || "";
+    if (profileInstagramInput) profileInstagramInput.value = data.instagram || "";
+    if (profileBioInput) profileBioInput.value = data.bio || "";
+  } catch (error) {
+    console.error("Profile load error:", error);
   }
 }
 
-/* ---------------- events ---------------- */
+function saveProfileInputs() {
+  if (!currentUser) return;
+
+  const data = {
+    businessEmail: profileBusinessEmailInput ? profileBusinessEmailInput.value.trim() : "",
+    instagram: profileInstagramInput ? profileInstagramInput.value.trim() : "",
+    bio: profileBioInput ? profileBioInput.value.trim() : ""
+  };
+
+  localStorage.setItem(getProfileStorageKey(), JSON.stringify(data));
+  showToast("Profile saved", "Your details were updated.");
+}
+
+async function logoutUser() {
+  try {
+    await supabaseClient.auth.signOut();
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+
+  window.location.href = "/";
+}
+
 if (uploadBtn) {
   uploadBtn.addEventListener("click", openUploadModal);
 }
@@ -935,10 +807,7 @@ if (fileInput) {
     if (previewImage) previewImage.src = previewURL;
     if (previewBox) previewBox.classList.add("active");
     if (previewText) previewText.textContent = file.name;
-
-    if (modalConfirmBtn) {
-      modalConfirmBtn.disabled = false;
-    }
+    if (modalConfirmBtn) modalConfirmBtn.disabled = false;
   });
 }
 
@@ -969,26 +838,20 @@ if (claimBtn) {
   claimBtn.addEventListener("click", handleClaim);
 }
 
-/* ---------------- init ---------------- */
+if (saveProfileBtn) {
+  saveProfileBtn.addEventListener("click", saveProfileInputs);
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", logoutUser);
+}
+
 (async function initApp() {
-  injectGlobalUX();
   setupNavigation();
-  setupProfileUI();
+  setupRouteChips();
 
   const ok = await requireLogin();
   if (!ok) return;
 
   await updateUploadStatsUI();
-
-  const currentPage = getCurrentPageName();
-
-  if (currentPage === "monetisation.html") {
-    const monthCount = await getMonthUploadCount();
-    const balance = syncRewardBalanceFromUploads(monthCount);
-    updateMonetisationUI(balance, monthCount);
-  }
-
-  if (currentPage === "profile.html") {
-    showToast("Profile loaded", "Your creator account is ready.");
-  }
 })();
