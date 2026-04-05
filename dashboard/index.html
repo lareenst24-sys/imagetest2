@@ -6,7 +6,7 @@
   <title>Eanova Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
 </head>
-<body>
+<body data-page="dashboard">
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
   <div class="bg-grid"></div>
@@ -24,15 +24,15 @@
     </header>
 
     <nav class="dashboard-nav glass-card">
-      <button class="nav-tab active" type="button">
+      <button class="nav-tab active" type="button" data-nav="dashboard">
         <span class="nav-icon">⌂</span>
         <span>Dashboard</span>
       </button>
-      <button class="nav-tab" type="button">
+      <button class="nav-tab" type="button" data-nav="monetisation">
         <span class="nav-icon">◈</span>
         <span>Monetisation</span>
       </button>
-      <button class="nav-tab" type="button">
+      <button class="nav-tab" type="button" data-nav="profile">
         <span class="nav-icon">◉</span>
         <span>Profile</span>
       </button>
