@@ -954,3 +954,49 @@ body {
     text-align: left !important;
   }
 }
+/* ===== About & Support Section ===== */
+
+.support-clean {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.support-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.support-label {
+  font-size: 0.75rem;
+  color: #a6a7bc;
+  letter-spacing: 0.5px;
+}
+
+.support-value {
+  font-size: 0.95rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+.support-value:hover {
+  color: #b06cff;
+}
+
+.support-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.support-links a {
+  font-size: 0.85rem;
+  color: #b06cff;
+  text-decoration: none;
+}
+
+.support-links a:hover {
+  text-decoration: underline;
+}
