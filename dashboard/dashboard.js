@@ -7,6 +7,7 @@ const AD_BONUS_LIMIT = 15;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+/* main dashboard */
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 
@@ -37,6 +38,7 @@ let selectedFile = null;
 let previewURL = null;
 let todayExtraLimit = 0;
 
+/* helpers */
 function getTodayKey() {
   const d = new Date();
   const year = d.getFullYear();
@@ -67,7 +69,7 @@ function loadTodayExtraLimit() {
       todayExtraLimit = 0;
       localStorage.removeItem(getDailyBonusStorageKey());
     }
-  } catch {
+  } catch (error) {
     todayExtraLimit = 0;
     localStorage.removeItem(getDailyBonusStorageKey());
   }
@@ -113,6 +115,7 @@ function getStartOfNextMonthISO() {
   return date.toISOString();
 }
 
+/* auth */
 async function getCurrentUser() {
   const { data, error } = await supabaseClient.auth.getUser();
 
@@ -137,6 +140,7 @@ async function requireLogin() {
   return true;
 }
 
+/* counts */
 async function getTodayUploadCount() {
   if (!currentUser) return 0;
 
@@ -216,6 +220,7 @@ async function updateUploadStatsUI() {
   updateProgressUI(todayCount, monthCount);
 }
 
+/* upload preview */
 function resetPreview() {
   selectedFile = null;
 
@@ -259,6 +264,7 @@ function closeLimitModal() {
   limitModal.classList.add("hidden");
 }
 
+/* upload */
 async function handleUpload(file) {
   if (!currentUser) {
     alert("Please login again.");
@@ -283,8 +289,7 @@ async function handleUpload(file) {
       modalConfirmBtn.textContent = "Uploading...";
     }
 
-    const { error: uploadError } = await supabaseClient
-      .storage
+    const { error: uploadError } = await supabaseClient.storage
       .from(BUCKET_NAME)
       .upload(filePath, file, {
         cacheControl: "3600",
@@ -312,8 +317,7 @@ async function handleUpload(file) {
       return false;
     }
 
-    const { error: deleteStorageError } = await supabaseClient
-      .storage
+    const { error: deleteStorageError } = await supabaseClient.storage
       .from(BUCKET_NAME)
       .remove([filePath]);
 
@@ -343,6 +347,7 @@ async function handleUpload(file) {
   }
 }
 
+/* ad bonus */
 async function simulateWatchAdAndIncreaseLimit() {
   if (!watchAdBtn) return;
 
@@ -364,6 +369,7 @@ async function simulateWatchAdAndIncreaseLimit() {
   }, 1000);
 }
 
+/* events */
 if (uploadBtn) {
   uploadBtn.addEventListener("click", openUploadModal);
 }
@@ -432,6 +438,7 @@ if (watchAdBtn) {
   watchAdBtn.addEventListener("click", simulateWatchAdAndIncreaseLimit);
 }
 
+/* init */
 (async function initDashboard() {
   const ok = await requireLogin();
   if (!ok) return;
