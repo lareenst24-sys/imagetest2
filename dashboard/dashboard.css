@@ -160,11 +160,20 @@ body {
   font-size: 0.98rem;
   font-weight: 700;
   cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
 .nav-tab.active {
   background: linear-gradient(135deg, rgba(139,61,255,0.22), rgba(176,108,255,0.10));
   border-color: rgba(176,108,255,0.28);
+  box-shadow: 0 0 0 1px rgba(176,108,255,0.12) inset, 0 10px 24px rgba(139, 61, 255, 0.14);
+}
+
+.nav-tab:hover {
+  opacity: 0.98;
+  transform: translateY(-2px);
+  border-color: rgba(176,108,255,0.28);
+  background: linear-gradient(135deg, rgba(139,61,255,0.14), rgba(176,108,255,0.06));
 }
 
 .nav-icon {
@@ -246,8 +255,7 @@ body {
 }
 
 .primary-btn:hover,
-.secondary-btn:hover,
-.nav-tab:hover {
+.secondary-btn:hover {
   opacity: 0.98;
   transform: translateY(-2px);
 }
