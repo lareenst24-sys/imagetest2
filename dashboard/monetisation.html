@@ -9,6 +9,7 @@
 <body data-page="monetisation">
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
   <div class="bg-grid"></div>
 
   <div class="dashboard-shell">
@@ -16,9 +17,16 @@
       <div class="brand-wrap">
         <div class="brand-mark">E</div>
         <div>
-          <p class="eyebrow">CREATOR DASHBOARD</p>
+          <p class="eyebrow">CREATOR MONETISATION</p>
           <h1 class="brand">Eanova</h1>
-          <p class="top-sub">Rewards, balance and payout status</p>
+          <p class="top-sub">Track rewards, unlocks, and payout progress</p>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="mini-chip">
+          <span class="mini-dot"></span>
+          <span>Revenue Path</span>
         </div>
       </div>
     </header>
@@ -28,7 +36,7 @@
         <span class="nav-icon">⌂</span>
         <span>Dashboard</span>
       </button>
-      <button class="nav-tab active" type="button" data-nav="monetisation">
+      <button class="nav-tab" type="button" data-nav="monetisation">
         <span class="nav-icon">◈</span>
         <span>Monetisation</span>
       </button>
@@ -39,91 +47,130 @@
     </nav>
 
     <section class="monetisation-grid">
-      <div class="glass-card hero-wide-card">
-        <div class="card-topline">
-          <p class="card-label">Your Earnings</p>
-          <span class="spark-pill">Reward Center</span>
+      <div class="glass-card balance-hero">
+        <div class="hero-topline">
+          <p class="section-kicker">Available Balance</p>
+          <span id="payoutStatusBadge" class="status-badge">Growing</span>
         </div>
 
-        <h3 class="action-title">Turn uploads into payouts</h3>
-        <p class="muted-text action-copy">
-          Your approved uploads build your available balance. Once you meet the payout conditions, you can claim your rewards.
+        <h2 class="money-big" id="availableBalance">$0.00</h2>
+        <p class="muted-text hero-copy">
+          Your creator balance grows as your upload activity increases.
         </p>
 
-        <div class="action-tip-box">
-          <span class="tip-dot"></span>
-          <p>The amount displayed is not final. Additional amount may be added after image review and assessment.</p>
-        </div>
-      </div>
-
-      <div class="glass-card balance-card">
-        <div class="card-topline">
-          <p class="card-label">Balance</p>
-          <span class="status-badge">Current</span>
-        </div>
-
-        <div class="money-block">
-          <span class="money-label">Available Balance</span>
-          <strong id="availableBalance">$0.00</strong>
-        </div>
-
-        <div class="mini-info-grid">
-          <div class="mini-info-box">
-            <span class="mini-info-title">Minimum Payout</span>
-            <strong>$100.00</strong>
+        <div class="payout-meta-row">
+          <div class="mini-metric">
+            <span>Minimum Payout</span>
+            <strong id="minimumPayoutText">$100.00</strong>
           </div>
-          <div class="mini-info-box">
-            <span class="mini-info-title">Payment Route</span>
-            <strong>Gift Card</strong>
+          <div class="mini-metric">
+            <span>Estimated Month Value</span>
+            <strong id="monthlyEstimateText">$0.00</strong>
           </div>
         </div>
 
-        <p class="muted-text limit-footnote">
-          Ready once your eligible balance reaches the payout threshold.
+        <div class="progress-panel progress-panel-hero">
+          <div class="progress-head">
+            <span>Payout Progress</span>
+            <strong id="payoutProgressText">0%</strong>
+          </div>
+
+          <div class="progress-bar-wrap progress-bar-wrap-glow">
+            <div id="payoutProgressBar" class="progress-bar-fill money-fill"></div>
+          </div>
+        </div>
+
+        <p id="payoutHelperText" class="muted-text">
+          Keep uploading to move closer to your first payout.
         </p>
       </div>
 
-      <div class="glass-card payout-card">
+      <div class="glass-card claim-card">
         <div class="card-topline">
-          <p class="card-label">Payout Status</p>
-          <span class="status-badge" id="payoutBadge">Not Ready</span>
+          <p class="card-label">Claim Rewards</p>
+          <span class="spark-pill">Claim Zone</span>
         </div>
 
-        <div class="payout-status-row">
-          <div class="status-option active-status" id="readyBox">Ready</div>
-          <div class="status-option inactive-status" id="notReadyBox">Not Ready</div>
+        <div class="claim-stack">
+          <button id="giftCardModeBtn" class="mode-btn active" type="button">Gift Card</button>
+          <button id="bankModeBtn" class="mode-btn" type="button">Bank Transfer</button>
         </div>
 
-        <button id="claimBtn" class="primary-btn big-btn claim-btn disabled-btn" type="button" disabled>
-          Claim
+        <div class="claim-panel">
+          <p class="claim-label">Selected payout route</p>
+          <h3 id="selectedPayoutRoute">Gift Card</h3>
+          <p id="claimStatusText" class="muted-text">
+            Claim becomes available once your balance reaches the minimum payout.
+          </p>
+        </div>
+
+        <button id="claimBtn" class="primary-btn big-btn claim-btn-disabled" type="button" disabled>
+          Claim Rewards
         </button>
-
-        <p class="earn-hint">Claim becomes available when your payout is ready</p>
       </div>
 
-      <div class="glass-card notes-card">
+      <div class="glass-card milestone-card">
         <div class="card-topline">
-          <p class="card-label">Payment Notes</p>
-          <span class="spark-pill">Important</span>
+          <p class="card-label">Reward Milestones</p>
+          <span class="top-status-pill">Progress</span>
         </div>
 
-        <div class="notes-stack">
-          <div class="note-box">
-            <span class="tip-dot"></span>
-            <p>Totals shown can go up based on final review.</p>
+        <div class="milestone-list">
+          <div class="milestone-item" id="milestone25">
+            <div class="milestone-left">
+              <strong>$25</strong>
+              <span>Starter momentum</span>
+            </div>
+            <span class="milestone-state">Locked</span>
           </div>
-          <div class="note-box">
-            <span class="tip-dot"></span>
-            <p>We will email you when you become eligible for bank transfer or reward claim.</p>
+
+          <div class="milestone-item" id="milestone50">
+            <div class="milestone-left">
+              <strong>$50</strong>
+              <span>Halfway to payout</span>
+            </div>
+            <span class="milestone-state">Locked</span>
           </div>
-          <div class="note-box">
-            <span class="tip-dot"></span>
-            <p>For now, rewards can stay disabled until your payout system is connected.</p>
+
+          <div class="milestone-item" id="milestone100">
+            <div class="milestone-left">
+              <strong>$100</strong>
+              <span>Claim threshold</span>
+            </div>
+            <span class="milestone-state">Locked</span>
           </div>
+        </div>
+      </div>
+
+      <div class="glass-card earnings-card">
+        <div class="card-topline">
+          <p class="card-label">Creator Stats</p>
+          <span class="spark-pill">Live</span>
+        </div>
+
+        <div class="upload-stats two-col">
+          <div class="upload-stat-tile pop-tile">
+            <span class="upload-stat-title">This Month Uploads</span>
+            <strong id="monetisationMonthUploads">0</strong>
+          </div>
+
+          <div class="upload-stat-tile pop-tile">
+            <span class="upload-stat-title">Today Uploads</span>
+            <strong id="monetisationTodayUploads">0</strong>
+          </div>
+        </div>
+
+        <div class="reward-note-box">
+          <span class="tip-dot"></span>
+          <p>
+            The amount displayed is an estimate for UI flow. Connect your real payout system later when you are ready.
+          </p>
         </div>
       </div>
     </section>
   </div>
+
+  <div id="toast" class="toast hidden"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
