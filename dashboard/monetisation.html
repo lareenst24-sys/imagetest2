@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eanova Monetisation</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body data-page="monetisation">
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
+  <div class="dashboard-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-mark">E</div>
+        <div>
+          <p class="eyebrow">CREATOR DASHBOARD</p>
+          <h1 class="brand">Eanova</h1>
+          <p class="top-sub">Rewards, balance and payout status</p>
+        </div>
+      </div>
+    </header>
+
+    <nav class="dashboard-nav glass-card">
+      <button class="nav-tab" type="button" data-nav="dashboard">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-tab active" type="button" data-nav="monetisation">
+        <span class="nav-icon">◈</span>
+        <span>Monetisation</span>
+      </button>
+      <button class="nav-tab" type="button" data-nav="profile">
+        <span class="nav-icon">◉</span>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <section class="monetisation-grid">
+      <div class="glass-card hero-wide-card">
+        <div class="card-topline">
+          <p class="card-label">Your Earnings</p>
+          <span class="spark-pill">Reward Center</span>
+        </div>
+
+        <h3 class="action-title">Turn uploads into payouts</h3>
+        <p class="muted-text action-copy">
+          Your approved uploads build your available balance. Once you meet the payout conditions, you can claim your rewards.
+        </p>
+
+        <div class="action-tip-box">
+          <span class="tip-dot"></span>
+          <p>The amount displayed is not final. Additional amount may be added after image review and assessment.</p>
+        </div>
+      </div>
+
+      <div class="glass-card balance-card">
+        <div class="card-topline">
+          <p class="card-label">Balance</p>
+          <span class="status-badge">Current</span>
+        </div>
+
+        <div class="money-block">
+          <span class="money-label">Available Balance</span>
+          <strong id="availableBalance">$0.00</strong>
+        </div>
+
+        <div class="mini-info-grid">
+          <div class="mini-info-box">
+            <span class="mini-info-title">Minimum Payout</span>
+            <strong>$100.00</strong>
+          </div>
+          <div class="mini-info-box">
+            <span class="mini-info-title">Payment Route</span>
+            <strong>Gift Card</strong>
+          </div>
+        </div>
+
+        <p class="muted-text limit-footnote">
+          Ready once your eligible balance reaches the payout threshold.
+        </p>
+      </div>
+
+      <div class="glass-card payout-card">
+        <div class="card-topline">
+          <p class="card-label">Payout Status</p>
+          <span class="status-badge" id="payoutBadge">Not Ready</span>
+        </div>
+
+        <div class="payout-status-row">
+          <div class="status-option active-status" id="readyBox">Ready</div>
+          <div class="status-option inactive-status" id="notReadyBox">Not Ready</div>
+        </div>
+
+        <button id="claimBtn" class="primary-btn big-btn claim-btn disabled-btn" type="button" disabled>
+          Claim
+        </button>
+
+        <p class="earn-hint">Claim becomes available when your payout is ready</p>
+      </div>
+
+      <div class="glass-card notes-card">
+        <div class="card-topline">
+          <p class="card-label">Payment Notes</p>
+          <span class="spark-pill">Important</span>
+        </div>
+
+        <div class="notes-stack">
+          <div class="note-box">
+            <span class="tip-dot"></span>
+            <p>Totals shown can go up based on final review.</p>
+          </div>
+          <div class="note-box">
+            <span class="tip-dot"></span>
+            <p>We will email you when you become eligible for bank transfer or reward claim.</p>
+          </div>
+          <div class="note-box">
+            <span class="tip-dot"></span>
+            <p>For now, rewards can stay disabled until your payout system is connected.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
