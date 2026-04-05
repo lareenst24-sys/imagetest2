@@ -33,6 +33,8 @@ const progressNoteEl = document.getElementById("uploadProgressNote");
 const uploadStatusBadge = document.getElementById("uploadStatusBadge");
 const dailyLimitTextEl = document.getElementById("dailyLimitText");
 
+const navTabs = document.querySelectorAll(".nav-tab");
+
 let currentUser = null;
 let selectedFile = null;
 let previewURL = null;
@@ -113,6 +115,42 @@ function getStartOfNextMonthISO() {
   date.setMonth(date.getMonth() + 1, 1);
   date.setHours(0, 0, 0, 0);
   return date.toISOString();
+}
+
+function setActiveNav() {
+  if (!navTabs.length) return;
+
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+  navTabs.forEach((tab) => {
+    tab.classList.remove("active");
+  });
+
+  if (currentPage === "index.html" || currentPage === "dashboard.html" || currentPage === "") {
+    if (navTabs[0]) navTabs[0].classList.add("active");
+  } else if (currentPage === "monetisation.html") {
+    if (navTabs[1]) navTabs[1].classList.add("active");
+  } else if (currentPage === "profile.html") {
+    if (navTabs[2]) navTabs[2].classList.add("active");
+  }
+}
+
+function setupNavigation() {
+  if (!navTabs.length) return;
+
+  navTabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => {
+      if (index === 0) {
+        window.location.href = "index.html";
+      } else if (index === 1) {
+        window.location.href = "monetisation.html";
+      } else if (index === 2) {
+        window.location.href = "profile.html";
+      }
+    });
+  });
+
+  setActiveNav();
 }
 
 /* auth */
@@ -440,7 +478,10 @@ if (watchAdBtn) {
 
 /* init */
 (async function initDashboard() {
+  setupNavigation();
+
   const ok = await requireLogin();
   if (!ok) return;
+
   await updateUploadStatsUI();
 })();
