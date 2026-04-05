@@ -9,6 +9,7 @@
 <body data-page="dashboard">
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
   <div class="bg-grid"></div>
 
   <div class="dashboard-shell">
@@ -21,10 +22,17 @@
           <p class="top-sub">Welcome back, Creator</p>
         </div>
       </div>
+
+      <div class="topbar-right">
+        <div class="mini-chip">
+          <span class="mini-dot"></span>
+          <span>Creator Mode</span>
+        </div>
+      </div>
     </header>
 
     <nav class="dashboard-nav glass-card">
-      <button class="nav-tab active" type="button" data-nav="dashboard">
+      <button class="nav-tab" type="button" data-nav="dashboard">
         <span class="nav-icon">⌂</span>
         <span>Dashboard</span>
       </button>
@@ -38,37 +46,79 @@
       </button>
     </nav>
 
-    <section class="main-grid">
-      <div class="glass-card uploads-card">
-        <div class="card-topline">
-          <p class="card-label">Uploads</p>
+    <section class="hero-strip">
+      <div class="glass-card hero-card hero-card-main">
+        <div class="hero-topline">
+          <p class="section-kicker">Daily Momentum</p>
           <span id="uploadStatusBadge" class="status-badge">New Day</span>
         </div>
 
-        <div class="progress-panel">
+        <h2 class="hero-title">Build your daily streak</h2>
+        <p id="uploadProgressNote" class="muted-text hero-copy">
+          Start your first upload and begin building today’s progress.
+        </p>
+
+        <div class="progress-panel progress-panel-hero">
           <div class="progress-head">
             <span>Today’s Progress</span>
             <strong id="uploadProgressText">0 / 50</strong>
           </div>
 
-          <div class="progress-bar-wrap">
+          <div class="progress-bar-wrap progress-bar-wrap-glow">
             <div id="uploadProgressBar" class="progress-bar-fill"></div>
           </div>
-
-          <p id="uploadProgressNote" class="muted-text">
-            Start your first upload and begin building today’s progress.
-          </p>
         </div>
 
-        <div class="upload-stats two-col">
-          <div class="upload-stat-tile">
+        <div class="hero-bottom-row">
+          <button id="uploadBtn" class="primary-btn big-btn glow-btn" type="button">
+            Upload &amp; Earn
+          </button>
+          <p class="earn-hint">More uploads → more rewards → faster unlocks</p>
+        </div>
+      </div>
+
+      <div class="glass-card hero-card hero-card-side">
+        <div class="card-topline">
+          <p class="card-label">Next Unlock</p>
+          <span class="spark-pill">Boost</span>
+        </div>
+
+        <div class="unlock-ring-wrap">
+          <div class="unlock-ring">
+            <div class="unlock-ring-inner">
+              <strong id="dashboardUnlockPercent">0%</strong>
+              <span>progress</span>
+            </div>
+          </div>
+        </div>
+
+        <p id="dashboardUnlockText" class="muted-text center-text">
+          Keep uploading to move closer to your next reward threshold.
+        </p>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="glass-card uploads-card">
+        <div class="card-topline">
+          <p class="card-label">Upload Stats</p>
+          <span class="top-status-pill">Live</span>
+        </div>
+
+        <div class="upload-stats three-col">
+          <div class="upload-stat-tile pop-tile">
             <span class="upload-stat-title">Today</span>
             <strong id="todayUploadCount">0</strong>
           </div>
 
-          <div class="upload-stat-tile">
+          <div class="upload-stat-tile pop-tile">
             <span class="upload-stat-title">This Month</span>
             <strong id="monthUploadCount">0</strong>
+          </div>
+
+          <div class="upload-stat-tile pop-tile">
+            <span class="upload-stat-title">Daily Limit</span>
+            <strong id="currentDailyLimitCount">50</strong>
           </div>
         </div>
 
@@ -79,34 +129,39 @@
 
       <div class="glass-card upload-card action-card">
         <div class="card-topline">
-          <p class="card-label">Earn</p>
+          <p class="card-label">Creator Energy</p>
           <span class="spark-pill">Money Mode</span>
         </div>
 
         <h3 class="action-title">Turn images into rewards</h3>
         <p class="muted-text action-copy">
-          Every approved upload increases your earning potential and helps you build daily momentum.
+          Every approved upload increases your earning potential and pushes you closer to payout.
         </p>
 
-        <button id="uploadBtn" class="primary-btn big-btn glow-btn" type="button">
-          Upload &amp; Earn
-        </button>
-
-        <p class="earn-hint">Upload more → earn more rewards</p>
+        <div class="dopamine-strip">
+          <div class="dopamine-chip">
+            <span class="dopamine-chip-title">Fast Progress</span>
+            <strong>Live</strong>
+          </div>
+          <div class="dopamine-chip">
+            <span class="dopamine-chip-title">Reward Path</span>
+            <strong>Active</strong>
+          </div>
+        </div>
 
         <div class="action-tip-box">
           <span class="tip-dot"></span>
-          <p>Need more space later? Watch an ad to increase today’s upload limit.</p>
+          <p>Hit your daily cap? Watch an ad to unlock 15 more uploads for today only.</p>
         </div>
       </div>
 
       <div class="glass-card locked-card">
         <div class="locked-inner">
           <div class="locked-icon-wrap">
-            <div class="locked-icon">🔒</div>
+            <div class="locked-icon">⚡</div>
           </div>
-          <h3>Locked</h3>
-          <p>Unlock after meeting the required threshold.</p>
+          <h3>Momentum Zone</h3>
+          <p id="motivationLine">Upload your first image and start your streak.</p>
         </div>
       </div>
     </section>
@@ -149,6 +204,8 @@
       <p id="limitStatusText" class="muted-text limit-status-text"></p>
     </div>
   </div>
+
+  <div id="toast" class="toast hidden"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
