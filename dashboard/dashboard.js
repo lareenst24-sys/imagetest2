@@ -39,11 +39,13 @@ const profileNameEl = document.getElementById("profileName");
 const profileEmailEl = document.getElementById("profileEmail");
 const profileJoinDateEl = document.getElementById("profileJoinDate");
 const profileStatusEl = document.getElementById("profileStatus");
-const profileBusinessEmailInput = document.getElementById("profileBusinessEmail");
-const profileInstagramInput = document.getElementById("profileInstagram");
-const profileBioInput = document.getElementById("profileBio");
-const saveProfileBtn = document.getElementById("saveProfileBtn");
-const logoutBtn = document.getElementById("logoutBtn");
+
+/* profile account popup */
+const accountActionBtn = document.getElementById("accountActionBtn");
+const accountModal = document.getElementById("accountModal");
+const closeAccountModal = document.getElementById("closeAccountModal");
+const modalLogout = document.getElementById("modalLogout");
+const modalDelete = document.getElementById("modalDelete");
 
 /* monetisation */
 const balanceAmountEl = document.getElementById("balanceAmount");
@@ -127,11 +129,6 @@ function getRewardStorageKey() {
 function getClaimHistoryStorageKey() {
   if (!currentUser) return "claim_history_guest";
   return `claim_history_${currentUser.id}`;
-}
-
-function getProfileStorageKey() {
-  if (!currentUser) return "profile_details_guest";
-  return `profile_details_${currentUser.id}`;
 }
 
 function loadTodayExtraLimit() {
@@ -283,7 +280,6 @@ async function requireLogin() {
   currentUser = user;
   loadTodayExtraLimit();
   hydrateUserUI();
-  loadProfileInputs();
   return true;
 }
 
@@ -294,9 +290,17 @@ function hydrateUserUI() {
   const email = currentUser.email || "—";
   const initial = getInitial(displayName);
 
-  creatorNameEls.forEach((el) => (el.textContent = displayName));
-  creatorEmailEls.forEach((el) => (el.textContent = email));
-  creatorInitialEls.forEach((el) => (el.textContent = initial));
+  creatorNameEls.forEach((el) => {
+    el.textContent = displayName;
+  });
+
+  creatorEmailEls.forEach((el) => {
+    el.textContent = email;
+  });
+
+  creatorInitialEls.forEach((el) => {
+    el.textContent = initial;
+  });
 
   if (profileNameEl) profileNameEl.textContent = displayName;
   if (profileEmailEl) profileEmailEl.textContent = email;
@@ -539,6 +543,16 @@ function closeLimitModal() {
   limitModal.classList.add("hidden");
 }
 
+function openAccountModal() {
+  if (!accountModal) return;
+  accountModal.classList.remove("hidden");
+}
+
+function closeProfileAccountModal() {
+  if (!accountModal) return;
+  accountModal.classList.add("hidden");
+}
+
 async function handleUpload(file) {
   if (!currentUser) {
     showToast("Session expired", "Please log in again.");
@@ -665,18 +679,10 @@ function getPayoutStatus(balance) {
     };
   }
 
-  if (percent < 100) {
-    return {
-      label: "Growing",
-      note: `Keep uploading to move closer to your first payout.`,
-      percent
-    };
-  }
-
   return {
-    label: "Ready to Claim",
-    note: "Your balance is ready for payout.",
-    percent: 100
+    label: "Growing",
+    note: "Keep uploading to move closer to your first payout.",
+    percent
   };
 }
 
@@ -729,41 +735,9 @@ function setupRouteChips() {
       routeChips.forEach((item) => item.classList.remove("active"));
       chip.classList.add("active");
       selectedRoute = chip.dataset.route || chip.textContent.trim();
-
-      const balance = getStoredRewardBalance();
-      updateMonetisationUI(balance, 0);
+      updateMonetisationUI(getStoredRewardBalance(), 0);
     });
   });
-}
-
-function loadProfileInputs() {
-  if (!currentUser) return;
-
-  const raw = localStorage.getItem(getProfileStorageKey());
-  if (!raw) return;
-
-  try {
-    const data = JSON.parse(raw);
-
-    if (profileBusinessEmailInput) profileBusinessEmailInput.value = data.businessEmail || "";
-    if (profileInstagramInput) profileInstagramInput.value = data.instagram || "";
-    if (profileBioInput) profileBioInput.value = data.bio || "";
-  } catch (error) {
-    console.error("Profile load error:", error);
-  }
-}
-
-function saveProfileInputs() {
-  if (!currentUser) return;
-
-  const data = {
-    businessEmail: profileBusinessEmailInput ? profileBusinessEmailInput.value.trim() : "",
-    instagram: profileInstagramInput ? profileInstagramInput.value.trim() : "",
-    bio: profileBioInput ? profileBioInput.value.trim() : ""
-  };
-
-  localStorage.setItem(getProfileStorageKey(), JSON.stringify(data));
-  showToast("Profile saved", "Your details were updated.");
 }
 
 async function logoutUser() {
@@ -774,6 +748,11 @@ async function logoutUser() {
   }
 
   window.location.href = "/";
+}
+
+function handleDeleteAccount() {
+  closeProfileAccountModal();
+  showToast("Coming soon", "Account deactivation is not connected yet.");
 }
 
 if (uploadBtn) {
@@ -845,12 +824,28 @@ if (claimBtn) {
   claimBtn.addEventListener("click", handleClaim);
 }
 
-if (saveProfileBtn) {
-  saveProfileBtn.addEventListener("click", saveProfileInputs);
+if (accountActionBtn) {
+  accountActionBtn.addEventListener("click", openAccountModal);
 }
 
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", logoutUser);
+if (closeAccountModal) {
+  closeAccountModal.addEventListener("click", closeProfileAccountModal);
+}
+
+if (accountModal) {
+  accountModal.addEventListener("click", (event) => {
+    if (event.target === accountModal) {
+      closeProfileAccountModal();
+    }
+  });
+}
+
+if (modalLogout) {
+  modalLogout.addEventListener("click", logoutUser);
+}
+
+if (modalDelete) {
+  modalDelete.addEventListener("click", handleDeleteAccount);
 }
 
 (async function initApp() {
