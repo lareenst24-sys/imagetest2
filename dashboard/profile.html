@@ -109,9 +109,9 @@
 
       <div class="support-item">
         <span class="support-label">Email</span>
-        <a href="mailto:support@eanova.online" class="support-value">
+        <span class="support-value">
          support@eanova.online
-        </a>
+        </span>
       </div>
 
     <div class="support-item">
@@ -127,8 +127,7 @@
   </div>
 </div>
         <div class="profile-actions">
-          <button id="saveProfileBtn" class="primary-btn" type="button">Save Details</button>
-          <button id="logoutBtn" class="ghost-btn" type="button">Log Out</button>
+          <button id="accountActionBtn" class="ghost-btn">Account</button>
         </div>
       </div>
     </section>
@@ -136,5 +135,19 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
+
+  <div id="accountModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Account Options</h3>
+    <p>Manage your account actions</p>
+
+    <div class="modal-actions">
+      <button id="modalLogout" class="primary-btn">Log Out</button>
+      <button id="modalDelete" class="danger-btn">Deactivate Account</button>
+    </div>
+
+    <button id="closeAccountModal" class="ghost-btn">Cancel</button>
+  </div>
+</div>
 </body>
 </html>
