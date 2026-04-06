@@ -72,6 +72,11 @@ let previewURL = null;
 let todayExtraLimit = 0;
 let selectedRoute = "Gift Card";
 
+/* keep latest stats so UI updates stay correct */
+let latestTodayCount = 0;
+let latestMonthCount = 0;
+let latestLifetimeCount = 0;
+
 function getTodayKey() {
   const d = new Date();
   const year = d.getFullYear();
@@ -85,13 +90,20 @@ function getCurrentPageName() {
 }
 
 function formatMoney(value) {
-  return `$${Number(value || 0).toFixed(2)}`;
+  const amount = Number(value || 0);
+
+  if (amount < 1) {
+    return `$${amount.toFixed(3)}`;
+  }
+
+  return `$${amount.toFixed(2)}`;
 }
 
 function formatDate(value) {
   if (!value) return "—";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "—";
+
   return d.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
@@ -363,9 +375,9 @@ function setupNavigation() {
 
   navTabs.forEach((tab, index) => {
     tab.addEventListener("click", () => {
-      if (index === 0) window.location.href = "index.html";
-      if (index === 1) window.location.href = "monetisation.html";
-      if (index === 2) window.location.href = "profile.html";
+      if (index === 0) window.location.href = "/dashboard/index.html";
+      if (index === 1) window.location.href = "/dashboard/monetisation.html";
+      if (index === 2) window.location.href = "/dashboard/profile.html";
     });
   });
 }
@@ -423,13 +435,13 @@ async function getLifetimeUploadCount() {
 }
 
 function calculateMonthEarnings(monthCount) {
-  return Number((monthCount * BASE_REWARD_PER_UPLOAD).toFixed(2));
+  return Number((monthCount * BASE_REWARD_PER_UPLOAD).toFixed(3));
 }
 
 function calculateLifetimeEarnings(lifetimeCount) {
   const uploadValue = lifetimeCount * BASE_REWARD_PER_UPLOAD;
   const adBonusValue = getStoredRewardBonus();
-  return Number((uploadValue + adBonusValue).toFixed(2));
+  return Number((uploadValue + adBonusValue).toFixed(3));
 }
 
 function getStoredClaimedAmount() {
@@ -520,15 +532,15 @@ function updateProgressUI(todayCount, monthCount, lifetimeCount) {
 }
 
 async function updateUploadStatsUI() {
-  const todayCount = await getTodayUploadCount();
-  const monthCount = await getMonthUploadCount();
-  const lifetimeCount = await getLifetimeUploadCount();
+  latestTodayCount = await getTodayUploadCount();
+  latestMonthCount = await getMonthUploadCount();
+  latestLifetimeCount = await getLifetimeUploadCount();
 
-  updateProgressUI(todayCount, monthCount, lifetimeCount);
+  updateProgressUI(latestTodayCount, latestMonthCount, latestLifetimeCount);
 
-  const availableBalance = syncRewardBalanceFromUploads(monthCount, lifetimeCount);
-  updateMonetisationUI(availableBalance, monthCount, lifetimeCount);
-  updateProfileStats(lifetimeCount, monthCount);
+  const availableBalance = syncRewardBalanceFromUploads(latestMonthCount, latestLifetimeCount);
+  updateMonetisationUI(availableBalance, latestMonthCount, latestLifetimeCount);
+  updateProfileStats(latestLifetimeCount, latestMonthCount);
 }
 
 function updateProfileStats(lifetimeCount, monthCount) {
@@ -782,7 +794,7 @@ function handleClaim() {
   const alreadyClaimed = getStoredClaimedAmount();
   saveClaimedAmount(alreadyClaimed + currentBalance);
   saveRewardBalance(0);
-  updateMonetisationUI(0, 0, 0);
+  updateMonetisationUI(0, latestMonthCount, latestLifetimeCount);
   showToast("Claim submitted", "Your reward request was recorded.");
 }
 
@@ -794,7 +806,7 @@ function setupRouteChips() {
       routeChips.forEach((item) => item.classList.remove("active"));
       chip.classList.add("active");
       selectedRoute = chip.dataset.route || chip.textContent.trim();
-      updateMonetisationUI(getStoredRewardBalance(), 0, 0);
+      updateMonetisationUI(getStoredRewardBalance(), latestMonthCount, latestLifetimeCount);
     });
   });
 }
