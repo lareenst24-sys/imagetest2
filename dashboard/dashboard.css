@@ -1041,3 +1041,12 @@ body {
   border-radius: 10px;
   flex: 1;
 }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-actions button {
+  flex: 1;           /* makes both equal width */
+  height: 42px;      /* same height */
+}
