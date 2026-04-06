@@ -5,6 +5,10 @@ const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 15;
 const MIN_PAYOUT = 100;
 
+/* careful earning optimization */
+const BASE_REWARD_PER_UPLOAD = 0.001; // 1,000,000 uploads = $1000
+const AD_WATCH_REWARD_BONUS = 0.01;   // small bonus for ad engagement
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const navTabs = document.querySelectorAll(".nav-tab");
@@ -58,6 +62,9 @@ const rewardUnlockTextEl = document.getElementById("rewardUnlockText");
 const claimBtn = document.getElementById("claimBtn");
 const activityListEl = document.getElementById("activityList");
 const routeChips = document.querySelectorAll(".route-chip");
+const monthEarningsStatEl = document.getElementById("monthEarningsStat");
+const lifetimeEarningsStatEl = document.getElementById("lifetimeEarningsStat");
+const claimSelectedLabelEl = document.querySelector(".claim-selected strong");
 
 let currentUser = null;
 let selectedFile = null;
@@ -131,6 +138,11 @@ function getClaimHistoryStorageKey() {
   return `claim_history_${currentUser.id}`;
 }
 
+function getRewardBonusStorageKey() {
+  if (!currentUser) return "reward_bonus_guest";
+  return `reward_bonus_${currentUser.id}`;
+}
+
 function loadTodayExtraLimit() {
   const raw = localStorage.getItem(getDailyBonusStorageKey());
 
@@ -162,6 +174,32 @@ function saveTodayExtraLimit() {
       extra: todayExtraLimit
     })
   );
+}
+
+function getStoredRewardBonus() {
+  const raw = localStorage.getItem(getRewardBonusStorageKey());
+  if (!raw) return 0;
+
+  try {
+    return Number(JSON.parse(raw).bonus || 0);
+  } catch (error) {
+    return 0;
+  }
+}
+
+function saveRewardBonus(amount) {
+  localStorage.setItem(
+    getRewardBonusStorageKey(),
+    JSON.stringify({
+      bonus: Number(amount || 0),
+      updatedAt: new Date().toISOString()
+    })
+  );
+}
+
+function addRewardBonus(amount) {
+  const currentBonus = getStoredRewardBonus();
+  saveRewardBonus(currentBonus + Number(amount || 0));
 }
 
 function getCurrentDailyLimit() {
@@ -384,8 +422,14 @@ async function getLifetimeUploadCount() {
   return count || 0;
 }
 
-function calculateEstimatedRewards(monthCount) {
-  return Number((monthCount * 0.2).toFixed(2));
+function calculateMonthEarnings(monthCount) {
+  return Number((monthCount * BASE_REWARD_PER_UPLOAD).toFixed(2));
+}
+
+function calculateLifetimeEarnings(lifetimeCount) {
+  const uploadValue = lifetimeCount * BASE_REWARD_PER_UPLOAD;
+  const adBonusValue = getStoredRewardBonus();
+  return Number((uploadValue + adBonusValue).toFixed(2));
 }
 
 function getStoredClaimedAmount() {
@@ -430,10 +474,10 @@ function saveRewardBalance(amount) {
   );
 }
 
-function syncRewardBalanceFromUploads(monthCount) {
-  const estimated = calculateEstimatedRewards(monthCount);
+function syncRewardBalanceFromUploads(monthCount, lifetimeCount) {
+  const lifetimeEstimated = calculateLifetimeEarnings(lifetimeCount);
   const claimed = getStoredClaimedAmount();
-  const available = Math.max(estimated - claimed, 0);
+  const available = Math.max(lifetimeEstimated - claimed, 0);
   saveRewardBalance(available);
   return available;
 }
@@ -482,8 +526,8 @@ async function updateUploadStatsUI() {
 
   updateProgressUI(todayCount, monthCount, lifetimeCount);
 
-  const availableBalance = syncRewardBalanceFromUploads(monthCount);
-  updateMonetisationUI(availableBalance, monthCount);
+  const availableBalance = syncRewardBalanceFromUploads(monthCount, lifetimeCount);
+  updateMonetisationUI(availableBalance, monthCount, lifetimeCount);
   updateProfileStats(lifetimeCount, monthCount);
 }
 
@@ -619,7 +663,7 @@ async function handleUpload(file) {
 
     await updateUploadStatsUI();
     closeUploadModal();
-    showToast("Upload complete", "Your stats just increased.");
+    showToast("Upload complete", "Keep going to grow your rewards.");
     return true;
   } catch (error) {
     console.error("Upload error:", error);
@@ -646,13 +690,14 @@ async function simulateWatchAdAndIncreaseLimit() {
   setTimeout(async () => {
     todayExtraLimit += AD_BONUS_LIMIT;
     saveTodayExtraLimit();
+    addRewardBonus(AD_WATCH_REWARD_BONUS);
     await updateUploadStatsUI();
 
     if (limitStatusText) {
       limitStatusText.textContent = "Ad completed. Daily limit increased by 15 for today.";
     }
 
-    showToast("Boost unlocked", `+${AD_BONUS_LIMIT} uploads added for today.`);
+    showToast("Boost unlocked", `+${AD_BONUS_LIMIT} uploads and ${formatMoney(AD_WATCH_REWARD_BONUS)} bonus added.`);
 
     watchAdBtn.disabled = false;
     watchAdBtn.textContent = "Watch Ad to Increase Limit";
@@ -674,29 +719,43 @@ function getPayoutStatus(balance) {
   if (percent === 0) {
     return {
       label: "Growing",
-      note: "Your balance grows as your upload activity increases.",
+      note: "Your balance grows through uploads and bonus activity.",
       percent: 1
     };
   }
 
   return {
     label: "Growing",
-    note: "Keep uploading to move closer to your first payout.",
+    note: "Keep uploading and using bonus activity to move closer to payout.",
     percent
   };
 }
 
-function updateMonetisationUI(balance, monthCount = 0) {
+function updateMonetisationUI(balance, monthCount = 0, lifetimeCount = 0) {
   const safeBalance = Number(balance || 0);
   const status = getPayoutStatus(safeBalance);
+  const monthEarnings = calculateMonthEarnings(monthCount);
+  const lifetimeEarnings = calculateLifetimeEarnings(lifetimeCount);
 
   if (balanceAmountEl) animateCount(balanceAmountEl, safeBalance, (v) => formatMoney(v), 800);
   if (minPayoutEl) minPayoutEl.textContent = formatMoney(MIN_PAYOUT);
-  if (estimatedMonthValueEl) estimatedMonthValueEl.textContent = formatMoney(calculateEstimatedRewards(monthCount));
+  if (estimatedMonthValueEl) estimatedMonthValueEl.textContent = formatMoney(monthEarnings);
   if (payoutProgressBarEl) setProgressWidth(payoutProgressBarEl, status.percent);
   if (payoutProgressTextEl) payoutProgressTextEl.textContent = `${Math.round(status.percent)}% to payout`;
   if (payoutStatusEl) payoutStatusEl.textContent = status.label;
   if (rewardUnlockTextEl) rewardUnlockTextEl.textContent = status.note;
+
+  if (monthEarningsStatEl) {
+    animateCount(monthEarningsStatEl, monthEarnings, (v) => formatMoney(v), 800);
+  }
+
+  if (lifetimeEarningsStatEl) {
+    animateCount(lifetimeEarningsStatEl, lifetimeEarnings, (v) => formatMoney(v), 800);
+  }
+
+  if (claimSelectedLabelEl) {
+    claimSelectedLabelEl.textContent = selectedRoute;
+  }
 
   if (claimBtn) {
     claimBtn.disabled = safeBalance < MIN_PAYOUT;
@@ -706,7 +765,7 @@ function updateMonetisationUI(balance, monthCount = 0) {
   if (activityListEl) {
     activityListEl.innerHTML = `
       <div class="activity-item">Minimum payout: <strong>${formatMoney(MIN_PAYOUT)}</strong></div>
-      <div class="activity-item">Estimated month value: <strong>${formatMoney(calculateEstimatedRewards(monthCount))}</strong></div>
+      <div class="activity-item">This month earnings: <strong>${formatMoney(monthEarnings)}</strong></div>
       <div class="activity-item">Selected payout route: <strong>${selectedRoute}</strong></div>
     `;
   }
@@ -723,7 +782,7 @@ function handleClaim() {
   const alreadyClaimed = getStoredClaimedAmount();
   saveClaimedAmount(alreadyClaimed + currentBalance);
   saveRewardBalance(0);
-  updateMonetisationUI(0, 0);
+  updateMonetisationUI(0, 0, 0);
   showToast("Claim submitted", "Your reward request was recorded.");
 }
 
@@ -735,7 +794,7 @@ function setupRouteChips() {
       routeChips.forEach((item) => item.classList.remove("active"));
       chip.classList.add("active");
       selectedRoute = chip.dataset.route || chip.textContent.trim();
-      updateMonetisationUI(getStoredRewardBalance(), 0);
+      updateMonetisationUI(getStoredRewardBalance(), 0, 0);
     });
   });
 }
