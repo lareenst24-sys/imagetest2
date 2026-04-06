@@ -6,10 +6,9 @@
   <title>Eanova Monetisation</title>
   <link rel="stylesheet" href="dashboard.css" />
 </head>
-<body data-page="monetisation">
+<body>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
   <div class="bg-grid"></div>
 
   <div class="dashboard-shell">
@@ -17,160 +16,116 @@
       <div class="brand-wrap">
         <div class="brand-mark">E</div>
         <div>
-          <p class="eyebrow">CREATOR MONETISATION</p>
+          <p class="eyebrow">CREATOR DASHBOARD</p>
           <h1 class="brand">Eanova</h1>
-          <p class="top-sub">Track rewards, unlocks, and payout progress</p>
-        </div>
-      </div>
-
-      <div class="topbar-right">
-        <div class="mini-chip">
-          <span class="mini-dot"></span>
-          <span>Revenue Path</span>
+          <p class="top-sub">Your rewards and payout overview</p>
         </div>
       </div>
     </header>
 
     <nav class="dashboard-nav glass-card">
-      <button class="nav-tab" type="button" data-nav="dashboard">
+      <button class="nav-tab" type="button">
         <span class="nav-icon">⌂</span>
         <span>Dashboard</span>
       </button>
-      <button class="nav-tab" type="button" data-nav="monetisation">
+      <button class="nav-tab active" type="button">
         <span class="nav-icon">◈</span>
         <span>Monetisation</span>
       </button>
-      <button class="nav-tab" type="button" data-nav="profile">
+      <button class="nav-tab" type="button">
         <span class="nav-icon">◉</span>
         <span>Profile</span>
       </button>
     </nav>
 
-    <section class="monetisation-grid">
-      <div class="glass-card balance-hero">
-        <div class="hero-topline">
-          <p class="section-kicker">Available Balance</p>
-          <span id="payoutStatusBadge" class="status-badge">Growing</span>
-        </div>
-
-        <h2 class="money-big" id="availableBalance">$0.00</h2>
-        <p class="muted-text hero-copy">
-          Your creator balance grows as your upload activity increases.
-        </p>
-
-        <div class="payout-meta-row">
-          <div class="mini-metric">
-            <span>Minimum Payout</span>
-            <strong id="minimumPayoutText">$100.00</strong>
-          </div>
-          <div class="mini-metric">
-            <span>Estimated Month Value</span>
-            <strong id="monthlyEstimateText">$0.00</strong>
-          </div>
-        </div>
-
-        <div class="progress-panel progress-panel-hero">
-          <div class="progress-head">
-            <span>Payout Progress</span>
-            <strong id="payoutProgressText">0%</strong>
+    <section class="profile-shell">
+      <div class="money-grid">
+        <div class="glass-card money-card">
+          <div class="card-topline">
+            <div>
+              <p class="eyebrow">AVAILABLE BALANCE</p>
+            </div>
+            <span class="soft-pill" id="payoutStatus">Growing</span>
           </div>
 
-          <div class="progress-bar-wrap progress-bar-wrap-glow">
-            <div id="payoutProgressBar" class="progress-bar-fill money-fill"></div>
+          <div class="money-amount" id="balanceAmount">$0.00</div>
+
+          <div class="money-meta">
+            <div class="money-meta-row">
+              <span>Minimum Payout</span>
+              <strong id="minPayoutAmount">$100.00</strong>
+            </div>
+
+            <div class="money-meta-row">
+              <span>Estimated This Month</span>
+              <strong id="estimatedMonthValue">$0.00</strong>
+            </div>
           </div>
-        </div>
 
-        <p id="payoutHelperText" class="muted-text">
-          Keep uploading to move closer to your first payout.
-        </p>
-      </div>
+          <div class="sub-panel">
+            <div class="progress-head">
+              <span>Payout Progress</span>
+              <strong id="payoutProgressText">1% to payout</strong>
+            </div>
 
-      <div class="glass-card claim-card">
-        <div class="card-topline">
-          <p class="card-label">Claim Rewards</p>
-          <span class="spark-pill">Claim Zone</span>
-        </div>
+            <div class="progress-bar-wrap">
+              <div id="payoutProgressBar" class="progress-bar-fill"></div>
+            </div>
+          </div>
 
-        <div class="claim-stack">
-          <button id="giftCardModeBtn" class="mode-btn active" type="button">Gift Card</button>
-          <button id="bankModeBtn" class="mode-btn" type="button">Bank Transfer</button>
-        </div>
-
-        <div class="claim-panel">
-          <p class="claim-label">Selected payout route</p>
-          <h3 id="selectedPayoutRoute">Gift Card</h3>
-          <p id="claimStatusText" class="muted-text">
-            Claim becomes available once your balance reaches the minimum payout.
+          <p id="rewardUnlockText" class="muted-text" style="margin-top:16px;">
+            Keep uploading to move closer to your first payout.
           </p>
         </div>
 
-        <button id="claimBtn" class="primary-btn big-btn claim-btn-disabled" type="button" disabled>
-          Claim Rewards
-        </button>
-      </div>
-
-      <div class="glass-card milestone-card">
-        <div class="card-topline">
-          <p class="card-label">Reward Milestones</p>
-          <span class="top-status-pill">Progress</span>
-        </div>
-
-        <div class="milestone-list">
-          <div class="milestone-item" id="milestone25">
-            <div class="milestone-left">
-              <strong>$25</strong>
-              <span>Starter momentum</span>
-            </div>
-            <span class="milestone-state">Locked</span>
+        <div class="glass-card money-card">
+          <div class="card-topline">
+            <p class="card-label">Claim Rewards</p>
+            <span class="soft-pill">Claim Zone</span>
           </div>
 
-          <div class="milestone-item" id="milestone50">
-            <div class="milestone-left">
-              <strong>$50</strong>
-              <span>Halfway to payout</span>
-            </div>
-            <span class="milestone-state">Locked</span>
+          <div class="claim-route-wrap">
+            <button class="route-chip active" type="button" data-route="Gift Card">Gift Card</button>
+            <button class="route-chip" type="button" data-route="Bank Transfer">Bank Transfer</button>
           </div>
 
-          <div class="milestone-item" id="milestone100">
-            <div class="milestone-left">
-              <strong>$100</strong>
-              <span>Claim threshold</span>
-            </div>
-            <span class="milestone-state">Locked</span>
+          <div class="claim-selected">
+            <span class="support-label">Selected payout route</span>
+            <strong>Gift Card</strong>
+          </div>
+
+          <button id="claimBtn" class="primary-btn claim-card-btn" type="button" disabled>
+            Claim Locked
+          </button>
+
+          <div id="activityList" class="clean-activity-list" style="margin-top:18px;">
+            <div class="activity-item">Minimum payout: <strong>$100.00</strong></div>
+            <div class="activity-item">Estimated month value: <strong>$0.00</strong></div>
+            <div class="activity-item">Selected payout route: <strong>Gift Card</strong></div>
           </div>
         </div>
       </div>
 
-      <div class="glass-card earnings-card">
+      <div class="glass-card" style="margin-top:18px;">
         <div class="card-topline">
-          <p class="card-label">Creator Stats</p>
-          <span class="spark-pill">Live</span>
+          <p class="card-label">Earnings Overview</p>
+          <span class="soft-pill">Live</span>
         </div>
 
-        <div class="upload-stats two-col">
-          <div class="upload-stat-tile pop-tile">
-            <span class="upload-stat-title">This Month Uploads</span>
-            <strong id="monetisationMonthUploads">0</strong>
+        <div class="clean-two-col">
+          <div class="clean-stat-tile">
+            <span class="clean-stat-title">This Month Earnings</span>
+            <strong id="monthEarningsStat">$0.00</strong>
           </div>
 
-          <div class="upload-stat-tile pop-tile">
-            <span class="upload-stat-title">Today Uploads</span>
-            <strong id="monetisationTodayUploads">0</strong>
+          <div class="clean-stat-tile">
+            <span class="clean-stat-title">Lifetime Earnings</span>
+            <strong id="lifetimeEarningsStat">$0.00</strong>
           </div>
-        </div>
-
-        <div class="reward-note-box">
-          <span class="tip-dot"></span>
-          <p>
-            The amount displayed is an estimate for UI flow. Connect your real payout system later when you are ready.
-          </p>
         </div>
       </div>
     </section>
   </div>
-
-  <div id="toast" class="toast hidden"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="dashboard.js"></script>
