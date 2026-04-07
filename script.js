@@ -3,125 +3,241 @@ const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* forms */
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-
-const loginBox = document.getElementById("login-form");
-const registerBox = document.getElementById("register-form");
+const loginFormBox = document.getElementById("login-form");
+const registerFormBox = document.getElementById("register-form");
 
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
-/* ui switch */
-function openLogin() {
-  if (loginBox) loginBox.style.display = "block";
-  if (registerBox) registerBox.style.display = "none";
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+
+function createMessageBox(formElement) {
+  let box = formElement.querySelector(".message-box");
+
+  if (!box) {
+    box = document.createElement("div");
+    box.className = "message-box";
+    formElement.insertBefore(box, formElement.children[1]);
+  }
+
+  return box;
 }
 
-function openRegister() {
-  if (loginBox) loginBox.style.display = "none";
-  if (registerBox) registerBox.style.display = "block";
+function showMessage(formElement, text, type = "success") {
+  const box = createMessageBox(formElement);
+  box.textContent = text;
+  box.className = `message-box show ${type}`;
 }
 
-if (showRegister) {
-  showRegister.addEventListener("click", (event) => {
-    event.preventDefault();
-    openRegister();
-  });
-}
-
-if (showLogin) {
-  showLogin.addEventListener("click", (event) => {
-    event.preventDefault();
-    openLogin();
-  });
-}
-
-/* always redirect to the real dashboard file */
-function goToDashboard() {
-  window.location.href = "/dashboard/index.html";
-}
-
-/* keep user signed in */
-async function checkSessionAndRedirect() {
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
-
-  if (session?.user) {
-    goToDashboard();
+function clearMessage(formElement) {
+  const box = formElement.querySelector(".message-box");
+  if (box) {
+    box.className = "message-box";
+    box.textContent = "";
   }
 }
 
-/* login */
-if (loginForm) {
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+function showLoginForm() {
+  if (loginFormBox) loginFormBox.style.display = "block";
+  if (registerFormBox) registerFormBox.style.display = "none";
+  if (registerForm) clearMessage(registerForm);
+}
 
-    const email = document.getElementById("loginEmail")?.value.trim();
-    const password = document.getElementById("loginPassword")?.value;
-    const rememberMe = document.getElementById("rememberMe")?.checked ?? true;
+function showRegisterForm() {
+  if (loginFormBox) loginFormBox.style.display = "none";
+  if (registerFormBox) registerFormBox.style.display = "block";
+  if (loginForm) clearMessage(loginForm);
+}
 
-    if (!email || !password) {
-      alert("Please enter your email and password.");
-      return;
-    }
+function goToDashboard() {
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "/dashboard/index.html";
+  }, 600);
+}
 
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    if (!rememberMe) {
-      console.warn("Remember me is off, but Supabase session persistence remains enabled by default.");
-    }
-
-    goToDashboard();
+if (showRegister && loginFormBox && registerFormBox) {
+  showRegister.addEventListener("click", function (e) {
+    e.preventDefault();
+    showRegisterForm();
   });
 }
 
-/* register */
-if (registerForm) {
-  registerForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+if (showLogin && loginFormBox && registerFormBox) {
+  showLogin.addEventListener("click", function (e) {
+    e.preventDefault();
+    showLoginForm();
+  });
+}
 
-    const name = document.getElementById("registerName")?.value.trim();
-    const email = document.getElementById("registerEmail")?.value.trim();
-    const password = document.getElementById("registerPassword")?.value;
+async function checkSession() {
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) {
+      console.error("Session check error:", error.message);
+      return;
+    }
+
+    if (data.session) {
+      goToDashboard();
+    }
+  } catch (err) {
+    console.error("Session check failed:", err);
+  }
+}
+
+checkSession();
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  const onAuthPage =
+    window.location.pathname === "/" ||
+    window.location.pathname.endsWith("/index.html") ||
+    window.location.pathname.endsWith("index.html");
+
+  if (session && onAuthPage) {
+    window.location.href = "/dashboard/index.html";
+  }
+});
+
+if (registerForm) {
+  registerForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    clearMessage(registerForm);
+
+    const nameEl = document.getElementById("registerName");
+    const emailEl = document.getElementById("registerEmail");
+    const passwordEl = document.getElementById("registerPassword");
+    const registerBtn = registerForm.querySelector("button[type='submit'], button");
+
+    const name = nameEl ? nameEl.value.trim() : "";
+    const email = emailEl ? emailEl.value.trim() : "";
+    const password = passwordEl ? passwordEl.value.trim() : "";
 
     if (!name || !email || !password) {
-      alert("Please fill in all fields.");
+      showMessage(registerForm, "Please fill all fields.", "error");
       return;
     }
 
-    const { error } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
-          name: name,
-          display_name: name
-        }
+    const originalBtnText = registerBtn ? registerBtn.textContent : "";
+
+    try {
+      if (registerBtn) {
+        registerBtn.textContent = "Creating account...";
+        registerBtn.disabled = true;
       }
-    });
 
-    if (error) {
-      alert(error.message);
-      return;
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: name,
+            name: name,
+            display_name: name
+          }
+        }
+      });
+
+      if (error) {
+        showMessage(registerForm, "Register error: " + error.message, "error");
+        return;
+      }
+
+      if (data.session) {
+        goToDashboard();
+        return;
+      }
+
+      showMessage(
+        registerForm,
+        "Account created. Check your email if confirmation is enabled, then log in.",
+        "success"
+      );
+
+      registerForm.reset();
+
+      setTimeout(() => {
+        showLoginForm();
+      }, 1200);
+    } catch (err) {
+      console.error("REGISTER FAILED:", err);
+      showMessage(registerForm, "Register error: " + err.message, "error");
+    } finally {
+      if (registerBtn) {
+        registerBtn.textContent = originalBtnText;
+        registerBtn.disabled = false;
+      }
     }
-
-    alert("Account created successfully. You can now log in.");
-    openLogin();
   });
 }
 
-/* run on load */
-openLogin();
-checkSessionAndRedirect();
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    clearMessage(loginForm);
+
+    const emailEl = document.getElementById("loginEmail");
+    const passwordEl = document.getElementById("loginPassword");
+    const rememberMeEl = document.getElementById("rememberMe");
+    const loginBtn = loginForm.querySelector("button[type='submit'], button");
+
+    const email = emailEl ? emailEl.value.trim() : "";
+    const password = passwordEl ? passwordEl.value.trim() : "";
+    const rememberMe = rememberMeEl ? rememberMeEl.checked : true;
+
+    if (!email || !password) {
+      showMessage(loginForm, "Please enter email and password.", "error");
+      return;
+    }
+
+    const originalBtnText = loginBtn ? loginBtn.textContent : "";
+
+    try {
+      if (loginBtn) {
+        loginBtn.textContent = "Loading...";
+        loginBtn.disabled = true;
+      }
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        showMessage(loginForm, "Login error: " + error.message, "error");
+        return;
+      }
+
+      if (!rememberMe) {
+        sessionStorage.setItem("tempLogin", "true");
+      } else {
+        sessionStorage.removeItem("tempLogin");
+      }
+
+      goToDashboard();
+    } catch (err) {
+      console.error("LOGIN FAILED:", err);
+      showMessage(loginForm, "Login error: " + err.message, "error");
+    } finally {
+      if (loginBtn) {
+        loginBtn.textContent = originalBtnText;
+        loginBtn.disabled = false;
+      }
+    }
+  });
+}
+
+window.addEventListener("beforeunload", async () => {
+  const tempLogin = sessionStorage.getItem("tempLogin");
+  if (tempLogin === "true") {
+    try {
+      await supabaseClient.auth.signOut();
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
+  }
+});
+
+showLoginForm();
