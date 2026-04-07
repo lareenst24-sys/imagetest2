@@ -3,14 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Black Purple Auth</title>
+  <title>Eanova | Creator Access</title>
+  <meta
+    name="description"
+    content="Eanova is a creator platform where users can upload content, track progress, and view rewards through a secure dashboard."
+  />
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <div class="container">
+
+    <div class="auth-intro">
+      <p class="intro-kicker">Eanova</p>
+      <h1>Creator Access</h1>
+      <p class="intro-text">
+        Upload content, track activity, and manage rewards from your creator dashboard.
+      </p>
+
+      <div class="intro-links">
+        <a href="/how-it-works/">How It Works</a>
+        <a href="/legal/privacy/">Privacy Policy</a>
+        <a href="/legal/terms/">Terms</a>
+        <a href="/legal/payment-policy/">Payment Policy</a>
+        <a href="/legal/data-notice/">Data Notice</a>
+      </div>
+
+      <p class="intro-support">Support: support@eanova.online</p>
+    </div>
 
     <!-- LOGIN -->
     <div class="form-box" id="login-form">
@@ -21,6 +41,7 @@
           type="email"
           id="loginEmail"
           placeholder="Email"
+          autocomplete="email"
           required
         />
 
@@ -28,6 +49,7 @@
           type="password"
           id="loginPassword"
           placeholder="Password"
+          autocomplete="current-password"
           required
         />
 
@@ -54,6 +76,7 @@
           type="text"
           id="registerName"
           placeholder="Name"
+          autocomplete="name"
           required
         />
 
@@ -61,6 +84,7 @@
           type="email"
           id="registerEmail"
           placeholder="Email"
+          autocomplete="email"
           required
         />
 
@@ -68,6 +92,7 @@
           type="password"
           id="registerPassword"
           placeholder="Password"
+          autocomplete="new-password"
           required
         />
 
@@ -79,14 +104,20 @@
         </p>
       </form>
     </div>
-
   </div>
 
-  <!-- Supabase -->
+  <footer class="site-footer">
+    <p>© 2026 Eanova. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/legal/privacy/">Privacy Policy</a>
+      <a href="/legal/terms/">Terms</a>
+      <a href="/legal/payment-policy/">Payment Policy</a>
+      <a href="/legal/data-notice/">Data Notice</a>
+    </div>
+  </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- JS -->
   <script src="script.js"></script>
-
 </body>
 </html>
