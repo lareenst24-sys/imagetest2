@@ -1,6 +1,5 @@
 const SUPABASE_URL ="https://rgunoayzvtibhhzwlxtk.supabase.co";
 const SUPABASE_ANON_KEY ="sb_publishable_x3m6IZ4h2aREkla8cI8oUA_m-Q1CSX6";
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const loginFormBox = document.getElementById("login-form");
@@ -53,7 +52,7 @@ function showRegisterForm() {
 function goToDashboard() {
   document.body.classList.add("fade-out");
   setTimeout(() => {
-    window.location.href = "/dashboard/index.html";
+    window.location.href = "/dashboard/";
   }, 600);
 }
 
@@ -97,7 +96,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     window.location.pathname.endsWith("index.html");
 
   if (session && onAuthPage) {
-    window.location.href = "/dashboard/index.html";
+    window.location.href = "/dashboard/";
   }
 });
 
