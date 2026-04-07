@@ -72,7 +72,6 @@ let previewURL = null;
 let todayExtraLimit = 0;
 let selectedRoute = "Gift Card";
 
-/* keep latest stats so UI updates stay correct */
 let latestTodayCount = 0;
 let latestMonthCount = 0;
 let latestLifetimeCount = 0;
@@ -85,8 +84,8 @@ function getTodayKey() {
   return `${year}-${month}-${day}`;
 }
 
-function getCurrentPageName() {
-  return window.location.pathname.split("/").pop() || "index.html";
+function getCleanPath() {
+  return window.location.pathname.replace(/\/+$/, "") || "/";
 }
 
 function formatMoney(value) {
@@ -361,21 +360,21 @@ function hydrateUserUI() {
 function setupNavigation() {
   if (!navTabs.length) return;
 
-  const page = getCurrentPageName();
+  const path = getCleanPath();
 
   navTabs.forEach((tab) => tab.classList.remove("active"));
 
-  if (page === "index.html" || page === "dashboard.html") {
+  if (path === "/dashboard" || path === "/dashboard/index.html") {
     if (navTabs[0]) navTabs[0].classList.add("active");
-  } else if (page === "monetisation.html") {
+  } else if (path === "/dashboard/monetisation.html") {
     if (navTabs[1]) navTabs[1].classList.add("active");
-  } else if (page === "profile.html") {
+  } else if (path === "/dashboard/profile.html") {
     if (navTabs[2]) navTabs[2].classList.add("active");
   }
 
   navTabs.forEach((tab, index) => {
     tab.addEventListener("click", () => {
-      if (index === 0) window.location.href = "/dashboard/index.html";
+      if (index === 0) window.location.href = "/dashboard/";
       if (index === 1) window.location.href = "/dashboard/monetisation.html";
       if (index === 2) window.location.href = "/dashboard/profile.html";
     });
@@ -504,7 +503,7 @@ function updateProgressUI(todayCount, monthCount, lifetimeCount) {
   if (progressFillEl) setProgressWidth(progressFillEl, percent);
 
   let badgeText = "New Day";
-  let noteText = "Start your first upload and begin building today’s progress.";
+  let noteText = "Start your first upload and build today’s progress.";
 
   if (todayCount > 0 && percent < 30) {
     badgeText = "Starting";
