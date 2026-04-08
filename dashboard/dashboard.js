@@ -375,8 +375,8 @@ function setupNavigation() {
   navTabs.forEach((tab, index) => {
     tab.addEventListener("click", () => {
       if (index === 0) window.location.href = "/dashboard/";
-      if (index === 1) window.location.href = "/dashboard/monetisation.html";
-      if (index === 2) window.location.href = "/dashboard/profile.html";
+      if (index === 1) window.location.href = "/dashboard/monetisation/";
+      if (index === 2) window.location.href = "/dashboard/profile/";
     });
   });
 }
