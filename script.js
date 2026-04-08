@@ -96,7 +96,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     window.location.pathname.endsWith("index.html");
 
   if (session && onAuthPage) {
-    window.location.href = "/dashboard/";
+    window.location.href = "/dashboard/index.html";
   }
 });
 
