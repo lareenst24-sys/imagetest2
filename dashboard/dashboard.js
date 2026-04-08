@@ -366,17 +366,17 @@ function setupNavigation() {
 
   if (path === "/dashboard" || path === "/dashboard/index.html") {
     if (navTabs[0]) navTabs[0].classList.add("active");
-  } else if (path === "/dashboard/monetisation.html") {
+  } else if (path === "/dashboard/monetisation") {
     if (navTabs[1]) navTabs[1].classList.add("active");
-  } else if (path === "/dashboard/profile.html") {
+  } else if (path === "/dashboard/profile") {
     if (navTabs[2]) navTabs[2].classList.add("active");
   }
 
   navTabs.forEach((tab, index) => {
     tab.addEventListener("click", () => {
       if (index === 0) window.location.href = "/dashboard/";
-      if (index === 1) window.location.href = "/dashboard/monetisation/inedx.html";
-      if (index === 2) window.location.href = "/dashboard/profile/index.html";
+      if (index === 1) window.location.href = "/dashboard/monetisation/";
+      if (index === 2) window.location.href = "/dashboard/profile/";
     });
   });
 }
