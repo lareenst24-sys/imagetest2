@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Eanova Profile</title>
-  <link rel="stylesheet" href="../dashboard.css">
+  <link rel="stylesheet" href="../dashboard.css" />
 </head>
 <body>
   <div class="bg-orb orb-1"></div>
@@ -39,6 +39,7 @@
     </nav>
 
     <section class="profile-shell">
+      <!-- PROFILE HEADER -->
       <div class="glass-card">
         <div class="profile-card-main">
           <div class="profile-avatar" data-creator-initial>A</div>
@@ -52,9 +53,11 @@
         </div>
       </div>
 
+      <!-- PROFILE DETAILS -->
       <div class="glass-card">
         <div class="card-topline">
           <p class="card-label">Profile Details</p>
+          <span class="soft-pill">Account</span>
         </div>
 
         <div class="profile-details-grid">
@@ -74,16 +77,17 @@
           </div>
 
           <div class="detail-box">
-            <label>Account Status</label>
-            <span>Active</span>
+            <label>Status</label>
+            <span id="profileStatusMirror">Active</span>
           </div>
         </div>
       </div>
 
+      <!-- CREATOR STATS -->
       <div class="glass-card">
         <div class="card-topline">
           <p class="card-label">Creator Stats</p>
-          <span class="soft-pill">Premium</span>
+          <span class="soft-pill">Live</span>
         </div>
 
         <div class="clean-two-col">
@@ -99,6 +103,7 @@
         </div>
       </div>
 
+      <!-- ABOUT & SUPPORT -->
       <div class="glass-card">
         <div class="card-topline">
           <p class="card-label">About &amp; Support</p>
@@ -107,17 +112,18 @@
 
         <div class="support-clean">
           <div class="support-item">
-            <span class="support-label">Email</span>
+            <span class="support-label">Support Email</span>
             <span class="support-value">support@eanova.online</span>
           </div>
 
           <div class="support-item">
             <span class="support-label">Legal</span>
             <div class="support-links">
-            <a href="/legal/privacy/">Privacy Policy</a>
-            <a href="/legal/terms/">Terms</a>
-            <a href="/legal/payment-policy/">Payment Policy</a>
-            <a href="/legal/data-notice/">Data Notice</a>
+              <a href="/how-it-works/">How It Works</a>
+              <a href="/legal/privacy/">Privacy Policy</a>
+              <a href="/legal/terms/">Terms</a>
+              <a href="/legal/payment-policy/">Payment Policy</a>
+              <a href="/legal/data-notice/">Data Notice</a>
             </div>
           </div>
         </div>
@@ -126,9 +132,17 @@
           <button id="accountActionBtn" class="ghost-btn" type="button">Account</button>
         </div>
       </div>
+
+      <!-- NOTICE -->
+      <div class="glass-card" style="margin-top: 18px;">
+        <p class="muted-text" style="font-size: 0.9rem;">
+          Account details shown here are used for platform access, activity tracking, support, and reward management.
+        </p>
+      </div>
     </section>
   </div>
 
+  <!-- ACCOUNT MODAL -->
   <div id="accountModal" class="modal hidden">
     <div class="modal-box">
       <h3>Account Options</h3>
