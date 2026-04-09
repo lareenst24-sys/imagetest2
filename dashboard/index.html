@@ -18,11 +18,12 @@
         <div>
           <p class="eyebrow">CREATOR DASHBOARD</p>
           <h1 class="brand">Eanova</h1>
-          <p class="top-sub">Track your progress and grow your rewards</p>
+          <p class="top-sub">Track your activity and grow your rewards</p>
         </div>
       </div>
     </header>
 
+    <!-- NAV -->
     <nav class="dashboard-nav glass-card">
       <button class="nav-tab active" type="button">
         <span class="nav-icon">⌂</span>
@@ -39,13 +40,17 @@
     </nav>
 
     <section class="profile-shell">
+
+      <!-- MAIN PROGRESS -->
       <div class="glass-card">
         <div class="card-topline">
           <div>
-            <p class="eyebrow">DAILY MOMENTUM</p>
-            <h2 class="action-title" style="margin: 8px 0 6px;">Build your daily streak</h2>
+            <p class="eyebrow">DAILY PROGRESS</p>
+            <h2 class="action-title" style="margin: 8px 0 6px;">
+              Build your upload streak
+            </h2>
             <p id="uploadProgressNote" class="muted-text">
-              Start your first upload and build today’s progress.
+              Upload images to grow your progress and rewards.
             </p>
           </div>
 
@@ -54,7 +59,7 @@
 
         <div class="progress-panel">
           <div class="progress-head">
-            <span>Today’s Progress</span>
+            <span>Today</span>
             <strong id="uploadProgressText">0 / 50</strong>
           </div>
 
@@ -64,34 +69,38 @@
         </div>
 
         <button id="uploadBtn" class="primary-btn big-btn glow-btn" type="button">
-          Upload &amp; Earn
+          Upload & Earn
         </button>
 
-        <p class="earn-hint">More uploads → more rewards</p>
+        <p class="earn-hint">More uploads = higher rewards</p>
       </div>
 
+      <!-- LIMIT INFO -->
       <div class="glass-card">
         <div class="card-topline">
-          <p class="card-label">Next Unlock</p>
-          <span class="soft-pill">Boost</span>
+          <p class="card-label">Daily Limit</p>
+          <span class="soft-pill">Info</span>
         </div>
 
         <div class="sub-panel">
           <div class="money-meta-row">
-            <span>Daily limit</span>
-            <strong id="dailyLimitText">Daily uploads reset every day.</strong>
+            <span>Upload limit</span>
+            <strong id="dailyLimitText">
+              Resets every day
+            </strong>
           </div>
         </div>
 
         <p class="muted-text" style="margin-top: 16px;">
-          Keep going to move closer to your next unlock.
+          Watch ads to increase your daily upload limit.
         </p>
       </div>
 
+      <!-- STATS -->
       <div class="money-grid">
         <div class="glass-card">
           <div class="card-topline">
-            <p class="card-label">Upload Stats</p>
+            <p class="card-label">Your Stats</p>
             <span class="soft-pill">Live</span>
           </div>
 
@@ -108,33 +117,46 @@
           </div>
         </div>
 
+        <!-- SIDE CARD -->
         <div class="glass-card action-card">
           <div class="card-topline">
-            <p class="card-label">Creator Energy</p>
-            <span class="soft-pill">Money Mode</span>
+            <p class="card-label">Consistency</p>
+            <span class="soft-pill">Growth</span>
           </div>
 
-          <h3 class="action-title">Stay consistent</h3>
+          <h3 class="action-title">Stay active</h3>
           <p class="muted-text action-copy">
-            Daily progress helps grow your rewards over time.
+            Regular uploads improve your earning potential over time.
           </p>
 
           <div class="action-tip-box">
             <span class="tip-dot"></span>
-            <p>Watch an ad later to increase today’s upload limit.</p>
+            <p>Unlock extra uploads by watching ads.</p>
           </div>
         </div>
       </div>
+
+      <!-- DISCLAIMER (IMPORTANT FOR ADS) -->
+      <div class="glass-card" style="margin-top: 18px;">
+        <p class="muted-text" style="font-size: 0.9rem;">
+          Earnings shown are estimates and may vary based on contribution activity,
+          content quality, and platform evaluation.
+        </p>
+      </div>
+
     </section>
   </div>
 
+  <!-- FILE INPUT -->
   <input type="file" id="fileInput" accept="image/*" hidden />
 
+  <!-- UPLOAD MODAL -->
   <div id="uploadModal" class="modal-overlay hidden">
     <div class="modal-box upload-modal-box">
       <button id="modalCloseBtn" class="modal-close" type="button">&times;</button>
-      <p class="section-kicker">Upload Flow</p>
-      <h2>Upload Preview</h2>
+
+      <p class="section-kicker">Upload</p>
+      <h2>Preview</h2>
 
       <div id="previewBox" class="preview-box">
         <span id="previewText">No image selected</span>
@@ -151,17 +173,22 @@
     </div>
   </div>
 
+  <!-- LIMIT MODAL -->
   <div id="limitModal" class="modal-overlay hidden">
     <div class="modal-box limit-modal-box">
       <button id="closeLimitBtn" class="modal-close" type="button">&times;</button>
-      <p class="section-kicker">Daily Cap</p>
-      <h2>Daily Limit Reached</h2>
+
+      <p class="section-kicker">Limit Reached</p>
+      <h2>Daily Upload Limit</h2>
+
       <p class="limit-text">
-        You have reached your daily upload limit. Watch an ad to increase your upload limit by 15 for today only.
+        You’ve reached today’s upload limit. Watch an ad to unlock additional uploads.
       </p>
+
       <button id="watchAdBtn" class="primary-btn" type="button">
-        Watch Ad to Increase Limit
+        Watch Ad
       </button>
+
       <p id="limitStatusText" class="muted-text limit-status-text"></p>
     </div>
   </div>
