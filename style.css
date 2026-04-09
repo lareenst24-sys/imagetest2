@@ -392,3 +392,9 @@ body.fade-out .form-box {
     font-size: 0.92rem !important;
   }
 }
+.intro-disclaimer {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
