@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Eanova Monetisation</title>
-  <link rel="stylesheet" href="../dashboard.css">
+  <link rel="stylesheet" href="../dashboard.css" />
 </head>
 <body>
   <div class="bg-orb orb-1"></div>
@@ -18,7 +18,7 @@
         <div>
           <p class="eyebrow">CREATOR DASHBOARD</p>
           <h1 class="brand">Eanova</h1>
-          <p class="top-sub">Your rewards and payout overview</p>
+          <p class="top-sub">Review your rewards and payout progress</p>
         </div>
       </div>
     </header>
@@ -40,6 +40,7 @@
 
     <section class="profile-shell">
       <div class="money-grid">
+        <!-- AVAILABLE BALANCE -->
         <div class="glass-card money-card">
           <div class="card-topline">
             <div>
@@ -48,7 +49,7 @@
             <span class="soft-pill" id="payoutStatus">Growing</span>
           </div>
 
-          <div class="money-amount" id="balanceAmount">$0.00</div>
+          <div class="money-amount" id="balanceAmount">$0.000</div>
 
           <div class="money-meta">
             <div class="money-meta-row">
@@ -58,7 +59,7 @@
 
             <div class="money-meta-row">
               <span>Estimated This Month</span>
-              <strong id="estimatedMonthValue">$0.00</strong>
+              <strong id="estimatedMonthValue">$0.000</strong>
             </div>
           </div>
 
@@ -74,14 +75,15 @@
           </div>
 
           <p id="rewardUnlockText" class="muted-text" style="margin-top:16px;">
-            Keep uploading to move closer to your first payout.
+            Keep uploading and using bonus activity to move closer to payout.
           </p>
         </div>
 
+        <!-- CLAIM -->
         <div class="glass-card money-card">
           <div class="card-topline">
             <p class="card-label">Claim Rewards</p>
-            <span class="soft-pill">Claim Zone</span>
+            <span class="soft-pill">Payout</span>
           </div>
 
           <div class="claim-route-wrap">
@@ -100,12 +102,13 @@
 
           <div id="activityList" class="clean-activity-list" style="margin-top:18px;">
             <div class="activity-item">Minimum payout: <strong>$100.00</strong></div>
-            <div class="activity-item">Estimated month value: <strong>$0.00</strong></div>
+            <div class="activity-item">This month earnings: <strong>$0.000</strong></div>
             <div class="activity-item">Selected payout route: <strong>Gift Card</strong></div>
           </div>
         </div>
       </div>
 
+      <!-- EARNINGS OVERVIEW -->
       <div class="glass-card" style="margin-top:18px;">
         <div class="card-topline">
           <p class="card-label">Earnings Overview</p>
@@ -115,14 +118,21 @@
         <div class="clean-two-col">
           <div class="clean-stat-tile">
             <span class="clean-stat-title">This Month Earnings</span>
-            <strong id="monthEarningsStat">$0.00</strong>
+            <strong id="monthEarningsStat">$0.000</strong>
           </div>
 
           <div class="clean-stat-tile">
             <span class="clean-stat-title">Lifetime Earnings</span>
-            <strong id="lifetimeEarningsStat">$0.00</strong>
+            <strong id="lifetimeEarningsStat">$0.000</strong>
           </div>
         </div>
+      </div>
+
+      <!-- NOTICE -->
+      <div class="glass-card" style="margin-top:18px;">
+        <p class="muted-text" style="font-size: 0.9rem;">
+          Earnings shown are estimates and may vary based on contribution activity, content quality, review, bonus activity, and platform evaluation.
+        </p>
       </div>
     </section>
   </div>
