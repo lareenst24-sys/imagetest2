@@ -5,9 +5,11 @@ const DAILY_LIMIT = 50;
 const AD_BONUS_LIMIT = 15;
 const MIN_PAYOUT = 100;
 
-/* careful earning optimization */
-const BASE_REWARD_PER_UPLOAD = 0.001; // 1,000,000 uploads = $1000
-const AD_WATCH_REWARD_BONUS = 0.01;   // small bonus for ad engagement
+/* earning system */
+const BASE_REWARD_PER_UPLOAD = 0.001;
+const AD_WATCH_REWARD_BONUS = 0.01;
+const STREAK_BONUS_STEP = 0.002;
+const MAX_MONTHLY_STREAK_BONUS = 0.05;
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -90,11 +92,7 @@ function getCleanPath() {
 
 function formatMoney(value) {
   const amount = Number(value || 0);
-
-  if (amount < 1) {
-    return `$${amount.toFixed(3)}`;
-  }
-
+  if (amount < 1) return `$${amount.toFixed(3)}`;
   return `$${amount.toFixed(2)}`;
 }
 
@@ -152,6 +150,11 @@ function getClaimHistoryStorageKey() {
 function getRewardBonusStorageKey() {
   if (!currentUser) return "reward_bonus_guest";
   return `reward_bonus_${currentUser.id}`;
+}
+
+function getLastAdPromptStorageKey() {
+  if (!currentUser) return "last_ad_prompt_guest";
+  return `last_ad_prompt_${currentUser.id}`;
 }
 
 function loadTodayExtraLimit() {
@@ -366,9 +369,9 @@ function setupNavigation() {
 
   if (path === "/dashboard" || path === "/dashboard/index.html") {
     if (navTabs[0]) navTabs[0].classList.add("active");
-  } else if (path === "/dashboard/monetisation") {
+  } else if (path === "/dashboard/monetisation" || path === "/dashboard/monetisation/index.html") {
     if (navTabs[1]) navTabs[1].classList.add("active");
-  } else if (path === "/dashboard/profile") {
+  } else if (path === "/dashboard/profile" || path === "/dashboard/profile/index.html") {
     if (navTabs[2]) navTabs[2].classList.add("active");
   }
 
@@ -433,14 +436,22 @@ async function getLifetimeUploadCount() {
   return count || 0;
 }
 
-function calculateMonthEarnings(monthCount) {
-  return Number((monthCount * BASE_REWARD_PER_UPLOAD).toFixed(3));
+function calculateStreakBonus(monthCount) {
+  const steps = Math.floor(Number(monthCount || 0) / 25);
+  return Math.min(steps * STREAK_BONUS_STEP, MAX_MONTHLY_STREAK_BONUS);
 }
 
-function calculateLifetimeEarnings(lifetimeCount) {
+function calculateMonthEarnings(monthCount) {
+  const base = monthCount * BASE_REWARD_PER_UPLOAD;
+  const streakBonus = calculateStreakBonus(monthCount);
+  return Number((base + streakBonus).toFixed(3));
+}
+
+function calculateLifetimeEarnings(lifetimeCount, monthCount = latestMonthCount) {
   const uploadValue = lifetimeCount * BASE_REWARD_PER_UPLOAD;
   const adBonusValue = getStoredRewardBonus();
-  return Number((uploadValue + adBonusValue).toFixed(3));
+  const streakBonusValue = calculateStreakBonus(monthCount);
+  return Number((uploadValue + adBonusValue + streakBonusValue).toFixed(3));
 }
 
 function getStoredClaimedAmount() {
@@ -486,11 +497,23 @@ function saveRewardBalance(amount) {
 }
 
 function syncRewardBalanceFromUploads(monthCount, lifetimeCount) {
-  const lifetimeEstimated = calculateLifetimeEarnings(lifetimeCount);
+  const lifetimeEstimated = calculateLifetimeEarnings(lifetimeCount, monthCount);
   const claimed = getStoredClaimedAmount();
   const available = Math.max(lifetimeEstimated - claimed, 0);
   saveRewardBalance(available);
   return available;
+}
+
+function shouldShowAdPrompt(todayCount) {
+  if (!todayCount || todayCount <= 0) return false;
+  if (todayCount >= getCurrentDailyLimit()) return true;
+  if (todayCount % 20 !== 0) return false;
+
+  const lastPrompt = localStorage.getItem(getLastAdPromptStorageKey());
+  if (lastPrompt === `${getTodayKey()}_${todayCount}`) return false;
+
+  localStorage.setItem(getLastAdPromptStorageKey(), `${getTodayKey()}_${todayCount}`);
+  return true;
 }
 
 function updateProgressUI(todayCount, monthCount, lifetimeCount) {
@@ -540,6 +563,10 @@ async function updateUploadStatsUI() {
   const availableBalance = syncRewardBalanceFromUploads(latestMonthCount, latestLifetimeCount);
   updateMonetisationUI(availableBalance, latestMonthCount, latestLifetimeCount);
   updateProfileStats(latestLifetimeCount, latestMonthCount);
+
+  if (shouldShowAdPrompt(latestTodayCount)) {
+    openLimitModal();
+  }
 }
 
 function updateProfileStats(lifetimeCount, monthCount) {
@@ -655,7 +682,7 @@ async function handleUpload(file) {
       });
 
     if (insertError) {
-      console.error("Database insert failed:", insertError);
+      console.error("Upload record failed:", insertError);
       showToast("Upload record failed", "Check database rules.");
       return false;
     }
@@ -746,7 +773,8 @@ function updateMonetisationUI(balance, monthCount = 0, lifetimeCount = 0) {
   const safeBalance = Number(balance || 0);
   const status = getPayoutStatus(safeBalance);
   const monthEarnings = calculateMonthEarnings(monthCount);
-  const lifetimeEarnings = calculateLifetimeEarnings(lifetimeCount);
+  const lifetimeEarnings = calculateLifetimeEarnings(lifetimeCount, monthCount);
+  const streakBonus = calculateStreakBonus(monthCount);
 
   if (balanceAmountEl) animateCount(balanceAmountEl, safeBalance, (v) => formatMoney(v), 800);
   if (minPayoutEl) minPayoutEl.textContent = formatMoney(MIN_PAYOUT);
@@ -754,7 +782,13 @@ function updateMonetisationUI(balance, monthCount = 0, lifetimeCount = 0) {
   if (payoutProgressBarEl) setProgressWidth(payoutProgressBarEl, status.percent);
   if (payoutProgressTextEl) payoutProgressTextEl.textContent = `${Math.round(status.percent)}% to payout`;
   if (payoutStatusEl) payoutStatusEl.textContent = status.label;
-  if (rewardUnlockTextEl) rewardUnlockTextEl.textContent = status.note;
+
+  if (rewardUnlockTextEl) {
+    rewardUnlockTextEl.textContent =
+      streakBonus > 0
+        ? `${status.note} Streak bonus active: ${formatMoney(streakBonus)}.`
+        : status.note;
+  }
 
   if (monthEarningsStatEl) {
     animateCount(monthEarningsStatEl, monthEarnings, (v) => formatMoney(v), 800);
