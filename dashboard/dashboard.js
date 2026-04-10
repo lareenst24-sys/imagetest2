@@ -11,6 +11,53 @@ const AD_WATCH_REWARD_BONUS = 0.01;
 const STREAK_BONUS_STEP = 0.002;
 const MAX_MONTHLY_STREAK_BONUS = 0.05;
 
+/* ad system */
+const AD_SCRIPT_SRC =
+  "https://pl29109905.profitablecpmratenetwork.com/7a/de/3d/7ade3dd6e1b4fe13cc5ca0a8d7700827.js";
+
+let adScriptPromise = null;
+let adScriptLoaded = false;
+
+function ensureAdScriptLoaded() {
+  if (adScriptPromise) return adScriptPromise;
+
+  adScriptPromise = new Promise((resolve) => {
+    const existing = document.querySelector(`script[src="${AD_SCRIPT_SRC}"]`);
+
+    if (existing) {
+      adScriptLoaded = true;
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = AD_SCRIPT_SRC;
+    script.async = true;
+
+    script.onload = () => {
+      adScriptLoaded = true;
+      resolve(true);
+    };
+
+    script.onerror = () => {
+      console.warn("Ad script failed to load.");
+      resolve(false);
+    };
+
+    document.head.appendChild(script);
+  });
+
+  return adScriptPromise;
+}
+
+async function triggerAd() {
+  try {
+    await ensureAdScriptLoaded();
+  } catch (error) {
+    console.warn("Ad trigger error:", error);
+  }
+}
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const navTabs = document.querySelectorAll(".nav-tab");
@@ -719,11 +766,13 @@ async function simulateWatchAdAndIncreaseLimit() {
   if (!watchAdBtn) return;
 
   watchAdBtn.disabled = true;
-  watchAdBtn.textContent = "Processing...";
+  watchAdBtn.textContent = "Opening Ad...";
 
   if (limitStatusText) {
-    limitStatusText.textContent = "Boosting your daily limit...";
+    limitStatusText.textContent = "Opening ad and preparing your bonus...";
   }
+
+  await triggerAd();
 
   setTimeout(async () => {
     todayExtraLimit += AD_BONUS_LIMIT;
@@ -740,7 +789,7 @@ async function simulateWatchAdAndIncreaseLimit() {
     watchAdBtn.disabled = false;
     watchAdBtn.textContent = "Watch Ad to Increase Limit";
     closeLimitModal();
-  }, 900);
+  }, 1200);
 }
 
 function getPayoutStatus(balance) {
@@ -860,7 +909,10 @@ function handleDeleteAccount() {
 }
 
 if (uploadBtn) {
-  uploadBtn.addEventListener("click", openUploadModal);
+  uploadBtn.addEventListener("click", async () => {
+    await triggerAd();
+    openUploadModal();
+  });
 }
 
 if (modalCloseBtn) {
@@ -959,5 +1011,6 @@ if (modalDelete) {
   const ok = await requireLogin();
   if (!ok) return;
 
+  await ensureAdScriptLoaded();
   await updateUploadStatsUI();
 })();
