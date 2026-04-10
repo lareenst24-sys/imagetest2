@@ -11,12 +11,11 @@ const AD_WATCH_REWARD_BONUS = 0.01;
 const STREAK_BONUS_STEP = 0.002;
 const MAX_MONTHLY_STREAK_BONUS = 0.05;
 
-/* ad system */
+/* ad system - Social Bar only */
 const AD_SCRIPT_SRC =
-  "https://pl29109905.profitablecpmratenetwork.com/7a/de/3d/7ade3dd6e1b4fe13cc5ca0a8d7700827.js";
+  "https://pl29118316.profitablecpmratenetwork.com/1d/a5/60/1da560e9f3b77f26473bdf134ff1f1c0.js";
 
 let adScriptPromise = null;
-let adScriptLoaded = false;
 
 function ensureAdScriptLoaded() {
   if (adScriptPromise) return adScriptPromise;
@@ -25,7 +24,6 @@ function ensureAdScriptLoaded() {
     const existing = document.querySelector(`script[src="${AD_SCRIPT_SRC}"]`);
 
     if (existing) {
-      adScriptLoaded = true;
       resolve(true);
       return;
     }
@@ -34,13 +32,9 @@ function ensureAdScriptLoaded() {
     script.src = AD_SCRIPT_SRC;
     script.async = true;
 
-    script.onload = () => {
-      adScriptLoaded = true;
-      resolve(true);
-    };
-
+    script.onload = () => resolve(true);
     script.onerror = () => {
-      console.warn("Ad script failed to load.");
+      console.warn("Social Bar script failed to load.");
       resolve(false);
     };
 
@@ -787,7 +781,7 @@ async function simulateWatchAdAndIncreaseLimit() {
     showToast("Boost unlocked", `+${AD_BONUS_LIMIT} uploads and ${formatMoney(AD_WATCH_REWARD_BONUS)} bonus added.`);
 
     watchAdBtn.disabled = false;
-    watchAdBtn.textContent = "Watch Ad to Increase Limit";
+    watchAdBtn.textContent = "Watch Ad";
     closeLimitModal();
   }, 1200);
 }
